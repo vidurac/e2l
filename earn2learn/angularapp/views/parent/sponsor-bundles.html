@@ -1,0 +1,109 @@
+<div ng-init="initForSponsor()">
+<header class="header bg-light bg-gradient b-b" >
+    <div class="col-md-6 pull-left no-padder">
+        <div class="search input-group left">
+            <div class="search-field">
+                <input type="text" placeholder="Search by name" ng-model="searchBundleName" class="input-sm form-control" />
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="searchBundleName=undefined">Clear</div>
+    </div>
+    <div class="col-md-6 pull-right top-buttons no-padder">
+        <span class="c-info"><i class="fa fa-th-list icon"></i><span class="label bg-info info-count badge-info" title="Sponsor Bundles" data-toggle="tooltip">{{bundleModel.allBundle.length}}</span></span>
+    </div>
+</header>
+    <div class="page-title col-md-12">
+        <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Bundles <i class="fa fa-angle-right"></i> <span>Sponsor Bundles</span></h4>
+    </div>
+    <section class="vbox bundles" ng-if="!resources.stillLoading && !resources.stillLoadingCategories">
+        <section class="scrollable no-padder m-t m-t">
+            <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                <div class="item-sizer col-lg-3 col-md-4 col-sm-6 col-xs-12"></div>
+            <div masonry-brick class="grid-item col-lg-3 col-md-4 col-sm-6 col-xs-12 m-t-sm" ng-repeat="bundle in bundleModel.allBundle  | filter : {name : searchBundleName , points:searchByPointsFrom } | filter : filterByType as loadedBundlesForType">
+                <div class="col-md-12 no-padder bg-wrapper b-a">
+                    <div class="bundle-wrapper">
+                        <div class="col-md-12 col-xs-12 bg-primary col">
+
+                            <div class="clear">
+                                <div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding bundle-title">
+                                    <a ui-sref="parent.updateBundle({ id: bundle.id })" class="text-info text-ellipsis" data-toggle="tooltip" data-placement = "bottom" title="{{bundle.name}}"><h2>{{bundle.name}}</h2></a>
+                                </div>
+                            </div>
+                            <ul>
+                                <li ng-repeat="cquiz in bundle.quizzes | limitTo: 3">
+                                    {{ cquiz.video.title }}
+                                </li>
+                            </ul>
+                            <small>Parent: {{bundle.f_name + ' ' + bundle.l_name}}</small>
+                            <br/>
+                            <div class="pull-right view-more">
+                                <a ui-sref="parent.updateBundle({'id': bundle.id})" title="Edit Bundle" data-toggle="tooltip">View more <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="btn-group col-md-12">
+                        <div class="pull-right">
+                            <span>
+                        <button ng-show="bundle.bundle_types_id ==2" class="btn btn-warning btn-sm btn-no-w pull-right m-l-sm" ui-sref="parent.updateBundle({'id': bundle.id})" title="Edit Bundle" data-toggle="tooltip"><i class="fa fa-pencil"></i></button>
+                    </span>
+                        </div>
+                        <div class="pull-left">
+                    <span>
+                        <button class="btn btn-info btn-sm btn-no-w pull-right" ng-click="childAssignPopupForSponsor(bundle.id, bundle.house_id)" title="ASSIGN BUNDLE">Assign Bundle</button>
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           </div>
+            <h4 class="text-center" ng-if="loadedBundlesForType.length == 0  && (searchLessonName && searchLessonName != '')">No Bundles in this type</h4>
+            <section class="padder m-b-xl" style="padding-bottom: 70px;">
+                <div class="col-md-12 not-found m-t-sm" ng-if="!(bundleModel.allBundle.length > 0)">
+                    <h3>No Any Bundles</h3>
+                </div>
+            </section>
+        </section>
+</section>
+<!--<section ng-if="!resources.stillLoading && bundleModel.allBundle.length == 0">-->
+    <!--<h2 class="text-muted text-center">This Bundle is not available.</h2>-->
+<!--</section>-->
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<script type="text/ng-template" id="assignChildToBundle">
+    <div class="">
+        <header class="panel-heading text-uc font-bold">
+            Assign To Child
+        </header>
+        <ul class="list-group alt" ng-if="!stillLoadingChildren">
+            <li class="list-group-item" ng-repeat="participant in allHouseParticipants">
+                <div class="media">
+					<span class="pull-left thumb-sm">
+						<img style="height : 26px; width: 26px;" src="{{participant.profile_image}}" class="img-circle">
+					</span>
+                    <div class="pull-right">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-sm btn-default btn-no-w" ng-disabled="assignedMembers.indexOf(participant.id) == -1" ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}" ng-click="assignedMembers.indexOf(participant.id) != -1 && childAssigToggle(participant.id, false)">
+                                <input type="radio" name="options" id="option2" ng-disabled="assignedMembers.indexOf(participant.id) == -1"><i class="fa fa-check text-active"></i> Unassign
+                            </label>
+                            <label class="btn btn-sm btn-default btn-no-w" ng-disabled="assignedMembers.indexOf(participant.id) > -1" ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}" ng-click="!(assignedMembers.indexOf(participant.id) > -1) && childAssigToggle(participant.id, true)">
+                                <input type="radio" name="options" id="option1" ng-disabled="assignedMembers.indexOf(participant.id) > -1"><i class="fa fa-check text-active"></i> Assign
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5" style="padding-right: 0;">
+                        <div><a href="#" class="text-ellipsis">{{participant.f_name}} {{participant.l_name}}</a></div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div ng-if="loadingHouseMembers || loadingAssignedMembers">
+            <div class="wrapper">
+                <h5 class="text-center m-t-xl"><i class="fa fa-spinner fa fa-spin fa fa-large"></i>&nbsp;&nbsp;&nbsp;Loading...</h5>
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,136 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div ng-init="loadEditBundle()" ></div>
+<div ng-init="getBundleCompletion(bundleId)" ></div>
+
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 pull-left no-padder">
+        <button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Bundles <i class="fa fa-angle-right"></i> <span>View Bundles</span></h4>
+</div>
+<section class="vbox bundles" >
+    <section class="scrollable no-padder m-b-xl">
+        <form class="panel-body no-padder wrapper" name="updateBundleDataX" id="updateBundleData"
+              ng-submit="updateBundle(updateBundleData)" data-validate="parsley">
+<div class="col-md-12 no-padder">
+               <div class="col-md-7 pull-right m-t" ng-if="warning_message != ''"> 
+                    <span class="txt-red b-a warning-message">
+                        <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+                        {{warning_message}}  
+                    </span>
+                </div>
+
+            <div class="col-md-5 col-xs-12 col-sm-12 m-t">
+
+                <div class="col-md-12 bg-white b-a">
+                <div class="form-group">
+
+                 <input type="hidden" data-parsley-trigger="focusout" ng-init="updateBundleData.bundle_types_id=2"
+                           ng-model="updateBundleData.bundle_types_id" class="form-control" value="2">
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Edit Name</label>
+                    <input type="text" placeholder="Edit Name" maxlength="45" data-parsley-trigger="focusout"
+                           ng-model="updateBundleData.name" class="form-control" data-required="true" required>
+
+                    <span style="color: #fb6b5b">{{45 - updateBundleData.name.length}} characters left</span>
+                </div>
+
+                    </div>
+
+                <div class="col-md-12 no-padder m-t">
+                    <button type="submit" ng-disabled="resources.isSaving"
+                            class="btn btn-primary btn-lg pull-right"><span ng-show="resources.isSaving"><i
+                            class="fa fa-circle-o-notch fa-spin"></i></span>&nbsp;{{ resources.addBundleButtonText }}
+                    </button>
+
+                    <button type="button" ui-sref="parent.bundles" class="btn btn-default btn-lg pull-right m-r">Cancel
+                    </button>
+                </div>
+            </div>
+    </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 m-t clearfix" ng-init="">
+                    <section class="scrollable no-padder b-a bg-white bundle-items">
+                        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                            <div class="item-sizer col-md-3 col-sm-6 col-xs-6"></div>
+                        <div masonry-brick class="grid-item col-md-3 col-sm-6 col-xs-6" ng-repeat="quiz in QuizModel.allQuizes "> <!-- | filter : searchVideoName | filter : filterByCategory as loadedSections -->
+                            <div class="video bg-white b-a m-t hover">
+                                 <div class="control-group">
+                                        <img ng-if="quiz.video_ref == 'youtube'" class="img img-responsive" src="https://img.youtube.com/vi/{{quiz.video_id}}/0.jpg" />
+                                        <img ng-if="quiz.video_ref == 'ted'"  class="img img-responsive" src="{{quiz.thumb}}" />
+                                 </div>
+                                <div class="bg-white b-b padder padder-v">
+                                    <strong class="categoryName" ng-bind="quiz.title"></strong>
+                                </div>
+
+                                <div class="padder padder-v"><input type="checkbox" id="{{quiz.id}}" ng-model="updateBundleData.bundleLesson[quiz.id]"  ng-checked="bundleModel.bundleLesson.indexOf(quiz.id) > -1" value="" ng-disabled="created_user_id != logged_user_id" /></div>
+                            </div>
+                        </div>
+                            </div>
+                    </section>
+            </div>
+            <!-- ng-init="loadAllGiftCards()" -->
+
+<div class="col-md-12 col-xs-12 col-sm-12 m-t-xl">
+
+<a ng-click="UnselectGiftCards()" class="btn btn-primary">Unselect all gift cards</a> 
+
+                    <section class="scrollable no-padder bundle-items b-a bg-white" ng-init="loadAllGiftCards()">
+                        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                            <div class="item-sizer col-md-3 col-sm-6 col-xs-6"></div>
+                        <div masonry-brick class="grid-item col-md-3 col-sm-6 col-xs-6 m-t-sm" ng-repeat="card in giftCardModel.allGiftCards ">
+                            <section class="clearfix bg-light lter">
+                                <div class="panel-body  b-a" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+                                    <a class="cursor-pointer"><h4>{{card.Name}}</h4></a>
+                                    <a>
+                                        <img class="img img-responsive" src="{{card.image.ImageUrl}}" />
+                                    </a>
+
+                                    <div class="clear form-group m-t m-b">
+                                        <!--<a ng-click="assignGiftCardPopup(card)" class="btn btn-block btn-success m-t-xs">Assign</a>-->
+
+                                        <input type="radio" id="{{card.Id}}" name="chk2" ng-model="resources.newBundle.bundleCard[card.Id]" ng-checked="bundleModel.bundleGiftCardId == card.Id" value="{{card.Id}}" ng-click="setGiftCardAmountEdit(card.Id, 0, card.image.ImageUrl)"/>
+                                    </div>
+                                    <div class="form-group card-values no-margin">
+                                    <span ng-repeat="value in giftCardModel.giftCardValues">
+                                        <!--<input type="button" style="margin : 5px" class="btn btn-danger" ng-if="(!card.VariableAmountDenominationMinimumValue && !card.VariableAmountDenominationMaximumValue) || (value > card.VariableAmountDenominationMinimumValue && value < card.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="giftCardModel.selectedGiftCardValue = value"/>-->
+                                        
+                                        <input ng-class="{'selectedAmount' : (updateBundleData.giftCardValue[0].cardId == card.Id && updateBundleData.giftCardValue[0].amount == value)}" 
+
+                                        type="button" style="margin :2px" class="btn btn-danger btn-sm btn-no-w" ng-if="(!card.VariableAmountDenominationMinimumValue && !card.VariableAmountDenominationMaximumValue) || (value > card.VariableAmountDenominationMinimumValue && value < card.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="setGiftCardAmountEdit(card.Id, value, card.image.ImageUrl)"/>
+                                    </span>
+                                        </div>
+                                    <!--<input type="hidden" id="{{giftCardModel.selectedGiftCardValue}}" ng-model="resources.newBundle.giftCardValue" value="{{giftCardModel.selectedGiftCardValue}}"/>-->
+                                </div>
+                            </section>
+                            <input type="hidden" ng-model="resources.newBundle.giftCardValue" ng-value="bundleModel.amount"  />
+                        </div>
+                            </div>
+                    </section>
+    </div>
+
+
+        </form>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

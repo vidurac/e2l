@@ -1,0 +1,1 @@
+ALTER TABLE `inbox_message` ADD `type` INT NOT NULL AFTER `status`;

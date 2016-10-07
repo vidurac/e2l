@@ -1,0 +1,57 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="init(3)">
+	<div class="col-md-6 pull-left no-padder">
+		<!-- mini search box start-->
+		<div class="search input-group left m-t">
+			<div class="search-field">
+				<input type="text" placeholder="Search by name" ng-model="searchUserName" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div><!-- end mini search box -->
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetUserFilter()">Clear</div>
+    </div>
+	<div class="col-md-6 pull-right top-buttons no-padder">
+		<span class="c-info"><i class="fa fa-users icon"></i><span class="btn-nt label bg-info info-count child-info" title="Children" data-toggle="tooltip">{{usersModel.users.length}}</span></span>
+	</div>
+<!--	<div class="col-md-1 pull-right m-t-sm">
+		&lt;!&ndash;<button class="btn btn-primary btn-sm">
+			<i class="fa fa-plus text"></i>
+			<span ng-click="createUserPopup(3)" class="text">CREATE</span>
+		</button>&ndash;&gt;
+	</div>-->
+</header>
+
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Users <i class="fa fa-angle-right"></i> <span>All Children</span></h4>
+</div>
+<section class="vbox users" ng-if="!resources.stillLoading">
+	<section class="scrollable no-padder m-b-xl">
+		<div class="col-md-4" ng-repeat="user in usersModel.users | filter : searchUserName as userCount">
+			<section class="panel user-wrapper clearfix bg-light lter">
+                <div class="panel-body">
+                    <a ui-sref="admin.user({ id: user.id })" class="thumb pull-left m-r">
+                        <img style="height: 64px; width: 64px;" src="{{user.profile_image}}" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a ui-sref="admin.user({ id: user.id })" class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</a>
+                        <small class="block text-muted text-ellipsis">Member since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                        <a ui-sref="admin.user({ id: user.id })" class="btn btn-xs btn-sm btn-no-w btn-success m-t-xs">Edit</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <h4 class="text-center" ng-if="userCount.length == 0 && (usersModel.users.length > 0)">No Search Results Found</h4>
+        <section class="scrollable padder m-b-xl">
+            <div class="col-md-3 m-t-sm" ng-if="!(usersModel.users.length > 0)">
+                <h3>No Any Members</h3>
+            </div>
+        </section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

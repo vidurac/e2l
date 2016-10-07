@@ -1,0 +1,28 @@
+<style type="text/css">
+    .ngdialog.ngdialog-theme-default .ngdialog-content {
+        max-width: 100%;
+        width: 450px;
+    }
+
+</style>
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center">
+        <strong class="text-uc">Children</strong>
+    </header>
+    <form class="panel-body wrapper-lg no-padder" name="createUserForm" id="createUserForm" ng-submit="createUser(resources.newUser, true)" data-validate="parsley">
+
+
+        <div class="user-field padder padder-v b-b" ng-class="{dis_child:child.enable==0}" ng-repeat="child in parent_child | filter : searchUserName as userCount">
+            <a class="view-user" ui-sref="admin.user({ id: child.id })" ng-click="close()">
+            <span class="m-r">
+                        <img src="{{child.profile_image}}" style="width: 50px; height: 50px;" class="img-circle">
+            </span>
+            <span>{{child.f_name}} {{child.l_name}}</span>
+            </a>
+            <span ng-show="child.enable==0" class="deleted-label">Deleted</span>
+        </div>
+
+        <div class="text-center" ng-if="parent_child.length == 0"><h4>No Child Found</h4></div>
+
+    </form>
+</section>

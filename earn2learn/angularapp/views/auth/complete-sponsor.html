@@ -1,0 +1,83 @@
+<style>
+    .form-group .error {
+        color: red;
+    }
+    .btn {
+        display: inline-block !important;
+        margin-right: 10px;
+    }
+</style>
+<section class="m-t-lg wrapper-md animated fadeInUp auth" ng-init="validateSponsorToken()">
+    <div class="container aside-xxl">
+        <a class="navbar-brand block">
+            <img src="includes/images/logo.png" style="margin: 0 auto;">
+        </a>
+        <section class="panel panel-default bg-white m-t-lg">
+            <header class="panel-heading text-center">
+                <strong>Sponsor Invitation Request</strong>
+            </header>
+            <!--<form class="panel-body wrapper-lg" name="registerForm" id="registerForm" ng-submit="updateSponsorDetails(registerForm.$valid)" data-validate="parsley">-->
+            <div class="panel-body wrapper-lg">
+
+                <p>Dear <strong>{{sponsor.f_name}} {{ sponsor.l_name}}</strong></p>
+                <p><strong>{{sponsor.parent_name}}</strong> invited you to become a <strong>sponsor</strong> on his account.</p>
+
+                <div class="">
+                    <button class="btn btn-success" ng-click="updateSponsorDetails(true)">Accept</button>
+                    <button class="btn btn-default" ng-click="updateSponsorDetails(false)">Cancel</button>
+                </div>
+                <!--<div class="form-group">-->
+                    <!--<input type="text" name="f_name" placeholder="Your First Name" data-parsley-trigger="focusout" ng-model="sponsor.f_name" class="form-control input-lg" data-required="true">-->
+                    <!--<div class="text-danger msg-error" ng-show="registerForm.f_name.$touched" ng-messages="registerForm.f_name.$error" role="alert">-->
+                        <!--<div ng-message="required">Please enter first name</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="text" name="l_name" placeholder="Your Last Name" data-parsley-trigger="focusout" ng-model="sponsor.l_name" class="form-control input-lg" data-required="true">-->
+                    <!--<div class="text-danger msg-error" ng-show="registerForm.l_name.$touched" ng-messages="registerForm.l_name.$error" role="alert">-->
+                        <!--<div ng-message="required">Please enter last name</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="text" name="house_name" id="houseName" ng-model="sponsor.house_name" data-parsley-trigger="focusout" placeholder="House Name" class="form-control input-lg" required>-->
+                    <!--<div class="text-danger msg-error" ng-show="registerForm.house_name.$touched" ng-messages="registerForm.house_name.$error" role="alert">-->
+                        <!--<div ng-message="required">Please enter house name</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="text" name="username" placeholder="Username" ng-model="sponsor.username" data-parsley-trigger="focusout" class="form-control input-lg" data-required="true" required>-->
+                    <!--<div class="text-danger msg-error" ng-show="registerForm.username.$touched" ng-messages="registerForm.username.$error" role="alert">-->
+                        <!--<div ng-message="required">Please enter username</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="password" id="inputPassword" name="inputPassword" ng-model="sponsor.password" ng-minlength="6" ng-maxlength="20" ng-pattern="/(?=.*[^a-zA-Z])/" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="password" class="form-control input-lg" data-required="true">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--&lt;!&ndash;<span class="text-danger msg-error" ng-show="registerForm.inputPassword.$error.required && registerForm.inputPassword.$dirty">required</span>&ndash;&gt;-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.inputPassword.$error.required && (registerForm.inputPassword.$error.minlength || registerForm.inputPassword.$error.maxlength) && registerForm.inputPassword.$dirty">Passwords must be between 6 and 20 characters.</span>-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.inputPassword.$error.required && !registerForm.inputPassword.$error.minlength && !registerForm.inputPassword.$error.maxlength && registerForm.inputPassword.$error.pattern && registerForm.inputPassword.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<input type="password" id="confirmPassword" name="confirmPassword" ng-model="sponsor.confirm_password" ng-minlength="6" ng-maxlength="20" ng-pattern="/(?=.*[^a-zA-Z])/" pw-check="inputPassword" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="Confirm Password" class="form-control input-lg" data-required="true">-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--&lt;!&ndash;<span class="text-danger msg-error" ng-show="registerForm.confirmPassword.$error.required && registerForm.confirmPassword.$dirty">required</span>&ndash;&gt;-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.confirmPassword.$error.required && (registerForm.confirmPassword.$error.minlength || registerForm.confirmPassword.$error.maxlength) && registerForm.confirmPassword.$dirty">Passwords must be between 6 and 20 characters.</span>-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.confirmPassword.$error.required && !registerForm.confirmPassword.$error.minlength && !registerForm.confirmPassword.$error.maxlength && registerForm.confirmPassword.$error.pattern && registerForm.confirmPassword.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>-->
+                <!--</div>-->
+                <!--<div class="form-group">-->
+                    <!--<div class="msg-block" ng-show="registerForm.$error">-->
+                        <!--<span class="text-danger msg-error" ng-show="registerForm.confirmPassword.$error.pwmatch">-->
+                        <!--Passwords don't match.-->
+                    <!--</span>-->
+                    <!--</div>-->
+                    <!--<button type="submit" ng-disabled="registerForm.$invalid || isRegWaiting" class="btn btn-primary"><span ng-show="isRegWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ registerButtonText }}</button>-->
+                    <!--<div class="line line-dashed"></div>-->
+                    <!--<p class="text-muted text-center"><small>Already have an account?</small></p>-->
+                    <!--<a ui-sref="login" ng-disabled="isRegWaiting" class="btn btn-default btn-block">Sign in</a>-->
+                <!--</div>-->
+            </div>
+        </section>
+    </div>
+</section>

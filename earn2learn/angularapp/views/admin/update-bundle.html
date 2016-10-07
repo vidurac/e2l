@@ -1,0 +1,98 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<div ng-init="loadEditBundle()" ></div>
+<header class="header bg-light bg-gradient b-b">
+    <p>View Bundle</p>
+</header>
+<section class="vbox">
+    <section class="scrollable padder m-b-xl">
+        <form class="panel-body wrapper" name="updateBundleData" id="updateBundleData"
+              ng-submit="updateBundle(updateBundleData)" data-validate="parsley">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <input type="hidden" data-parsley-trigger="focusout" ng-init="updateBundleData.bundle_types_id=1"
+                           ng-model="updateBundleData.bundle_types_id" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Edit Name" data-parsley-trigger="focusout"
+                           ng-model="updateBundleData.name" class="form-control" data-required="true" required>
+                </div>
+                <div class="form-group">
+                    <input type="number" placeholder="Edit e2l Bucks" data-parsley-trigger="focusout"
+                           ng-model="updateBundleData.points" class="form-control" data-required="true" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Edit Dollar Amount" data-parsley-trigger="focusout"
+                           ng-model="updateBundleData.dollar_amount" class="form-control" data-required="true" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Edit Pass Percentage" data-parsley-trigger="focusout"
+                           ng-model="updateBundleData.average_marks" class="form-control" data-required="true" required>
+                </div>
+            </div>
+            <div class="line line-dashed"></div>
+            <div ng-init="loadAllLesson()">
+                <section >
+                    <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+                        <div class="col-md-3 m-t-sm" ng-repeat="video in VideoModel.allVideos "> <!-- | filter : searchVideoName | filter : filterByCategory as loadedSections -->
+                            <div class="video bg-white b-a m-t-sm hover m-b-xl">
+                                 <div class="control-group">
+                                        <img ng-if="video.video_ref == 'youtube'" style="height: 142px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg" />
+                                        <img ng-if="video.video_ref == 'ted'" style="height: 142px; width: 100%;" class="img img-responsive" src="includes/images/ted-no-thumbnail.png" />
+                                 </div>
+                                <div class="wrapper bg-white">
+                                    <strong class="text-ellipsis categoryName" ng-bind="video.title"></strong>
+                                </div>
+                                <div ><input type="checkbox" id="{{video.id}}" ng-model="updateBundleData.bundleLesson[video.id]"  ng-checked="bundleModel.bundleLesson.indexOf(video.id) > -1" value="" /></div> <!--  -->
+                            </div>
+                        </div>
+                    </section>
+                </section>
+                <div class="line line-dashed"></div>
+
+            </div>
+            <div class="line line-dashed"></div> <!-- ng-init="loadAllGiftCards()" -->
+            <div>
+                <section >
+                    <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+                        <div class="col-md-3 m-t-sm" ng-repeat="giftCard in GiftModel.allGiftCards"> <!-- | filter : searchVideoName | filter : filterByCategory as loadedSections -->
+                            <div class="video bg-white b-a m-t-sm hover m-b-xl">
+                                <div class="panel-body" ng-init="card.image = jsonDecodeStr(giftCard.CardImages)">
+                                    <!--ui-sref="parent.user({ id: user.id })"-->
+                                    <a>
+                                        <img class="img img-responsive" src="{{giftCard.image.ImageUrl}}" />
+                                    </a>
+                                    <!--<div class="clear">
+                                        <a class="cursor-pointer text-ellipsis"><h4>{{card.Name}}</h4></a>
+                                        <a ng-if="asignedCards.indexOf(card.Id) == -1" ng-click="assignGiftCardPopup(card)" class="btn btn-block btn-success m-t-xs">Assign</a>
+                                        <a ng-if="asignedCards.indexOf(card.Id) != -1" ng-disabled="true" class="btn btn-block btn-default m-t-xs">Assigned</a>
+                                    </div>-->
+                                </div>
+                                <!--<div ><input type="checkbox" id="{{giftCard.id}}" ng-model="resources.newBundle.bundleLesson[video.id]" value="{{video.id}}" /></div>-->
+                            </div>
+                        </div>
+                    </section>
+                </section>
+            </div>
+            <div class="line line-dashed"></div>
+            <button type="submit" ng-disabled="resources.isSaving"
+                    class="btn btn-primary btn-lg pull-right"><span ng-show="resources.isSaving"><i
+                    class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addBundleButtonText }}
+            </button>
+        </form>
+    </section>
+</section>

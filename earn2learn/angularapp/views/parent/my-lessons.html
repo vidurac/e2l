@@ -1,0 +1,184 @@
+<style type="text/css">
+	#search-wrapper{
+		margin: 100px auto;
+	}
+</style>
+<header class="header my-lesson bg-light bg-gradient b-b" ng-init="loadMyLessons();">
+	<div class="col-md-12 no-padder">
+		<div class="search input-group left">
+			<div class="input-group pull-left">
+				<button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Category">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu animated fadeInUp">
+					<span class="arrow top"></span>
+					<li>
+						<a ng-click="getFilteredIdList(null, true)" class="cursor-pointer">All Categories</a>
+					</li>
+					<li ng-repeat="mainCategory in LessonModel.allCategories | filter:{ parent_cat_id: 0 , enable: 1 }: true " ng-init="mainCategoryId = mainCategory.id" ng-class="{'dropdown-submenu' : LessonModel.subCategories[mainCategoryId]}">
+						<a data-id="{{mainCategory.id}}" ng-click="getFilteredIdList(mainCategory.id, true)" class="cursor-pointer">{{mainCategory.name}}</a>
+
+						<ul class="dropdown-menu" ng-if="LessonModel.subCategories[mainCategoryId]">
+							<li ng-repeat="subCat in LessonModel.subCategories[mainCategoryId]">
+								<a data-id="{{subCat.id}}" ng-click="getFilteredIdList(subCat.id, false)" class="cursor-pointer">{{subCat.name}}</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="input-group pull-left">
+				<button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Children">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu animated fadeInUp">
+					<span class="arrow top"></span>
+					<li>
+						<a ng-click="setAllChildrentFilter()" class="cursor-pointer">
+							All Children
+							<span ng-show="filterOpt.selectedChildId != undefined && filterOpt.selectedChildId == 0">
+								&#10003;
+							</span>
+						</a>
+					</li><!--| filter:{ parent_cat_id: 0, enable: 1 }-->
+					<li ng-repeat="child in allHouseParticipants " >
+						<!--<a data-id="{{child.id}}" ng-click="getChilLessons(child.id)" class="cursor-pointer">{{child.f_name}} {{child.l_name}}</a>-->
+						<a data-id="{{child.id}}" ng-click="getFilteredChildIdList(child.id)" class="cursor-pointer">
+							{{child.f_name}} {{child.l_name}}
+							<span ng-show="filterOpt.selectedChildId != undefined && filterOpt.selectedChildId == child.id">
+								&#10003;
+							</span>
+						</a>
+					</li>
+				</ul>
+				</div>
+			<div class="input-group pull-left">
+				<button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Lesson Added By">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu animated fadeInUp">
+					<span class="arrow top"></span>
+
+					<li class="dropdown-submenu">
+						<a ng-click="setFilterAddedBy(undefined)" class="cursor-pointer">
+							Added by all
+							<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.uid == undefined">
+								&#10003;
+							</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a class="cursor-pointer" ng-click="setFilterOwnerRole (1)">
+									Created by admin
+									<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.role_id == 1">
+								                &#10003;
+                                            </span>
+								</a>
+							</li>
+							<li>
+								<a class="cursor-pointer" ng-click="setFilterOwnerRole (2)">
+									Created by parent
+									<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.role_id == 2">
+								                &#10003;
+                                            </span>
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a ng-click="setFilterCurrentUser(resources.current_user_id)" class="cursor-pointer">
+							Added by me
+							<span ng-show="filterOpt.uid != undefined && filterOpt.selectedAddedBy == undefined">
+								&#10003;
+							</span>
+						</a>
+					</li>
+					<li>
+						<a ng-click="setFilterAddedBy('parent')" class="cursor-pointer">
+							Added by parent
+							<span ng-show="filterOpt.selectedAddedBy == 'parent'">
+								&#10003;
+							</span>
+						</a>
+					</li>
+					<li>
+						<a ng-click="setFilterAddedBy('sponsor')" class="cursor-pointer">
+							Added by sponsor
+							<span ng-show="filterOpt.selectedAddedBy == 'sponsor'">
+								&#10003;
+							</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+		<div class="search input-group left">
+			<div class="age-filter pull-left">
+				<span><input type="text" ng-model="filterByMinAge" placeholder="Min Age"></span>
+				<span><input type="text" ng-model="filterByMaxAge" placeholder="Max Age"></span>
+			</div>
+			<div class="search-field">
+				<input type="text" placeholder="Search by name" ng-model="searchLessonName" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div>
+
+		<div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetMyLessonFilters()">Clear</div>
+
+	</div>
+
+</header>
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> My Lessons</h4>
+</div>
+<section class="vbox" ng-show="!resources.stillLoading && !allCategoriesLoading">
+	<section class="scrollable no-padder m-b-xl text-center">
+		<div class="grid" lr-infinite-scroll="loadMore" style="max-height: 100%; overflow: scroll" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+			<div class="item-sizer col-md-3 col-sm-4 col-xs-6"></div>
+			<div masonry-brick class="grid-item col-md-3 col-sm-4 col-xs-6 m-t-sm" ng-repeat="video in myLessons |limitTo:dataItems| filter : keywordSearch | filter : {min_age : filterByMinAge} | filter : {max_age : filterByMaxAge}  | filter: filterByChildId | filter : filterByCategory  | filter: filterBySponsorAdded | filter: filterByCurrentParent | filter: filterByCurrentRole  as loadedSections track by video.id">
+		    <div class="video bg-white b-a hover">
+				<div class="control-group">
+					<a ui-sref="parent.lesson({id : video.video_id})">
+						<img ng-if="video.video_ref == 'youtube'" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_url_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'" class="img img-responsive" src="{{video.thumb}}" />
+					</a>
+				</div>
+				<div class="wrapper text-left">
+					<div class="category-item">{{categoryObj['main']}}</div>
+					<div class="sub-item m-b ">
+						<small ng-init="categoryObj = getMainSubCategoryNames(video.category_id);video.catName = categoryObj['main'];video.subCatName = categoryObj['sub']">{{categoryObj['sub']}}</small>
+					</div>
+
+					<a class="video-name m-b" ui-sref="parent.lesson({id : video.video_id})"><span class="categoryName" ng-bind="video.title"></span></a>
+					<div class="padder-v">
+						<span class="m-r"><strong>Min Age</strong> - {{::video.min_age}}</span>
+						<span class="m-l"><strong>Max Age</strong> - {{::video.max_age}}</span>
+					</div>
+					<div class="clearfix m-t">
+					<small  ng-if="video.sponsor_id" class="m-t clearfix added-by">Added by {{::video.sponsor_name}}</small>
+					<div class="average rating">
+						<ng-rate-it style="display: inline" ng-model="video.rating_value" resetable="false" read-only="true"></ng-rate-it>
+						<span ng-show="video.rating_value">({{::video.rating_value}})</span>
+					</div>
+					<small class="m-t clearfix">created on {{::video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+						</div>
+
+				</div>
+			</div>
+			</div>
+		</div>
+		<div class="not-found col-md-12">
+		<h3 class="text-center clearfix" ng-if="loadedSections.length == 0 && myLessons.length > 0">No Search Results Found</h3>
+		</div>
+
+	</section>
+</section>
+<section ng-if="!resources.stillLoading && !myLessons.length > 0 && (!FilteredIdList.length || $scope.filterOpt.selectedChildId != undefined)">
+	<div class="not-found">
+		<h3 class="text-muted text-center">No Any Lessons
+		</h3>
+	</div>
+</section>
+<section class="vbox" ng-if="resources.stillLoading && allCategoriesLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

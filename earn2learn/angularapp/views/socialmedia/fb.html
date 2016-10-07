@@ -1,0 +1,38 @@
+<div class="vbox child-view">
+    <!-- s.header section -->
+    <header ng-init="init_child_ctrl()" class="navbar navbar-inverse">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-12">
+                    <!-- s.logo -->
+                    <div class="navbar-header">
+                        <a class="navbar-brand" ui-sref="child.dashboard"><img src="includes/images/logo_child.png" /></a>
+                    </div>
+                    <!-- e.logo -->
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12" ng-init="getMyAssignedLessonsCompletedPercentage()">
+                    <!-- s.child data progress -->
+                    <div class="child-stats-info">
+                        <img style="height: 80px; width: 80px;" class="img-circle" src="{{user().profile_image}}">
+                        <div><a>{{user().f_name}}</a></div> <!-- ui-sref="child.profile"-->
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{completedPercentage}}" aria-valuemin="0" aria-valuemax="100" ng-style="{width: completedPercentage + '%'}">
+                                <span class="sr-only">{{completedPercentage}}% Complete (warning)</span>
+                            </div>
+                        </div>
+                        <div><a class="cursor-pointer" ng-click="logout()" class="logout">Log out</a></div>
+                    </div>
+                </div>
+                <div class="col-md-5 col-sm-5 col-xs-12" ng-init="getTotalPoints()">
+                    <ul class="pull-right list-inline child-stats-num">
+                        <li><a href="#">{{completedPercentage}}% <span>Completed</span></a></li>
+                        <li><a href="#">{{child_total_points}} <span>Points Earned</span></a></li>
+                        <li><img src="uploads/badges/Vintage-Badge.jpg" width="50px" height="50px"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </header>
+    <!-- e.header section -->
+</div>

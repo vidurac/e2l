@@ -1,0 +1,192 @@
+<style type="text/css">
+	.category {
+		cursor: pointer;
+		height: 145px;
+	}
+	
+	.categoryName {
+		font-size: 17px;
+	}
+	
+	.chart {
+		display: inline-block;
+		width: 110px;
+		margin: 40px auto 20px;
+		padding: 0 10px;
+	}
+	.b-too-light{
+		border-color: #F7F7F7;
+	}
+</style>
+
+<header class="header bg-light bg-gradient b-b">
+	<p>Reports</span>
+	</p>
+</header>
+<section class="vbox">
+	<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+		<section class="panel panel-default m-t-md" ng-init="getHouseHoldCount(); getChildrenCount();">
+			<div class="row m-l-none m-r-none bg-light lter">
+				<div class="col-sm-4 col-md-4 padder-v b-r b-light" ng-click='redirect_parent()'>
+					<span class="fa-stack fa-2x pull-left m-r-sm">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-male fa-stack-1x text-white"></i>
+                  	</span>
+					<a class="clear">
+						<span class="h3 block m-t-xs"><strong>{{houseHoldCount}}</strong></span>
+						<small class="text-muted text-uc">Active : {{houseHoldCount}} Inactive:{{houseHoldDisableCount}}</small>
+						<br>
+						<small class="text-muted text-uc">Parents</small>
+					</a>
+				</div>
+				<div class="col-sm-4 col-md-4 padder-v b-r b-light lt" ng-click='redirect_children()'>
+					<span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x text-warning"></i>
+                                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#fff" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="2000" data-target="#bugs" data-update="3000"></span>
+					</span>
+					<a class="clear">
+						<span class="h3 block m-t-xs"><strong id="bugs">{{childCount}} </strong></span>
+						<small class="text-muted text-uc">Active : {{childCount}} Inactive:{{childCountDisableCount}}</small>
+						<br>
+						<small class="text-muted text-uc">Children</small>
+					</a>
+				</div>
+				<div class="col-sm-4 col-md-4 padder-v b-r b-light" ng-click='redirect_house()'>
+					<span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                    <i class="fa fa-university fa-stack-1x text-white"></i>
+                                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#f5f5f5" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="3000" data-target="#firers" data-update="5000"></span>
+					</span>
+					<a class="clear">
+						<span class="h3 block m-t-xs"><strong id="firers">{{houseHoldCount}} </strong></span>
+						<small class="text-muted text-uc">Active : {{houseHoldCount}} Inactive:{{houseHoldDisableCount}}</small>
+						<br>
+						<small class="text-muted text-uc">Houses</small>
+					</a>
+				</div>
+			</div>
+		</section>
+		
+		<div class="row">
+			<div class="col-md-12">
+				<div ng-init="getMostPopularLesson();">
+					<section class="panel panel-default">
+						<header class="panel-heading text-muted">
+							<p style="font-size: 16px;">Most Popular Lesson</p>
+						</header>
+						<div class="panel-body" style="height: 180px;">
+							<div class="col-md-4" ng-if="!loadingPopularLesson">
+								<div class="iframe-wrapper" id="video-wrapper" ng-bind-html="videoIframe">
+								</div>
+							</div>
+							<div class="col-md-8" ng-if="!loadingPopularLesson">
+								<a class="h3 text-ellipsis text-left">{{popularLesson.title}}</a>
+								<p class="text-left">{{popularLesson.description}}</p>
+								<p><small class="badge bg-info">{{popularLesson.count}}</small> parents assigned this lesson to their houses.</p>
+								<!--{{popularLesson}}-->
+							</div>
+							<p class="m-t-md text-center" ng-if="loadingPopularLesson">Loading...</p>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<section class="panel panel-default" ng-init="getAverageNumberOfPointsAwardedWeekly()">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Average Number of Points Awarded Weekly (Last 12 weeks)</p>
+					</header>
+					<div class="panel-body" style="height: 248px;">
+						<div id="flot-1ine" ng-if="!loadingAverageNumberOfPointsAwardedWeekly" averagenumberofpointschart data-values="{{averageNumberOfPointsAwardedWeekly}}" style="width: 100%; height:210px;"></div>
+					</div>
+				</section>
+			</div>
+			<div class="col-md-4">
+				<section class="panel panel-default" ng-init="transactionDayMonthWeekYear()">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Total Amount Received</p>
+					</header>
+					<div class="panel-body" style="min-height: 248px;">
+						<div class="bg-light">
+							<div class="col-md-6 wrapper-sm text-center b-l b-t h4 b-too-light"><div class="m-t-md m-b-md ">Today<br /><span><strong>${{transactionDayAmount}}</strong></span></div></div>
+							<div class="col-md-6 wrapper-sm text-center b-t b-r h4 b-too-light lt"><div class="m-t-md m-b-md ">This Week<br /><span><strong>${{transactionMonthAmount}}</strong></span></div></div>
+							<div class="col-md-6 wrapper-sm text-center b-l b-b h4 b-too-light lt"><div class="m-t-md m-b-md ">This Month<br /><span><strong>${{transactionWeekAmount}}</strong></span></div></div>
+							<div class="col-md-6 wrapper-sm text-center b-b b-r h4 b-too-light"><div class="m-t-md m-b-md ">This Year<br /><span><strong>${{transactionYearAmount}}</strong></span></div></div>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6" ng-init="getLessonAnalytics();">
+				<section class="panel panel-default">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Percentage of children taking the quiz after watching videos</p>
+					</header>
+					<div class="panel-body text-center" style="height: 218px;">
+						<div class="inline" ng-if="!loadinggetLessonAnalytics">
+							<div chartpie class="easypiechart" data-percent="{{lessonAnalytics}}" data-bgcolor="#AFCF6F" data-line-width="30" data-track-color="#eee" data-bar-color="#afcf6f" data-scale-color="#fff" data-size="188" data-line-cap='butt'>
+								<span class="h2 step">{{lessonAnalytics}}</span>%
+							</div>
+						</div>
+						<p class="m-t-md text-center" ng-if="loadinggetLessonAnalytics">Loading...</p>
+					</div>
+					<div class="panel-footer"><small ng-if="!loadinggetLessonAnalytics">{{lessonAnalytics}}% of children taking the quiz after watching videos.</small></div>
+				</section>
+			</div>
+			<div class="col-md-6" ng-init="getGiftcardsAnalytics();">
+                <section class="panel panel-default">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Percentage of children purchasing gift cards</p>
+					</header>
+					<div class="panel-body text-center" style="height: 218px;">
+						<div class="inline" ng-if="!loadinggetGiftcardsAnalytics">
+							<div chartpie class="easypiechart" data-percent="{{giftcardsAnalytics}}" data-bgcolor="red" data-line-width="30" data-track-color="#eee" data-bar-color="#afcf6f" data-scale-color="#fff" data-size="188" data-line-cap='butt'>
+								<span class="h2 step">{{giftcardsAnalytics}}</span>%
+							</div>
+						</div>
+						<p class="m-t-md text-center" ng-if="loadinggetGiftcardsAnalytics">Loading...</p>
+					</div>
+					<div class="panel-footer"><small ng-if="!loadinggetGiftcardsAnalytics">{{giftcardsAnalytics}}% of children purchasing gift cards</small></div>
+				</section>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6 col-md-6 padder-v b-light" ng-init="averageSpentTimeParent()">
+				<section class="panel panel-default">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Average time spent by parents on the site</p>
+					</header>
+					<div class="panel-body text-center" style="height: 110px;">
+						<div class="inline">
+							<h3 class="text-warning">{{secToMinHours(averageSpentTimeParent)}}</h3>
+						</div>
+					</div>
+				</section>
+			</div>
+			<div class="col-sm-6 col-md-6 padder-v b-light lt" ng-init="averageSpentTimeChild()">
+				<section class="panel panel-default">
+					<header class="panel-heading text-muted">
+						<p style="font-size: 16px;">Average time spent by children on the site</p>
+					</header>
+					<div class="panel-body text-center" style="height: 110px;">
+						<div class="inline">
+							<h3 class="text-warning">{{secToMinHours(averageSpentTimeChild)}}</h3>
+						</div>
+					</div>
+				</section>
+			</div>
+		</div>
+
+		<!--<div class="col-md-3 m-t-sm" ng-repeat="category in CategoryModel.categories | filter : resources.searchCategoryName" ng-if="category.enable == 1">-->
+		<!--	<div class="category bg-light wrapper b-a hover" ng-click="openCategory(category);">-->
+		<!--		<a ui-sref="admin.category({ id: category.id })"><strong class="text-ellipsis categoryName" ng-bind="category.name"></strong></a>-->
+		<!--		<small>created on {{category.created_at | amDateFormat:'MM/DD/YYYY'}}</small><br />-->
+		<!--		<a class="btn btn-sm pull-right m-t-xl btn-default" ng-click="deleteCategory(category)"><i class="fa fa-trash"></i></a>-->
+		<!--		<a class="btn btn-sm pull-right m-t-xl btn-default" ng-click="openPopup(3, category)"><i class="fa fa-pencil"></i></a>-->
+		<!--	</div>-->
+		<!--</div>-->
+	</section>
+</section>

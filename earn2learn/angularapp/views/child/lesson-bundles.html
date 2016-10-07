@@ -1,0 +1,132 @@
+<div ng-init="getMyAssignedLessonBundles()"></div>
+<section class="clearfix lesson-bundles">
+    <header class="section-title main-head row">
+        <div class="col-xs-12 col-md-6">
+            <h2 class="section-header">Lesson Bundle</h2>
+        </div>
+        <!--<ul class="list-inline text-center" role="tablist">-->
+        <!--<li role="presentation" class="active"><a href="#lessonsAvalable" aria-controls="lessonsAvalable" role="tab" ng-click="getMyAssignedLessons()" data-toggle="tab">Available</a></li>-->
+        <!--<li role="presentation"><a href="#lessonsCompleted" aria-controls="lessonsCompleted" role="tab" data-toggle="tab" ng-click="getMyAssignedLessons()">Completed</a></li>-->
+        <!--</ul>-->
+        <div class="col-xs-12 col-md-6  availability-tab transition">
+            <div class="btn-group pull-right" role="group" aria-label="lesson type" ng-init="lessonType = 'available'">
+                <button type="button" class="btn btn-default" ng-class="{'active': lessonType == 'available'}"
+                        ng-click="lessonType='available'">Available
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{'active': lessonType == 'completed'}"
+                        ng-click="lessonType='completed'">Completed
+                </button>
+            </div>
+        </div>
+    </header>
+    <section class="tab-content container-fluid">
+
+        <div class="grid" ng-show="lessonType == 'available'">
+            <div class="col-xs-12 col-sm-12 col-lg-6 border-box bundle-box"
+                 ng-repeat="bundle in lbnc = (LessonModel.myBundles | filter: {completion: '!100'})">
+                <div class="box-wrapper col-xs-12">
+                    <div class="col-xs-12 col-sm-5">
+                         <span class="bundle-img">
+                                    <img ng-if="bundle.gift_card_image != ''" class="img img-responsive" ng-src="{{bundle.gift_card_image}}">
+                                    <img ng-if="bundle.gift_card_image == ''" class="img img-responsive" src="includes/images/no-assigned-giftcard.png">
+
+                         </span>
+
+                                <span ng-if="bundle.gift_card_image != ''"  class="bundle-details clearfix">
+                                    <span class="clear badge bundle-val"><b>${{bundle.amount}}</b></span>
+                                </span>
+
+
+                    </div>
+                    <div class="col-xs-12 col-sm-7">
+                        <div class="box-header">
+                            <h3 class="fs1 text-ellipsis" ng-bind="bundle.name"></h3>
+                            <p class="fs3 text-ellipsis"><i class="badge bg-warning count">{{bundle.child_quiz_allocations.length}}</i> Lessons</p>
+                        </div>
+                        <div class="bundle-list">
+                        <ol class="bundle-list-wrap" type="1">
+                            <li ng-repeat="cquiz in bundle.child_quiz_allocations | limitTo : 3">
+                                    <p ui-sref="child.lessonBundleLessonDetails({bundleId: bundle.id, quizid : cquiz.quiz_id})"
+                                       class="quiz-title text-ellipsis">
+                                        {{ cquiz.quiz.video.title}}
+                                    </p>
+                            </li>
+                        </ol>
+                        </div>
+                        <div class="bundle-footer">
+                            <div class="clearfix">
+                                <div class="col-md-6 col-sm-6 col-xs-12 no-padder">
+                                    <p class="view-more"><a  ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">More ...</a></p>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <a class="btn view text-white pull-right bg-green"
+                                       ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">
+                                        <span ng-if="bundle.status == 0">Start Now</span>
+                                        <span ng-if="bundle.status == 1">Continue</span>
+                                    </a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="!loadingAssignedBundles && (lbnc.length == 0)" class="text-center">
+                <h1 class="text-center child-error child-message">There are no assigned lesson bundles!</h1></div>
+        </div>
+        <div class="grid" ng-show="lessonType == 'completed'">
+
+
+            <div class="col-xs-12 col-sm-12 col-lg-6 border-box bundle-box"
+                 ng-repeat="bundle in lbc = (LessonModel.myBundles | filter: {completion: '100'})">
+                <div class="box-wrapper col-xs-12">
+                    <div class="col-xs-12 col-sm-5">
+                          <span class="bundle-img">
+                                    <img ng-if="bundle.gift_card_image != ''" class="img img-responsive" ng-src="{{bundle.gift_card_image}}">
+                                    <img ng-if="bundle.gift_card_image == ''" class="img img-responsive" src="includes/images/no-assigned-giftcard.png">
+
+                         </span>
+
+                                <span ng-if="bundle.gift_card_image != ''"  class="bundle-details clearfix">
+                                    <span class="clear badge bundle-val"><b>${{bundle.amount}}</b></span>
+                                </span>
+
+                    </div>
+                    <div class="col-xs-12 col-sm-7">
+                        <div class="box-header">
+                            <h3 class="fs1 text-ellipsis" ng-bind="bundle.name"></h3>
+                            <p class="fs3 text-ellipsis">{{bundle.child_quiz_allocations.length}} Lessons</p>
+                        </div>
+                        <ol class="bundle-list">
+                            <li ng-repeat="cquiz in bundle.child_quiz_allocations | limitTo : 3">
+                                <p ui-sref="child.lessonBundleLessonDetails({bundleId: bundle.id, quizid : cquiz.quiz_id})"
+                                   class="quiz-title text-ellipsis">
+                                    {{ cquiz.quiz.video.title}}
+                                </p>
+                            </li>
+
+                        </ol>
+                        <div class="bundle-footer">
+                            <div class="clearfix">
+                                <div class="col-md-6 col-sm-6 col-xs-12 no-padder">
+                                    <p class="view-more"><a  ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">more ...</a></p>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <a class="btn view text-white pull-right bg-green"
+                                       ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">
+                                        <span>View</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-if="!loadingAssignedBundles && (lbc.length == 0)" class="text-center">
+                <h1 class="text-center child-error child-message">There are no finished lesson bundles!</h1></div>
+        </div>
+
+    </section>
+</section>
+<section class="vbox" ng-if="loadingAssignedBundles">
+    <h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

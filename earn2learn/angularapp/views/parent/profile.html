@@ -1,0 +1,238 @@
+<style type="text/css">
+	.house {
+		cursor: pointer;
+		height: 145px;
+	}
+
+	.houseName {
+		font-size: 17px;
+	}
+
+	.houseNameHolder {
+		margin-top: -73px;
+		color: white;
+		background: rgba(0, 0, 0, 0.38);
+		position: relative;
+	}
+	.btn-fb {
+		color: #fff !important;
+		background-color: #355394;
+		border-color: #355394;
+	}
+
+	.btn-fb:hover,
+	.btn-fb:focus,
+	.btn-fb:active,
+	.btn-fb.active,
+	.open .dropdown-toggle.btn-fb {
+	  color: #fff !important;
+	  background-color: #2C4479;
+	  border-color: #355394;
+	}
+
+	.form-group, .panel-default {
+		position: relative;
+	}
+	.required {
+		position: absolute;
+		top: 10px;
+		right: -10px;
+		color: red;
+	}
+</style>
+<div ng-init="loadParentSelectedUser()"></div>
+<header class="header bg-light bg-gradient b-b" ng-if="!resources.stillLoading && !resources.isCurrentLoggedUser">
+	<p ng-if="userData">
+		<a ui-sref="parent.allParticipant" ng-if="userData.role_id == 3" class="btn btn-default">
+			<i class="fa fa-angle-left text"></i> View All Children
+		</a>
+	</p>
+	<p ng-if="!userData">
+		<a ui-sref="parent.allParticipant" class="btn btn-default">
+			View All Children
+		</a>
+	</p>
+</header>
+<header class="header bg-light bg-gradient b-b">
+	<div class="col-md-6 pull-left no-padder">
+		<button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+	</div>
+</header>
+
+<section class="hbox user-profile stretch" ng-if="!resources.stillLoading && userData && userData.role_id != 1">
+	<div class="col-md-5 col-sm-6 xol-xs-12 col" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable no-padder m-t">
+				<section class="panel panel-default">
+					<div class="panel-body">
+						<div class="clearfix text-center m-t">
+							<div class="inline">
+								<div class="thumb-lg">
+									<img style="height : 128px; width : 128px;" src="{{userData.profile_image}}" class="img-circle">
+								</div>
+								<div class="h4 m-t m-b-xs">{{userData.f_name}} {{userData.l_name}}</div>
+								<div class="h5 m-b-xs text-ellipsis">({{userData.username}})</div>
+	                            <small class="text-info text-ellipsis">{{userData.email}}</small>
+	                            <small class="text-info text-ellipsis">{{getRoleName(userData.role_id)}}</small>
+	                            <p class="text-center m-t-sm m-b-sm">
+	                            	<button ng-if="user()._fb == 0" ng-disabled="connectingFb" ng-click="facebookConnect()" class="btn-fb btn-block"><i class="fa fa-facebook"></i>&nbsp;{{fbConnectBtnTxt}}</button>
+	                            	<button ng-if="user()._fb == 1" ng-disabled="disconnectingFb" ng-click="disconnectFacebook()" class="btn-default btn-block"><i class="fa fa-facebook"></i>&nbsp;{{fbDisconnectBtnTxt}}</button>
+	                            </p>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="panel panel-default">
+                    <div class="panel-body">
+                        <h4 class="text-center">Update Profile Picture</h4>
+                        <h5 class="text-center">
+		                    <div class="bg-light" style="width: 100%; min-height: 225px;">
+		                    	<img ngf-src="picFile" class="img img-responsive" width="100%">
+		                    </div>
+		                    <div ng-show="picFile.progress >= 0" class="progress progress-sm progress-striped  active">
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" ng-bind="picFile.progress + '%'" data-original-title="{{picFile.progress + '%'}}" style="width:{{picFile.progress}}%"></div>
+                            </div>
+		                </h5>
+						<form name="imageUploadForm" class="profile-select">
+							<input type="file" ngf-select="" class="profile-pic btn inline" ng-model="picFile" name="file" ngf-accept="'image/*'" required="">
+							<label class="choose-pic" for="file">Choose a file</label>
+							<br><span>Accepted image formats gif ,png ,jpg and max upload size is 1MB</span>
+							<button ng-disabled="!imageUploadForm.$valid || uploading" class="btn update btn-primary ng-binding m-t" ng-click="uploadPic(picFile)">{{uploadImageBtnTxt}}</button>
+						</form>
+
+                    </div>
+                </section>
+			</section>
+		</section>
+	</div>
+	<div class="col-md-7 col-sm-6 xol-xs-12 right-col" ng-if="!notAvailable">
+		<header class="header bg-light bg-gradient b-l b-r b-t">
+			<p class="clear text-ellipsis" ng-if="resources.isCurrentLoggedUser">Update My Profile</p>
+		</header>
+		<section class="vbox">
+			<section class="scrollable">
+				<div ng-if="resources.isCurrentLoggedUser">
+					<ng-include src="'profileForm.html'"></ng-include>
+				</div>
+			</section>
+		</section>
+	</div>
+</section>
+<section ng-if="!resources.stillLoading && !userData">
+	<h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section ng-if="!resources.stillLoading && userData && userData.role_id == 1">
+	<h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<!--<div ng-include src="'profileForm'"></div>-->
+
+<script type="text/ng-template" id="profileForm.html">
+	<header>
+		<div class="row">
+
+			<div class="col-md-3 padder">
+				<a class="btn btn-sm btn-no-w pull-right m-t-sm m-r-sm btn-danger" ng-click="deleteUser(userData)" ng-if="!resources.isCurrentLoggedUser"><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
+
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<form class="panel-body wrapper-lg" name="updateUserForm" id="updateUserForm" ng-submit="updateUser(updateUserData)" data-validate="parsley">
+					<div class="form-group">
+						<label class="control-label" for="f_name">First Name</label>
+						<input type="text" id="f_name" name="fname" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="updateUserData.f_name" placeholder="First Name" class="form-control" data-required="true" required>
+						<span class="required">*</span>
+						<div class="text-danger msg-error" ng-show="updateUserForm.fname.$touched" ng-messages="updateUserForm.fname.$error" role="alert">
+							<div ng-message="required">You must enter a First Name</div>
+							<div ng-message="pattern">Please enter a valid name</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label" for="l_name">Last Name</label>
+						<input type="text" id="l_name" name="lname" ng-pattern="/^[a-zA-Z\s]*$/" ng-model="updateUserData.l_name" placeholder="Last Name" class="form-control" data-required="true" required>
+						<span class="required">*</span>
+						<div class="text-danger msg-error" ng-show="updateUserForm.lname.$touched" ng-messages="updateUserForm.lname.$error" role="alert">
+							<div ng-message="required">You must enter a First Name</div>
+							<div ng-message="pattern">Please enter a valid name</div>
+						</div>
+					</div>
+					<!--<div ng-if="updateUserData.role_id == 2" class="form-group">
+						<label class="control-label" for="email">E-mail</label>
+						<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail" class="form-control" data-required="true">
+					</div>
+					<div ng-if="updateUserData.role_id == 3" class="form-group">
+						<label class="control-label" for="email">E-mail</label>
+						<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail (Optional)" class="form-control">
+					</div>-->
+					<div class="form-group">
+                        <label class="control-label" for="telephone">Phone Number</label>
+						<!--ng-pattern="/^[0-9]+$/"-->
+                        <input type="tel" id="telephone" ng-model="updateUserData.telephone" placeholder="Phone Number" name="phoneNumber" class="form-control" international-phone-number>
+						<div class="text-danger msg-error" ng-show="updateUserForm.phoneNumber.$touched" ng-messages="updateUserForm.phoneNumber.$error" role="alert">
+							<!--<div ng-message="minlength">Phone number must have minimum 10 characters</div>-->
+							<!--<div ng-message="pattern">Invalid phone number</div>-->
+							<div ng-message="internationalPhoneNumber">Invalid phone number</div>
+						</div>
+                    </div>
+                    <div class="form-group hidden">
+                        <label class="control-label" for="mobile">Mobile</label>
+                        <input type="telephone" id="mobile" ng-model="updateUserData.mobile" placeholder="Mobile" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="address">Address</label>
+                        <textarea id="address" ng-model="updateUserData.address" row="3" placeholder="Address" class="form-control"></textarea>
+                    </div>
+
+                    <!--<div class="form-group">
+                        <label class="control-label" for="country">Country</label>
+                        <select name="gender" id="country" ng-model="updateUserData.country" class="form-control">
+                            <option value="" ng-selected="updateUserData.country == ''"> Select Country </option>
+                            <option ng-repeat="country in countryList" ng-value="country.name" ng-selected="updateUserData.country == country.name">{{country.name}}</option>
+                        </select>
+                    </div>-->
+					<div class="form-group">
+						<label class="control-label" for="country">Country</label>
+						<select name="gender" id="country" ng-model="updateUserData.country" ng-change="loadStates(updateUserData.country);" class="form-control">
+							<option value="" ng-selected="updateUserData.country == ''"> Select Country </option>
+							<option ng-repeat="country in countryList" ng-value="country" ng-selected="updateUserData.country == country">{{country}}</option>
+						</select>
+					</div>
+                    <div class="form-group">
+                        <label class="control-label"  ng-init="updateUserData.country = updateUserData.country == '' ? 'USA' : updateUserData.country; loadStates(updateUserData.country)" for="state">State</label>
+                        <select name="gender" id="state" placeholder="Select State" ng-model="updateUserData.state" class="form-control">
+							<option value="" ng-selected="updateUserData.state == ''"> Select State </option>
+							<option ng-repeat="state in state_list" ng-value="state" ng-selected="updateUserData.state == state">{{state}}</option>
+                        </select>
+                    </div>
+
+					<div class="form-group">
+						<label class="control-label" for="city">City</label>
+						<input type="text" id="city" ng-model="updateUserData.city" placeholder="City" class="form-control">
+					</div>
+                    
+					<div class="form-group">
+						<label class="control-label" for="gender">Gender</label>
+						<select name="gender" ng-model="updateUserData.gender" class="form-control">
+							<option value="" ng-selected="updateUserData.gender == ''"> Select Gender </option>
+							<option value="Male" ng-selected="updateUserData.gender == 'Male'">Male</option>
+							<option value="Female" ng-selected="updateUserData.gender == 'Female'">Female</option>
+						</select>
+					</div>
+					<div class="line line-dashed"></div>
+					<div class="form-footer">
+					<button ng-disabled="updateUserForm.$invalid || isWaiting" type="submit" class="btn btn-primary m-r">
+						<span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.updateUserButtonText }}</button>
+
+						<a ng-click="changeUserPassword(userData)" ng-if="resources.isCurrentLoggedUser && user()._fb == 0" class="m-r"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
+						<a ui-sref="parent.payment"><i class="fa fa-credit-card" aria-hidden="true"></i> Update Payment Info</a>
+					</div>
+
+				</form>
+			</div>
+		</div>
+	</header>
+</script>

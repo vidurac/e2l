@@ -1,0 +1,257 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .form-group, .panel-default {
+        position: relative;
+    }
+    .required {
+        position: absolute;
+        top: 33px;
+        right: -10px;
+        color: red;
+    }
+</style>
+<!--<header class="header bg-light bg-gradient b-b" >
+    <div  class="col-md-6 pull-left no-padder">
+        <button ng-show="is_expired" onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+    </div>
+</header>-->
+<section ng-controller="PaymentController" ng-init="checkPaymentUser()" class="vbox sm-screen payment-methods payment-controller" >
+    <div  class="page-title col-md-12">
+        <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Payment Details</h4>
+    </div>
+    <section class="padder m-b-xl wrapper" >
+        <div ><!-- ng-show="!paid" -->
+
+            <section class="inner-wrap wrapper b-a m-0-a" ng-show="!isLoadingUserDetails">
+                <div ng-if="usr.stripe_id && !updateFormEnable" class="method-wrapper">
+                    <div class="form-group"><h2 class="title">Payment Details</h2></div>
+                    <div class="form-group"><h4 class="sub-title">It’s only <span class="txt-red">$5</span>/month per
+                        child!</h4></div>
+                    <div class="c-data-wrap padder">
+                        <div class="c-data padder padder-v b-a m-b">
+                            <div class="form-group"><h5>Your card details are,</h5></div>
+                            <div class="form-group"><label class="txt-info"><span>Card Number Entered:</span>
+                                XXXX-XXXX-XXXX-{{usr.last_four}}</label></div>
+                            <div class="card-images"><img src="../images/cards.png"></div>
+                        </div>
+                        <!--<button ng-if="usr.stripe_active == 0" type="submit" ng-disabled="isAddingCcWaiting" class="btn btn-success btn-block m-t-md" ng-click="pay(true)">
+                            <span ng-show="isAddingCcWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>Pay&nbsp;</button>-->
+                        <div class="form-group">
+                            <button type="submit" ng-disabled="unsubscribing || subscribing"
+                                    class="btn btn-info m-t-md m-r pull-left" ng-click="openUpdateForm(true)">
+                                <span ng-show="isAddingCcWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>Update
+                                Card Details
+                            </button>
+                            <button ng-if="usr.stripe_active == 1" ng-disabled="unsubscribing"
+                                    class="btn btn-danger m-t-md m-b-md m-l pull-right" ng-click="unsubscribe()">
+                                {{unsubscribeBtnText}}
+                            </button>
+                            <button ng-if="usr.stripe_active == 0" ng-disabled="subscribing"
+                                    class="btn btn-success m-t-md m-b-md pull-left" ng-click="subscribe()">
+                                {{subscribeBtnText}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Do Payment Do Form Form -->
+                <div ng-if="!usr.stripe_id && !updateFormEnable">
+                    <h4 class="m-b">Enter your payment details to subscribe to Earn2Learn.</h4>
+                    <div class="form-group"><h4 class="sub-title">It’s only <span class="txt-red">$5</span>/month per child!</h4></div>
+                    <form name="ccForm" ng-submit="pay()">
+                        <div class="form-group">
+                            <label for="card-number">Name on card <span class="txt-red">*</span></label>
+                            <input type="text" class="form-control" id="nameOnCard" placeholder="Name on card" name="nameOncard" ng-model="card.nameOnCard" data-required="true" required  ng-pattern="/^[A-Za-z ]+$/">
+
+                            <div class="text-danger msg-error" ng-show="ccForm.nameOncard.$touched" ng-messages="ccForm.nameOncard.$error" role="alert">
+                                <div ng-message="required">Please enter name</div>
+                                <div ng-message="pattern">Invalid name</div>
+                            </div>
+                        </div>
+                        <div class="form-group pull-in clearfix">
+                            <div class="col-md-9 col-sm-9">
+                                <label for="card-number">Card number <span class="txt-red">*</span></label>
+                                <div class="right-inner-addon">
+                                    <i class="fa fa-cc-visa" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'Visa'"></i>
+                                    <i class="fa fa-cc-amex" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'American Express'"></i>
+                                    <i class="fa fa-cc-mastercard" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'MasterCard'"></i>
+                                    <i class="fa fa-credit-card" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType != 'Visa' && ccForm.ccNumber.$ccType != 'American Express' && ccForm.ccNumber.$ccType != 'MasterCard'"></i>
+
+                                    <input type="text" class="form-control" reset-on-blur id="cardNumber" placeholder="Card number" cc-number name="ccNumber" ng-model="card.number" ng-trim='false' required>
+
+                                    <div class="text-danger msg-error" ng-show="ccForm.ccNumber.$touched" ng-messages="ccForm.ccNumber.$error" role="alert">
+                                        <div ng-message="required">Please enter card number</div>
+                                    </div>
+                                    <div class="text-danger msg-error" ng-show="ccForm.ccCvc.$touched" ng-messages="ccForm.ccCvc.$error" role="alert">
+                                        <div ng-message="required">Please enter cvc</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-4 cvc-num">
+                                <label for="cvc">CVC <span class="txt-red">*</span></label>
+                                <input type="text" class="form-control" id="cvc" placeholder="CVC" cc-cvc cc-type="ccForm.ccNumber.$ccType" name="ccCvc" ng-model="card.cvc" ng-trim='false' required>
+                            </div>
+
+                        </div>
+                        <p class="text-success" ng-show="ccForm.ccNumber.$valid">
+                            Yes, that looks like a valid <b>{{ccForm.ccNumber.$ccType}} number!</b>
+                        </p>
+                        <div class="form-group">
+                            <label for="card-number">Expiration <span class="txt-red">*</span></label>
+                            <div class="row" cc-exp>
+                                <div class="col-md-3 col-sm-3 col-xs-4">
+                                    <!--<input placeholder="MM" type="text" class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month" required>-->
+                                    <select class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month" required>
+                                        <option value="" selected>MM</option>
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+
+
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-4">
+                                    <!--<input placeholder="YY" type="text" class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year" required>-->
+                                    <select class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year" required ng-valid="card.expiration.year != ''">
+                                        <option value="" selected>YY</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                        <option value="24">24</option>
+                                        <option value="25">25</option>
+                                        <option value="26">26</option>
+                                        <option value="27">27</option>
+                                        <option value="28">28</option>
+                                        <option value="29">29</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="text-danger msg-error" ng-show="ccForm.ccExpMonth.$touched" ng-messages="ccForm.ccExpMonth.$error" role="alert" >
+                                <div ng-message="required">Please select month</div>
+                            </div>
+                            <div class="text-danger msg-error" ng-show="ccForm.ccExpYear.$touched" ng-messages="ccForm.ccExpYear.$error" role="alert">
+                                <div ng-message="required">Please select year</div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="pull-left"><div class="card-images pay"><img src="../images/cards.png"></div></div>
+                        <div class="pull-right m-t-xs"><button type="submit" ng-disabled="ccForm.$invalid || !ccForm.ccNumber.$valid || !ccForm.ccCvc.$valid || !ccForm.ccExpMonth.$valid || !ccForm.ccExpYear.$valid || ccForm.$error.ccExp || isAddingCcWaiting" class="btn btn-success pull-right"><span ng-show="isAddingCcWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>Pay</button></div>
+                    </form>
+                </div>
+
+                <div ng-show="usr.stripe_id && updateFormEnable">
+                    <h2>Update Payment Details</h2>
+                    <h4>Enter your payment details to subscribe to Earn2Learn.</h4>
+                    <form name="ccForm" ng-submit="updatePaymentDetails()">
+                        <div class="form-group">
+                            <label for="card-number">Name on card <span class="txt-red">*</span></label>
+                            <input type="text" class="form-control" id="nameOnCard" placeholder="Name on card" name="nameOncard" ng-model="card.nameOnCard" data-required="true">
+                        </div>
+                        <div class="form-group pull-in clearfix">
+                            <div class="col-md-9">
+                                <label for="card-number">Card number <span class="txt-red">*</span></label>
+                                <div class="right-inner-addon">
+                                    <i class="fa fa-cc-visa" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'Visa'"></i>
+                                    <i class="fa fa-cc-amex" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'American Express'"></i>
+                                    <i class="fa fa-cc-mastercard" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'MasterCard'"></i>
+                                    <i class="fa fa-credit-card" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType != 'Visa' && ccForm.ccNumber.$ccType != 'American Express' && ccForm.ccNumber.$ccType != 'MasterCard'"></i>
+
+                                    <input type="text" class="form-control" reset-on-blur id="cardNumber" placeholder="Card number" cc-number name="ccNumber" ng-model="card.number">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="cvc">CVC <span class="txt-red">*</span></label>
+                                <input type="text" class="form-control" id="cvc" placeholder="CVC" cc-cvc cc-type="ccForm.ccNumber.$ccType" name="ccCvc" ng-model="card.cvc">
+                            </div>
+                        </div>
+                        <p class="text-success" ng-show="ccForm.ccNumber.$valid">
+                            Yes, that looks like a valid <b>{{ccForm.ccNumber.$ccType}} number!</b>
+                        </p>
+                        <div class="form-group">
+                            <label for="card-number">Expiration <span class="txt-red">*</span></label>
+                            <div class="row" cc-exp>
+                                <div class="col-md-3">
+                                    <!--<input placeholder="MM" type="text" class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month">-->
+                                    <select class="form-control" cc-exp-month name="ccExpMonth" ng-model="card.expiration.month" required>
+                                        <option value="" selected>MM</option>
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <!--<input placeholder="YY" type="text" class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year">-->
+                                    <select class="form-control" cc-exp-year name="ccExpYear" ng-model="card.expiration.year" required ng-valid="card.expiration.year != ''">
+                                        <option value="" selected>YY</option>
+                                        <option value="16">16</option>
+                                        <option value="17">17</option>
+                                        <option value="18">18</option>
+                                        <option value="19">19</option>
+                                        <option value="20">20</option>
+                                        <option value="21">21</option>
+                                        <option value="22">22</option>
+                                        <option value="23">23</option>
+                                        <option value="24">24</option>
+                                        <option value="25">25</option>
+                                        <option value="26">26</option>
+                                        <option value="27">27</option>
+                                        <option value="28">28</option>
+                                        <option value="29">29</option>
+                                        <option value="30">30</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                        <button type="button" class="btn btn-danger col-md-6 pull-left m-r" ng-click="openUpdateForm(false)">Cancel</button>
+                        <button type="submit" ng-disabled="ccForm.$invalid || !ccForm.ccNumber.$valid || !ccForm.ccCvc.$valid || !ccForm.ccExpMonth.$valid || !ccForm.ccExpYear.$valid || ccForm.$error.ccExp || isAddingCcWaiting" class="btn btn-success  col-md-6 pull-left"><span ng-show="isAddingCcWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>{{updatePaymentsBtnText}}</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+    </section>
+</section>
+<!--<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>-->

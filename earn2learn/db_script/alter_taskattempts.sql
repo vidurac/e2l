@@ -1,0 +1,2 @@
+SET SQL_MODE='ALLOW_INVALID_DATES';
+ALTER TABLE `taskattempts` ADD `is_satisfy` TINYINT(1) NOT NULL DEFAULT '0' AFTER `is_approved`;

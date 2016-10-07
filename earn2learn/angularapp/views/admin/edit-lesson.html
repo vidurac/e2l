@@ -1,0 +1,329 @@
+<style type="text/css">
+	.video {
+		cursor: pointer;
+		height: 145px;
+	}
+	
+	.videoName {
+		font-size: 17px;
+	}
+	
+	#video-player {
+		position: relative;
+	}
+	
+	#video {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	
+	.container1 {
+		/*height: 100%;*/
+		text-align: center;
+		padding: 1em;
+		box-sizing: border-box;
+	}
+	
+	img {
+		/*max-width: 100%;
+	    max-height: 100%;
+	    display: inline-block;*/
+	}
+	
+	.iframe-wrapper {
+		position: relative;
+		height: 0;
+		padding-top: 56.25%;
+		overflow: hidden;
+	}
+	
+	.iframe-wrapper iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	
+	.question-panel{
+		border-radius: 0px !important;
+		margin-bottom: 0 !important;
+	    margin-top: 0px !important;
+	    border: 0 !important;
+	    border-bottom: 1px solid #e8e8e8 !important;
+	}
+	
+	.question-panel .answer{
+		border-radius: 0px !important;
+		border: 0 !important;
+	}
+	
+	.question-icons a{
+		padding: 10px 5px;
+		cursor: pointer;
+	}
+	
+	.fa-check-square-o{
+		color: green;
+	}
+	
+	.fa-square-o{
+		color: red;
+	}
+	.form-group, .panel-default {
+		position: relative;
+		width:100%;
+		display: inline-block;
+	}
+	.required {
+		position: absolute;
+		top: 10px;
+		right: -10px;
+		color: red;
+	}
+</style>
+<div ng-init="loadUpdateLessonData()"></div>
+<div ng-init="checkAssignees(vid)"></div>
+<header class="header bg-light bg-gradient b-b">
+	<div class="col-md-6 no-padder pull-left lesson-edit">
+		<button ng-if="user_role_id == 1" ui-sref="admin.video({ id: vid })" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+
+		<button ng-if="user_role_id == 2" ui-sref="parent.video({ id: vid })" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+	</div>
+</header>
+
+<section class="hbox stretch add-lessons" ng-if="!resources.stillLoading && !allCategoriesLoading">
+	<aside class="aside bg-white aside-sm lter col-md-5" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable padder">
+		        <form class="panel-body wrapper update-video" name="updateVideoForm" id="updateVideoForm" ng-submit="updateVideo(cur_lesson)" data-validate="parsley">
+		        	<!-- {{LessonModel.allCategories}} -->
+	                <div class="form-group">
+	                	<!-- <select class="form-control m-t" ng-model="cur_lesson.category_id" ng-options="category.name as category.id group by category.parent_cat_id for category in LessonModel.allCategories"></select> -->
+
+	                	<select class="form-control m-t " ng-selected="v.id == cur_lesson.category_id" ng-model="cur_lesson.category_id" ng-options="v.id as v.name group by v.parent_category for v in LessonModel.allCategories" required>
+    </select>
+    					<span class="required txt-red">*</span>
+	                    <!-- <select class="form-control m-t" ng-model="cur_lesson.category_id" required>
+	                    	<option value="">Select a Category</option>
+	                        <optgroup ng-repeat="mainCategory in LessonModel.allCategories | filter:{ parent_cat_id: 0, enable: 1 }" ng-init="mainCategoryId = mainCategory.id" label="{{mainCategory.name}}">
+
+	                            <option ng-repeat="category in LessonModel.allCategories | filter:{ parent_cat_id: mainCategoryId, enable: 1 }  track by category.id " ng-value="{{category.id}}" ng-selected="category.id == cur_lesson.category_id">{{category.name}}</option>
+
+	                        </optgroup>
+	                    </select> -->
+	                </div>
+	                <div class="form-group">
+	                    <input type="text" placeholder="Add Title" maxlength="100" data-parsley-trigger="focusout" ng-model="cur_lesson.title" class="form-control" data-required="true" required>
+						<span class="required txt-red">*</span>
+
+						<span style="color: #fb6b5b">{{100 - cur_lesson.title.length}} characters left</span>
+					</div>
+
+
+					<div class="form-group">
+						<input type="number" placeholder="Add Min Age Range" name="addMinAge" min="1" max="{{getMin(cur_lesson.max_age,100)}}" data-parsley-trigger="focusout" ng-model="cur_lesson.min_age" class="form-control" data-required="true" required>
+						<span class="required txt-red">*</span>
+
+						 <div class="text-danger msg-error" ng-show="updateVideoForm.addMinAge.$touched" ng-messages="updateVideoForm.addMinAge.$error" role="alert">
+                            <div ng-message="required">Please enter minimum age</div>
+                            <div ng-message="number">Must be a valid number</div>
+                            <div ng-message="min">Min age should greater than 1</div>
+                            <div ng-message="max">Min age should less than or equal to {{ getMin(cur_lesson.max_age,100) }}</div>
+                        </div>
+
+					</div>
+
+					<div class="form-group">
+						<input type="number" placeholder="Add Max Age Range" name="addMaxAge" min="{{ cur_lesson.min_age }}" max="100" data-parsley-trigger="focusout" ng-model="cur_lesson.max_age" class="form-control" data-required="true" required>
+						<span class="required txt-red">*</span>
+
+						<div class="text-danger msg-error" ng-show="updateVideoForm.addMaxAge.$touched" ng-messages="updateVideoForm.addMaxAge.$error" role="alert">
+                            <div ng-message="required">Please enter maximum age</div>
+                            <div ng-message="number">Must be a valid number</div>
+                            <div ng-message="min">Max age should greater than or equal to {{ getMax(1,cur_lesson.min_age) }} </div>
+                            <div ng-message="max">Max age should less than 100</div>
+                        </div>
+
+					</div>
+
+
+
+	                <div class="form-group">
+	                    <textarea placeholder="Add Description" maxlength='100' data-parsley-trigger="focusout" ng-model="cur_lesson.description" class="form-control" data-required="true" required></textarea>
+						<span class="required txt-red">*</span>
+
+						<span style="color: #fb6b5b">{{100 - cur_lesson.description.length}} characters left</span>
+					</div>
+
+
+					<select ng-if="role_id == 2" class="form-control m-t " ng-model="cur_lesson.visibility" required ng-change="checkValidity(cur_lesson)" >
+                        <option ng-selected="cur_lesson.visibility == 'private'" value="private">Private</option>
+                        <option ng-selected="cur_lesson.visibility == 'public'"  value="public">Public</option>
+                    </select>
+
+	                <div class="line line-dashed"></div>
+	                <div class="form-group">
+	                    <input type="url" placeholder="Youtube/Ted Video URL" data-parsley-trigger="focusout" ng-model="cur_lesson.url" class="form-control" ng-change="onUpdateUrlChange()" data-required="true" required>
+						<span class="required txt-red">*</span>
+					</div>
+	                <div class="form-group">
+	                    <div class="iframe-wrapper b-b b-t b-l b-r" id="video-wrapper" ng-bind-html="videoIframe">
+	                    </div>
+	                </div>
+	                <div class="line line-dashed"></div>
+            		<span class="btn-nt add-new update-video"><button type="submit" ng-disabled="updateVideoForm.$invalid || isVideoUpdating" class="btn btn-primary"><span ng-show="isVideoUpdating"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ updateVideoButtonText }}</button></span>
+            	</form>
+            </section>
+		</section>
+	</aside>
+    <aside class="aside bg-white aside-md lter col-md-7" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable padder">
+				<form class="quiz" name="updateQuestionForm" id="updateQuestionForm" ng-submit="updateQuestion()" data-validate="parsley">
+					<div class="bg-light wrapper">
+	                    <div class="form-group">
+	                    	<div ng-if="selectedQuestion.is_new" class="btn-group pull-left m-b" data-toggle="buttons">
+	                            <label class="btn btn-sm btn-default btn-no-w m-r" ng-class="{'active' : selectedQuestion.question_type == 1}" ng-click="changeQtypeNew(1)">
+	                                <input type="radio" ng-value="1" name="options" id="option1" checked><i class="fa fa-check text-active"></i> MULTIPLE CHOICE
+	                            </label>
+	                            <label class="btn btn-sm btn-default btn-no-w" ng-class="{'active' : selectedQuestion.question_type == 0}" ng-click="changeQtypeNew(0)">
+	                                <input type="radio" ng-value="0" name="options" id="option2"><i class="fa fa-check text-active"></i> TRUE & FALSE
+	                            </label>
+	                        </div>
+	                        <div class="btn-group pull-right m-b">
+	                            <div class="btn-group">
+	                                <button type="button" ng-disabled="cur_lesson.questions.length < 2" title="Delete this question" ng-click="removeUpdateQuestion()" class="btn btn-icon-new btn-danger" data-toggle="tooltip"><i class="fa fa-trash"></i></button>
+	                            </div>
+	                        </div>
+	                    </div>
+
+
+	                    <div class="form-group">
+	                        <textarea placeholder="Add Question" ng-change="isValidUpdatedQuestion()" maxlength="255" name='add_question' rows="4" ng-model="selectedQuestion.question" data-parsley-trigger="focusout" class="form-control" data-required="true" required></textarea>
+	                   		<span class="required">*</span>
+
+	                   		<span style="color: #fb6b5b">{{255 - selectedQuestion.question.length}} characters left</span>
+	                     </div>
+
+
+
+	                    <div ng-if="!selectedQuestion.is_new && selectedQuestion.control_type == '1'">
+	                        <div class="input-group m-b" ng-repeat="ans in selectedQuestion.answers | filter : {enable : 1}">
+	                            <span class="input-group-addon">
+	                                {{answersIndexLables[$index]}}
+	                            </span>
+	                            <input type="text" ng-model="ans.answer" class="form-control">
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-click="updateSelectedRadio($index)" ng-checked="ans.is_correct == 1">
+	                            </span>
+	                        </div>
+	                    </div>
+	                    <div ng-if="!selectedQuestion.is_new && selectedQuestion.control_type == '0'" style="height: 186px;">
+	                        <div class="input-group m-b " ng-repeat="ans in selectedQuestion.answers | filter : {enable : 1}">
+	                            <span class="input-group-addon">
+	                                {{answersIndexLables[$index]}}
+	                            </span>
+	                            <input type="text" ng-model="ans.answer" class="form-control" readonly>
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-checked="ans.is_correct == 1" ng-click="updateSelectedRadio($index)">
+	                            </span>
+								<span class="required">*</span>
+	                        </div>
+	                    </div>
+	                    <div ng-if="selectedQuestion.is_new && selectedQuestion.control_type == '1'">
+	                        <div class="input-group m-b">
+	                            <span class="input-group-addon">
+	                                A.
+	                            </span>
+	                            <input type="text" ng-blur="isValidUpdatedNumberOfAnswers()" ng-model="selectedQuestion.answers[0].answer" class="form-control" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == ''">
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-click="updateSelectedRadio(0)" ng-checked="selectedQuestion.answers[0].is_correct == 1" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[0] == null || selectedQuestion.answers[0].answer == ''">
+	                            </span>
+								<span class="required">*</span>
+	                        </div>
+	                        <div class="input-group m-b">
+	                            <span class="input-group-addon">
+	                                B.
+	                            </span>
+	                            <input type="text" ng-blur="isValidUpdatedNumberOfAnswers()" ng-model="selectedQuestion.answers[1].answer" class="form-control" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[0] == null || selectedQuestion.answers[0].answer == ''">
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-click="updateSelectedRadio(1)" ng-checked="selectedQuestion.answers[1].is_correct == 1" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[1] == null || selectedQuestion.answers[1].answer == ''">
+	                            </span>
+	                        </div>
+	                        <div class="input-group m-b ">
+	                            <span class="input-group-addon ">
+	                                C.
+	                            </span>
+	                            <input type="text" ng-blur="isValidUpdatedNumberOfAnswers()" ng-model="selectedQuestion.answers[2].answer" class="form-control" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[1] == null || selectedQuestion.answers[1].answer == '' || selectedQuestion.answers[0] == null || selectedQuestion.answers[0].answer == ''">
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-click="updateSelectedRadio(2)" ng-checked="selectedQuestion.answers[2].is_correct == 1" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[2] == null || selectedQuestion.answers[2].answer == ''">
+	                            </span>
+	                        </div>
+	                        <div class="input-group m-b">
+	                            <span class="input-group-addon">
+	                                D.
+	                            </span>
+	                            <input type="text" ng-blur="isValidUpdatedNumberOfAnswers()" ng-model="selectedQuestion.answers[3].answer" class="form-control" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[2] == null || selectedQuestion.answers[2].answer == '' || selectedQuestion.answers[1] == null || selectedQuestion.answers[1].answer == '' || selectedQuestion.answers[0] == null || selectedQuestion.answers[0].answer == ''">
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-click="updateSelectedRadio(3)" ng-checked="selectedQuestion.answers[3].is_correct == 1" ng-disabled="selectedQuestion.question == null || selectedQuestion.question == '' || selectedQuestion.answers[3] == null || selectedQuestion.answers[3].answer == ''">
+	                            </span>
+	                        </div>
+	                    </div>
+	                    <div ng-if="selectedQuestion.is_new && selectedQuestion.control_type == '0'" style="height: 186px;">
+	                        <div class="input-group m-b ">
+	                            <span class="input-group-addon">
+	                                A.
+	                            </span>
+	                            <input type="text" ng-model="selectedQuestion.answers[0].answer" class="form-control" ng-value="TRUE" readonly>
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-checked="selectedQuestion.answers[0].is_correct == 1" ng-click="updateSelectedRadio(0)">
+	                            </span>
+	                        </div>
+	                        <div class="input-group m-b">
+	                            <span class="input-group-addon">
+	                                B.
+	                            </span>
+	                            <input type="text" ng-model="selectedQuestion.answers[1].answer " class="form-control " ng-value="FALSE " readonly>
+	                            <span class="input-group-addon">
+	                                <input type="radio" name="answers-radio" ng-checked="selectedQuestion.answers[1].is_correct == 1" ng-click="updateSelectedRadio(1)">
+	                            </span>
+	                        </div>
+	                    </div>
+	                    <div class="line line-dashed"></div>
+	                    <div class="alert alert-danger" ng-if="questionNotValidated">
+	                        <button type="button" class="close" data-dismiss="alert">×</button>
+	                        {{questionValidationError}}
+	                    </div>
+	                    <div class="btn-toolbar pagination">
+	                        <div class="btn-group ">
+	                            <button type="button" ng-repeat="question in lessonQuestions | filter : {enable : 1} track by $index" class="btn btn-default" ng-class="{ 'active' : $index==resources.updateQuestionSelectedIndex}" ng-click="selectUpdateQuestion($index)">{{$index + 1}}</button>
+	                        </div>
+	                        <div class="btn-group ">
+	                            <button type="button" ng-click="addUpdateQuestion()" class="btn btn-success" title="Append" data-toggle="tooltip">+</button>
+	                        </div>
+	                        <div class="btn-group pull-right">
+	                           <span class="btn-nt add-new"><button type="submit" ng-disabled="updateQuestionForm.$invalid || isQuestionUpdating" class="btn btn-primary ng-binding">{{ updateQuestionButtonText }}</button></span>
+	                        </div>
+	                    </div>
+	                </div>
+                
+                </form>
+
+            </section>
+		</section>
+	</aside>
+    <div ng-if="notAvailable">
+		<div ng-if="notAvailable" class="ng-scope">
+			<h2 class="text-muted text-center">This Lesson is not available.</h2>
+		</div>
+	</div>
+</section>
+
+<!-------------------------------------------------------------------->
+<section class="vbox" ng-if="resources.stillLoading && allCategoriesLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

@@ -1,0 +1,71 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="initAllSponsors()">
+    <div class="col-md-6 no-padder pull-right top-buttons">
+		<span class=""><a class="btn btn-primary btn-sm btn-no-w" ui-sref="parent.addSponsor">
+					<span class="text">Invite to Sponsor</span>
+
+				</a>
+		</span>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Sponsors</h4>
+</div>
+<section class="vbox" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl">
+        <div>
+            <div class="not-found" ng-if="allPendingUsers.length == 0 && allActiveUsers.length == 0">
+                <h3>You have not added any sponsor yet.</h3>
+            </div>
+            <div ng-if="allPendingUsers.length != 0">
+                <div class="row">
+                    <h3 class="col-md-12 m-t-sm">Invited Sponsors</h3>
+                </div>
+                <div class="col-md-4 m-t-sm" ng-repeat="user in allPendingUsers">
+                    <section class="panel user-wrapper clearfix bg-light lter">
+                        <div class="panel-body">
+                            <a class="thumb pull-left m-r">
+                                <img style="height: 64px; width: 64px;" ng-src="uploads/profile/default.jpg" class="img-circle">
+                            </a>
+                            <div class="clear">
+                                <div class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</div>
+                                <small class="block text-muted text-ellipsis">Member since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                                <a class="btn btn-sm btn-no-w btn-success m-t-xs" ng-click="resendInvitation(user.id)">Resend Invitation</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div ng-if="allActiveUsers.length != 0">
+                <div class="row">
+                    <h3 class="col-md-12 m-t-sm">Active Sponsors</h3>
+                </div>
+                <div class="col-md-4 m-t-sm" ng-repeat="user in allActiveUsers">
+                    <section class="panel user-wrapper clearfix bg-light lter">
+                        <div class="panel-body">
+                            <a class="thumb pull-left m-r">
+                                <img style="height: 64px; width: 64px;" ng-src="{{user.profile_image}}" class="img-circle">
+                            </a>
+                            <div class="clear">
+                                <div class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</div>
+                                <small class="block text-muted text-ellipsis">Member since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+
+                                <a ng-if="user.dashboard_enabled == 0" class="btn btn-sm btn-no-w btn-success m-t-xs" ng-click="grantDashboardAccess(user.id)">Grant Access</a>
+                                <a ng-if="user.dashboard_enabled == 1" class="btn btn-sm btn-no-w btn-danger m-t-xs" ng-click="revokeDashboardAccess(user.id)">Revoke Access</a>
+
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" style="margin: 250px auto;text-align: center;display: block;">
+</section>

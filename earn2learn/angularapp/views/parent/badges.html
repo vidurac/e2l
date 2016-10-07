@@ -1,0 +1,217 @@
+<div ng-init="loadUserCreatedBadge()"></div>
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 pull-left no-padder">
+        <div class="search input-group left">
+            <div class="input-group pull-left">
+
+                <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Category">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu animated fadeInUp">
+                    <span class="arrow top"></span>
+                    <li>
+                        <a ng-click="getFilteredList(null, true)" class="cursor-pointer">All Categories</a>
+                    </li>
+                    <li ng-repeat="badgeType in badgeModel.badgeTypes">
+                        <a data-id="{{badgeType.id}}" ng-click="getFilteredList(badgeType.id, false)"
+                           class="cursor-pointer">{{badgeType.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="input-group pull-left">
+                <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Children">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu animated fadeInUp">
+                    <span class="arrow top"></span>
+                    <!--<li>
+                        <a ng-click="getChildBadge(null, true)" class="cursor-pointer">All Children</a>
+                    </li>--><!--| filter:{ parent_cat_id: 0, enable: 1 }-->
+                    <li ng-repeat="child in allHouseParticipants " class="dropdown-submenu">
+                        <a data-id="{{child.id}}" class="cursor-pointer">{{child.f_name}}
+                            {{child.l_name}}</a>
+                        <span ng-show="filterOpt.selectedChildId != undefined && filterOpt.selectedChildId == child.id">
+								&#10003;
+                        </span>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a ng-click="getChildBadge(child.id, 1)" class="cursor-pointer">Achieved</a>
+                            </li>
+                            <li>
+                                <a ng-click="getChildBadge(child.id, 2)" class="cursor-pointer">Assigned</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="search input-group left">
+            <div class="search-field">
+                <input type="text" placeholder="Search by name" ng-model="searchBadgeName"
+                       class="input-sm form-control"/>
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div>
+        </div>
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetFilters()">Clear</div>
+    </div>
+    <div class="col-md-6 pull-right top-buttons no-padder">
+        <span class="pull-right"><a class="btn btn-primary btn-sm btn-no-w" ui-sref="parent.addBadge">
+					<span class="text">Add New Badge</span>
+				</a>
+		</span>
+        <span class="c-info"><i class="fa fa-star icon"></i><span class="label bg-info info-count badge-info"
+                                                                  title="Badges" data-toggle="tooltip">{{loadedBadgesForType.length}}</span></span>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <div class="col-md-8 col-xs-12 no-padder">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Badges</h4>
+        </div>
+    <div class="col-md-4 col-xs-12 no-padder">
+        <div class="col-md-12 no-padder">
+            <h5 class="m-l pull-right"><span><img class="img-assigned" src="includes/images/check.png"/></span> Already Assigned</h5>
+        </div>
+
+    </div>
+
+</div>
+
+
+<section class="vbox" ng-show="!resources.stillLoading">
+    <section class="m-b-xl scrollable badge-container">
+        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 badge-viewer"
+             ng-repeat="badge in badgeModel.allBadge  | filter : {name : searchBadgeName } | filter : filterByChild | filter : filterByType as loadedBadgesForType ">
+            <div class="badge-item bg-white b-a m-t-sm hover">
+                <div class="no-padder" ng-class="(badge.badge_types_id==2) ? 'm-badge' : ''">
+                    <div class="badge-container">
+                        <div class="row no-margin">
+                            <div class="col-md-12 col-sm-12 col-xs-12 no-padder">
+                                <!--<div class="col-md-12 col-sm-12 col-xs-12 bg-primary" ng-click="showDescription(badge.id);">-->
+                                <div class="col-md-12 col-sm-12 col-xs-12 bg-primary">
+                                    <div id="triangle-topleft" class=" " ng-show="badge.assigned==1">
+                                        <img class="img" data-toggle="tooltip" title="This Lesson is already in your house." src="includes/images/check.png"/>
+                                    </div>
+                                    <div ng-show="badge.badge_types_id == 1" class="m-b no-border system-badge  no-margin no-padder">
+                                        <div class="badge-image">
+                                            <img class="pull-left thumb avatar b-2x img-circle"
+                                                src="uploads/badges/{{badge.badge_image}}">
+                                        </div>
+
+                                        <div class="badge-label cursor-pointer" data-placement="top" data-container="body" data-toggle="popover" title="{{badge.name}}" data-content=" {{badge.description}} ">
+                                            <div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding badge-title">
+                                                <h4  class="text-ellipsis">{{badge.name}}</h4>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-show="badge.badge_types_id == 2" class="m-b no-border custom-badge no-margin no-padder">
+                                        <div class="badge-image">
+                                            <img src="uploads/badges/{{badge.badge_image}}"
+                                                 class="pull-left thumb avatar b-2x img-circle">
+                                        </div>
+                                        <div class="badge-label cursor-pointer" data-placement="top" data-container="body" data-toggle="popover" title="{{badge.name}}" data-content=" {{badge.description}} ">
+                                            <div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding badge-title">
+                                                <h4 class="text-ellipsis">{{badge.name}}</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12"> <!--href="#collapse_id"-->
+                                <span class="padder-v pull-left b-nav nav-l">
+                                <ul class="badge-lessons navbar-nav navbar-right no-padder">
+                                    <li class="dropdown">
+                                <a class="dropdown-toggle cursor-pointer" data-toggle="dropdown"><i class="fa fa-angle-right m-l" aria-hidden="true"></i> Lessons</a>
+                                <ul class="dropdown-menu animated fadeInDown">
+                                    <span class="arrow top"></span>
+                                    <li ng-repeat="badgeLesson in badge.lessons">{{badgeLesson.title}}</li>
+                                </ul>
+                                </li>
+                                </ul>
+                                    </span>
+
+                                <span class="pull-right padder-v b-nav nav-r"><a ng-if="badge.badge_types_id==2" class="btn btn-sm btn-warning"
+                                                            ng-click="editBadge(badge)" title="Edit Badge" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
+                                    <!-- <a ng-if="badge.badge_types_id==2" class="btn btn-sm btn-danger"
+                                        ng-click="deleteBadge(badge)" title="Delete Badge" data-toggle="tooltip"><i
+                                             class="fa fa-trash"></i></a>-->
+                    <a ng-if="badge.badge_types_id==2"
+                       class="btn btn-sm btn-no-w btn-primary"
+                       ng-click="childAssignPopup(badge.id)" title="Assign Badge" data-toggle="tooltip">Assign</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 pull-right no-padder text-right m-t">
+
+                </div>
+            </div>
+        </div>
+        <div class="not-found">
+        <h3 class="text-center" ><span ng-if="loadedBadgesForType.length == 0 && (badgeModel.allBadge.length > 0) && (badgeModel.badgeCat=='all')">No Search Results Found</span><span ng-if="loadedBadgesForType.length == 0 && (badgeModel.allBadge.length > 0) && (badgeModel.badgeCat=='system')">System badges are not available</span><span ng-if="loadedBadgesForType.length == 0 && (badgeModel.allBadge.length > 0) && (badgeModel.badgeCat=='custom')">Custom badges are not available</span></h3>
+            </div>
+    </section>
+</section>
+<section ng-if="(badgeModel.allBadge == null || badgeModel.allBadge.length==0) && !resources.stillLoading">
+    <div class="not-found">
+        <h3 class="text-muted text-center"><span ng-show="badgeModel.badgeCat=='all'">No Any Badges available.</span><span ng-show="badgeModel.badgeCat=='system'">System Badges are not available.</span><span ng-show="badgeModel.badgeCat=='custom'">Custom Badges are not available.</span><span ng-if="badgeModel.badgeStatus == 'achived'">Achieved badges are not available.</span><span ng-if="badgeModel.badgeStatus == 'assigned'">Assigned badges are not available.</span></h3>
+    </div>
+</section>
+<section class="vbox" ng-if="resources.stillLoading && badgeModel.allBadge.length != 0">
+    <img src="includes/images/still-loading.gif" class="loading"/>
+</section>
+
+<script type="text/ng-template" id="assignChildToBadge">
+    <div class="">
+        <header class="panel-heading text-uc font-bold">
+            Assign To Child
+        </header>
+        <ul class="list-group alt" ng-if="!stillLoadingChildren">
+            <li class="list-group-item" ng-repeat="participant in allHouseParticipants">
+                <div class="media">
+					<span class="pull-left thumb-sm">
+						<img style="height : 26px; width: 26px;" src="{{participant.profile_image}}" class="img-circle">
+					</span>
+                    <div class="pull-right">
+                        <div class="btn-group" data-toggle="buttons">
+                            <label class="btn btn-sm btn-no-w btn-default"
+                                   ng-disabled="assignedMembers.indexOf(participant.id) == -1"
+                                   ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}"
+                                   ng-click="assignedMembers.indexOf(participant.id) != -1 && childAssigToggle(participant.id, false)">
+                                <input type="radio" name="options" id="option2"
+                                       ng-disabled="assignedMembers.indexOf(participant.id) == -1"><i
+                                    class="fa fa-check text-active"></i> Unassign
+                            </label>
+                            <label class="btn btn-sm btn-no-w btn-default"
+                                   ng-disabled="assignedMembers.indexOf(participant.id) > -1"
+                                   ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}"
+                                   ng-click="!(assignedMembers.indexOf(participant.id) > -1) && childAssigToggle(participant.id, true)">
+                                <input type="radio" name="options" id="option1"
+                                       ng-disabled="assignedMembers.indexOf(participant.id) > -1"><i
+                                    class="fa fa-check text-active"></i> Assign
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-5" style="padding-right: 0;">
+                        <div><a href="#" class="text-ellipsis">{{participant.f_name}} {{participant.l_name}}</a></div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div ng-if="loadingHouseMembers || loadingAssignedMembers">
+            <div class="wrapper">
+                <h5 class="text-center m-t-xl"><i class="fa fa-spinner fa fa-spin fa fa-large"></i>&nbsp;&nbsp;&nbsp;Loading...
+                </h5>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="badgeDescription">
+    <section class="panel-default pop-ups bg-white">
+        <header class="panel-heading text-uc font-bold">
+            {{badge.name}}
+        </header>
+        <form class="panel-body wrapper-lg">{{badge.description}}</form>
+    </section>
+</script>

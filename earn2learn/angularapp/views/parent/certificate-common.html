@@ -1,0 +1,11 @@
+<header class="header bg-light bg-gradient b-b">
+    <p>Children</p>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+		<h2>Public certificate view</h2>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

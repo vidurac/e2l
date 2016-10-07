@@ -1,0 +1,56 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="getAllParticipants()">
+
+	<div class="col-md-6 pull-left no-padder">
+		<!-- mini search box start-->
+		<div class="search input-group left">
+			<div class="search-field">
+				<input type="text" placeholder="Search by Name" ng-model="searchUserName" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div><!-- end mini search box -->
+
+		<div class="btn btn-default m-t btn-no-w btn-clear" ng-click="searchUserName=undefined">Clear</div>
+	</div>
+	<div class="col-md-6 pull-right top-buttons no-padder">
+        <span class="pull-right"><a ui-sref="parent.addNewParticipant" class="btn btn-primary btn-sm btn-no-w">
+            <span class="text">Add New Child</span>
+        </a>
+            </span>
+	</div>
+
+</header>
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Children</h4>
+</div>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable no-padder m-b-xl" style="padding-bottom: 70px;">
+		<div class="col-md-4 m-t-sm" ng-repeat="user in allHouseParticipants | filter : searchUserName as userCount">
+            <section class="panel user-wrapper clearfix bg-light lter">
+                <div class="panel-body">
+                    <a ui-sref="parent.user({ id: user.id })" class="thumb pull-left m-r">
+                        <img style="height: 64px; width: 64px;" ng-src="{{user.profile_image}}" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a ui-sref="parent.user({ id: user.id })" class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</a>
+                        <small class="block text-muted text-ellipsis">Member since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                        <a ui-sref="parent.user({ id: user.id })" class="btn btn-xs btn-success m-t-xs btn-sm btn-no-w">View</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <h4 class="text-center" ng-if="userCount.length == 0 && (allHouseParticipants.length > 0)">No Search Results Found</h4>
+		<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+    		<div class="col-md-12 not-found m-t-sm" ng-if="!(allHouseParticipants.length > 0)">
+    			<h3>Add a child to get started on Earn2Learn!</h3>
+    		</div>
+    	</section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

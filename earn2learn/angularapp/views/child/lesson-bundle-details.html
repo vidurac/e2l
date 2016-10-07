@@ -1,0 +1,123 @@
+<section class="vbox" ng-if="!stillLoading">
+    <section class="clearfix">
+        <header class="section-title main-head row">
+            <div class="col-xs-12 col-md-12">
+                <h2 class="section-header">Lesson Bundle</h2>
+            </div>
+            </header>
+        <div class=" col-xs-10 col-xs-offset-1 col-md-offset-2 col-md-8 bg-white wrapper m-t-md m-b-md">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6" ng-if="bundle.gift_card_image != ''">
+
+                    <div>
+
+
+
+                        <!--<h2 class=" txt-green text-uc" style="font-size: 60px;"><span class="icon-smile"></span></h2>-->
+
+                        <!--<h2 class=" txt-green text-uc completed-points"><b>{{gotScore}}</b> %     |||   <b>+{{quiz.quiz_value}}</b><small>E2L Bucks</small></h2>-->
+                        <!--<h3 class=" txt-green text-uc completed-msg">Well Done, You have completed.</h3>-->
+
+                        <div ng-if="bundle.gift_card_image != ''">
+
+                            <div class="bundle-container clearfix">
+
+                                <span class="bundle-img">
+                                    <img class="img img-responsive" ng-src="{{bundle.gift_card_image}}">
+                                </span>
+                                <div class="clearfix"></div>
+                                <span class="bundle-details clearfix">
+                                    <span class="clear badge bundle-val"><b>${{bundle.amount}}</b></span>
+                                </span>
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <header class="bundle-detail-hd">
+                        <h3 class="fs1 txt-black m-t-none">{{bundle.name}}</h3>
+                        <h4  ng-if="bundle.completion != 100" class="fs2 txt-black">
+                            <span ng-if="bundle.child_quiz_allocations.length == 1">
+                                {{bundle.child_quiz_allocations.length}} Lesson needs to be completed
+                            </span>
+                            <span ng-if="bundle.child_quiz_allocations.length > 1">
+                                {{bundle.child_quiz_allocations.length}} Lessons needs to be completed
+                            </span>
+
+                        </h4>
+                        <h4  ng-if="bundle.completion == 100" class="fs2 txt-black">{{bundle.child_quiz_allocations.length}} Lessons</h4>
+                        <h5 class="fs3 txt-black m-t-lg">{{bundle.completion}}% Completed</h5>
+
+                        <h2 ng-if="bundle.completion == 100" class="txt-green text-uc ng-scope" style="font-size: 60px;">
+
+                        </h2>
+                        <button class="btn bg-green pull-left" ng-disabled="isRequestingBundleGiftCard" ng-if="bundle.gift_card_id && bundle.giftcard_requested == false && bundle.completion == 100" ng-click="requestBundleGiftCard()">
+                            Request Gift Card
+                        </button>
+                        <button class="btn bg-green pull-left" ng-disabled="bundle.giftcard_requested" ng-if="bundle.gift_card_id && bundle.giftcard_requested == true && bundle.completion == 100">
+                            Gift Card Requested
+                        </button>
+                    </header>
+                    <!--<h4 class=" text-muted">You must complete all lessons</h4>-->
+
+                </div>
+
+            </div>
+            <div class="row bundle-hd">
+                <div class="col-xs-12 col-md-10 col-md-offset-1">
+
+                    <h3 ng-if="bundle.completion == 100" class="m-t-md m-b-md txt-green ng-scope
+                text-center congratulations-txt">
+                        <span class="icon-smile"></span> <span class="text-uc">Congratulations</span> <br><br>
+                        You have Successfully Completed this Lesson Bundle
+                    </h3>
+                    <h4 ng-if="bundle.gift_card_id && bundle.amount" class="text-center text-muted m-t-md m-b-md"> You will Earn <span>${{bundle.amount}}</span>
+                        <span class="txt-orange points">{{bundle.gift_card_id}}</span> gift card</small></h4>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="wrapper col-xs-12">
+                    <ul class="bundle-list-group col-xs-12 col-md-10 col-md-offset-1">
+                        <li class="list-group-item row" ng-repeat="cquiz in bundle.child_quiz_allocations">
+                            <div class="col-xs-4  col-md-2 no-padder">
+                                <a class="video-lessons" ui-sref="child.lessonBundleLessonDetails({bundleId: bundle.id, quizid : cquiz.quiz_id})">
+                                    <span class="icon-play2"></span>
+                                    <img ng-if="cquiz.quiz.video.video_ref == 'youtube'" src="https://img.youtube.com/vi/{{cquiz.quiz.video.video_id}}/0.jpg" class="img-responsive"/>
+                                    <img ng-if="cquiz.quiz.video.video_ref == 'ted'" src="{{cquiz.quiz.video.thumb}}" />
+                                </a>
+                            </div>
+                            <div class="col-xs-8 col-md-10">
+
+                                <a ui-sref="child.lessonBundleLessonDetails({bundleId: bundle.id, quizid : cquiz.quiz_id})" class="quiz-title">
+                                    {{ cquiz.quiz.video.title}}
+                                    <i ng-if="cquiz.completed" class="text-success pull-right fa fa-2 fa-check-circle" aria-hidden="true"></i>
+                                </a>
+
+                                </div>
+
+                        </li>
+                    </ul>
+                    <div class="clearfix m-t-xs col-xs-12 col-md-10 col-md-offset-1">
+                        <div class="row btn-control-xs-12">
+                            <!--<button class="btn bg-green"  ng-if="!finishedAttempt" ng-click="startWatchVideo()">Start Lesson</button>-->
+                            <!--<button class="btn bg-green"  ng-if="attemptStatus == 1 && hasAttemptToFinish" ng-click="contAttempt()">Continue...</button>-->
+                            <a class="btn btn-info pull-right" ui-sref="child.lessonBundles">
+                                Back to Bundles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+</section>
+<section class="vbox" ng-if="stillLoading">
+    <h1 style="margin-top: 200px;" class="text-center text-white"><img src="includes/images/still-loading.svg" style="margin: 250px auto;text-align: center;display: block;" /></h1>
+</section>

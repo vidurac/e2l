@@ -1,0 +1,236 @@
+<style type="text/css">
+	.required {
+		position: absolute;
+		top: 33px;
+		right: 5px;
+		color: red;
+	}
+
+	.full button span {
+		background-color: limegreen;
+		border-radius: 32px;
+		color: black;
+	}
+	.partially button span {
+		background-color: orange;
+		border-radius: 32px;
+		color: black;
+	}
+</style>
+<div ng-init="loadTask()"></div>
+<header class="header bg-light bg-gradient b-b">
+	<div class="col-md-6 no-padder pull-left lesson-edit">
+		<button onClick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+	</div>
+</header>
+<div class="page-title col-md-12 m-b">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Chores <i class="fa fa-angle-right"></i> <span>Chores Assign</span></h4>
+</div>
+<section class="vbox stretch chores" ng-if="!resources.stillLoading">
+	<section class="padder panel-default" ng-if="!taskNotAvailable">
+		<div class="wrapper no-padder clearfix">
+			<h3 ng-bind-html="getUnsafeHtml(current_task.task)" class="m-t-sm"></h3>
+			<h5 ng-bind-html="getUnsafeHtml(current_task.description)"></h5>
+		</div>
+		<section class="vbox">
+			<section class="scrollable">
+				<form class="wrapper-md no-padder panel-body m-t-md" name="createTaskAllocationForm" id="createTaskAllocationForm" ng-submit="createTaskAllocation()" data-fv-framework="bootstrap" data-fv-icon-valid="glyphicon glyphicon-ok" data-fv-icon-invalid="glyphicon glyphicon-remove"
+				data-fv-icon-validating="glyphicon glyphicon-refresh" data-validate="parsley">
+					<div class="row m-b">
+						<div class="col-md-6 col-md-offset-3">
+						<section class="col-md-12 m-b">
+							<div class=" b-a bg-white col-md-12 padder-v no-p-l-r">
+							<div class="col-md-12 no-padder m-b">
+								<div class="col-md-4">
+									<label>Task Value <span class="txt-red">*</span></label>
+									<input type="number" pattern="^(100|[0-9][0-9]?)$" min="0" placeholder="Value" data-parsley-trigger="focusout" name="taskvalue" ng-model="resources.assignTask.value" class="form-control parsley-validated" data-required="true" required>
+									<div class="text-danger msg-error" ng-show="createTaskAllocationForm.taskvalue.$touched" ng-messages="createTaskAllocationForm.taskvalue.$error" role="alert">
+										<div ng-message="required">You must enter a task value</div>
+										<div ng-message="pattern">Please enter a valid value</div>
+									</div>
+								</div>
+							</div>
+								<div class="col-md-12 no-padder">
+							<div class="col-md-6 m-b">
+								<!--<div class="col-md-6">
+									<label>Start Date <span class="txt-red">*</span></label>
+									<pre class="disable">{{resources.assignTask.start_date}}</pre>
+									<br>
+									<label>Available Date</label>
+									<!--<input type="string" placeholder="YYYY-MM-DD" ng-model="resources.assignTask.start_date" class="form-control parsley-validated" data-required="true">-->
+									<!--<input type="text" ng-model="resources.assignTask.start_date" class="form-control parsley-validated" value="{{dt}}" data-required="true">-->
+									<!--<input type="hidden" ng-model="resources.assignTask.start_date" class="form-control parsley-validated" data-required="true">-->
+									<!-- <pre class="disable">{{resources.assignTask.start_date}}</pre> -->
+
+									<!--<pre>Selected date is: <em>{{dt | date:'fullDate' }}</em></pre>-->
+									<!-- </div> -->
+									<!-- <div class="col-md-6"> -->
+										<!-- <br> -->
+									<!-- <label>New Selected Date: <span class="txt-red">*</span></label> -->
+									<!---<pre ng-show="dt!=null"><em ng-model="resources.assignTask.start_date">{{dt | date:'yyyy-MM-dd'}}</em></pre>
+									<div style="display:inline-block; min-height:290px;">
+										<div uib-datepicker ng-model="dt" class="well well-sm" datepicker-popup="yyyy-MM-dd" datepicker-options="options"></div>
+									</div>-->
+
+									<label>Start Date: <span class="txt-red">*</span></label>
+									<span class="input-group-btn">
+            						<button type="button" class="btn btn-default date-picker" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+									<input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-value="resources.assignTask.dt" ng-model="resources.assignTask.dt" min-date="minDate" max-date="maxDate" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" readonly/>
+								</span>
+
+							</div>
+
+								<div class="col-md-6 m-b">
+
+											<label>Occurance <span class="txt-red">*</span></label>
+
+											<select
+													class="form-control parsley-validated" ng-model="resources.assignTask.occurance" data-required="true"
+													ng-options="occurance.value as occurance.name for occurance in resources.taskOccuranceOptions"
+													name="occurance" required>
+												<option value="">Select occurance</option>
+											</select>
+
+											<div class="text-danger msg-error" ng-show="createTaskAllocationForm.occurance.$error" ng-messages="createTaskAllocationForm.occurance.$error" role="alert">
+												<div ng-message="required">Please select occurance</div>
+											</div>
+
+									</div>
+							<!--<div class="col-md-6" ng-if="resources.assignTask.occurance && resources.assignTask.occurance != 1">-->
+
+									<!--<label>Attempts</label>-->
+									<!--<input type="number" min="1" pattern="^(100|[0-9][0-9]?)$" placeholder="Attempts" data-parsley-trigger="focusout" ng-model="resources.assignTask.attempts" class="form-control parsley-validated" min="0" max="100" data-required="true">-->
+
+							<!--</div>-->
+									</div>
+							</div>
+						</section>
+						<section class="col-md-12 ">
+							<div class="m-b clearfix">
+
+										<strong>Select the members who want to assign the chores. <span class="txt-red">*</span></strong>
+
+							</div>
+							<header class="header bg-light bg-light b-a ">
+								<div class="col-md-12 pull-right no-padder">
+									<!-- mini search box start-->
+									<div class="search input-group left">
+										<div class="search-field">
+											<input type="text" placeholder="Search by Name" ng-model="searchChildrenKey" class="input-sm form-control" />
+											<i class="fa fa-search" aria-hidden="true"></i>
+										</div>
+									</div><!-- end mini search box -->
+								</div>
+							</header>
+
+							<section class="panel panel-default chore-assign-user">
+								<section>
+									<section class="vbox">
+										<ul class="list-group no-margin alt">
+											<li class="list-group-item" ng-repeat="participant in allHouseChildren | filter : searchChildrenKey as childCount" ng-click="current_selected_user = participant">
+												<div class="clearfix">
+													<span class="pull-left thumb-sm">
+														<img src="{{participant.profile_image}}" class="img-circle">
+													</span>
+													<div class="pull-right text-success">
+														<div class="checkbox">
+															<label class="checkbox-custom">
+																<i class="fa fa-fw fa-square-o" ng-class="{'checked' : resources.assignTask.child_ids.indexOf(participant.id) != -1}" ng-click="toggleUserCheckForTaskAssign(participant.id)" ng-model="checked"></i>
+															</label>
+														</div>
+													</div>
+													<div class="media-body padder">
+														<div><a href="#/parent/user/{{participant.id}}" class="text-ellipsis">{{participant.f_name}} {{participant.l_name}}</a></div>
+													</div>
+												</div>
+											</li>
+										</ul>
+										<div class="text text-center wrapper" ng-if="childCount.length == 0 && allHouseChildren.length > 0">
+			                                No Search Results Found.
+			                            </div>
+			                            <div class="text text-center wrapper" ng-if="allHouseChildren.length == 0">
+			                                There are no children.
+			                            </div>
+									</section>
+								</section>
+							</section>
+						</section>
+							<div class="col-md-12 m-b">
+								<button type="submit" ng-if="!isTaskAllocationUpdate" ng-disabled="createTaskAllocationForm.$invalid || isAllocateWaiting || resources.assignTask.child_ids.length == 0 || resources.assignTask.dt.$invalid" class="btn btn-primary pull-right"><span ng-show="isAllocateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ allocateTaskButtonText }}</button>
+								<button type="submit" ng-if="isTaskAllocationUpdate" ng-disabled="createTaskAllocationForm.$invalid || isAllocateUpdateWaiting || resources.assignTask.dt.$invalid" class="btn btn-primary pull-right"><span ng-show="isAllocateUpdateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ allocateTaskUpdateButtonText }}</button>
+							</div>
+						</div>
+					</div>
+					<!--<div class="row wrapper ">
+						<div class="line line-dashed"></div>
+						<button type="submit" ng-if="!isTaskAllocationUpdate" ng-disabled="createTaskAllocationForm.$invalid || isAllocateWaiting || resources.assignTask.child_ids.length == 0 || !checked" class="btn btn-primary pull-right"><span ng-show="isAllocateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ allocateTaskButtonText }}</button>
+						<button type="submit" ng-if="isTaskAllocationUpdate" ng-disabled="createTaskAllocationForm.$invalid || isAllocateUpdateWaiting || resources.assignTask.child_ids.length == 0" class="btn btn-primary pull-right"><span ng-show="isAllocateUpdateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ allocateTaskUpdateButtonText }}</button>
+					</div>-->
+				</form>
+			</section>
+		</section>
+	</section>
+	<section ng-if="taskNotAvailable">
+		<h2 class="text-muted text-center">Failed to load this chores.</h2>
+	</section>
+	<script type="text/javascript">
+		//$('#createTaskAllocationForm').parsley();
+		/*$(".datepicker-input").each(function() {
+			$(this).datepicker();
+		});*/
+
+	</script>
+</section>
+<!--<section class="hbox stretch" ng-if="!resources.stillLoading">
+	<aside class="aside bg-white aside-xl lter">
+		<section class="vbox">
+			<section class="scrollable padder m-t">
+			</section>
+		</section>
+	</aside>
+	<aside class="aside bg-white aside-sm b-l">
+		<section class="vbox">
+			<header class="header bg-light bg-gradient b-b">
+				<p>Children</p>
+				<div class="col-md-8 pull-right m-t-sm">
+					<div class="input-group">
+						<input type="text" placeholder="search" ng-model="searchChildrenKey" class="input-sm form-control" />
+						<div class="input-group-btn">
+							<button class="btn btn-default btn-sm">Search</button>
+						</div>
+					</div>
+				</div>
+			</header>
+			<section class="scrollable m-b-xl">
+				<div ng-if="allHouseChildren.length == 0">
+					<h3 class="text-center">No children in this house.</h3>
+					<a ui-sref="parent.addNewParticipant"><h5 class="text-center text-default">Add New Child</h5></a>
+				</div>
+				<ul class="list-group alt" ng-if="!loadingHouseMembers && !loadingAssignedMembers">
+					<li class="list-group-item" ng-repeat="participant in allHouseChildren">
+						<div class="media">
+							<span class="pull-left thumb-sm"><img src="includes/template/images/avatar.jpg" class="img-circle"></span>
+							<div class="pull-right">
+								<div class="btn-group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default" ng-disabled="assignedMembers.indexOf(participant.id) == -1" ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}" ng-click="assignedMembers.indexOf(participant.id) != -1 && childAssigToggle(participant.id, false)">
+										<input type="radio" name="options" id="option2" ng-disabled="assignedMembers.indexOf(participant.id) == -1"><i class="fa fa-check text-active"></i> Unassign
+									</label>
+									<label class="btn btn-sm btn-default" ng-disabled="assignedMembers.indexOf(participant.id) > -1" ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}" ng-click="!(assignedMembers.indexOf(participant.id) > -1) && childAssigToggle(participant.id, true)">
+										<input type="radio" name="options" id="option1" ng-disabled="assignedMembers.indexOf(participant.id) > -1"><i class="fa fa-check text-active"></i> Assign
+									</label>
+								</div>
+							</div>
+							<div class="col-md-5" style="padding-right: 0;">
+								<div><a class="text-ellipsis">{{participant.f_name}} {{participant.l_name}}</a></div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</section>
+		</section>
+	</aside>
+</section>-->
+<!-------------------------------------------------------------------->
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

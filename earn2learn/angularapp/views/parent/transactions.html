@@ -1,0 +1,27 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="getParentTransactions()">
+    <p>Transactions History</p>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+		<div class="col-md-12 m-t-sm">
+		    <div class="table-responsive">
+    		    <table id="transactionTable" cellspacing="0" width="100%" ng-init="renderParentTransactionTable()" class="display table responsive nowrap dataTable dataTables_wrapper">
+    			    
+    			</table>
+            </div>
+        </div>
+		<!--<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+    		<div class="col-md-12 m-t-sm" ng-if="transactionHistory.length == 0">
+    			<h3>No Any Transactions</h3>
+    		</div>
+    	</section>-->
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

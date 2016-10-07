@@ -1,0 +1,162 @@
+// CSS border radius mixin
+@mixin border-radius($radius) {
+	-webkit-border-radius: $radius;
+ 	   -moz-border-radius: $radius;
+ 	    -ms-border-radius: $radius;
+ 	     -o-border-radius: $radius;
+ 	        border-radius: $radius;
+} 
+
+
+
+
+
+// CSS box shadow mixin
+@mixin box-shadow($x, $y, $spread, $color) {
+	-webkit-box-shadow: $x $y $spread $color;
+ 	   -moz-box-shadow: $x $y $spread $color;
+ 	    -ms-box-shadow: $x $y $spread $color;
+ 	     -o-box-shadow: $x $y $spread $color;
+ 	        box-shadow: $x $y $spread $color;
+}
+
+
+
+
+
+// Css transform property
+@mixin transform($property) { 
+	-webkit-transform: $property;
+       -moz-transform: $property;
+        -ms-transform: $property;
+         -o-transform: $property;
+            transform: $property;
+}
+
+
+
+
+
+// Css transition
+@mixin transition($property) {
+	-webkit-transition: $property;
+	   -moz-transition: $property;
+	    -ms-transition: $property;
+	     -o-transition: $property;
+	        transition: $property;
+}
+
+
+
+
+
+@mixin box-sizing ($box) {
+//  content-box | border-box | inherit
+  -webkit-box-sizing: $box;
+     -moz-box-sizing: $box;
+      -ms-box-sizing: $box;
+       -o-box-sizing: $box;
+          box-sizing: $box;
+}
+
+
+
+
+// Css font-size mixin
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculateRem($size);
+}
+
+
+
+
+// container grid system
+@mixin column($percentage, $float-direction:left) {
+  width: 100% * $percentage;
+  float: $float-direction;
+}
+
+
+
+
+
+// Clearfix
+@mixin clearfix {
+  &:after {
+    content:"";
+    display:table;
+    clear:both;
+  }
+}
+
+// flexbox
+@mixin flexbox() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+// Flex item
+@mixin flex($values) {
+  -webkit-box-flex: $values;
+  -moz-box-flex:  $values;
+  -webkit-flex:  $values;
+  -ms-flex:  $values;
+  flex:  $values;
+}
+
+// Flex flow item
+@mixin flex-flow($values) {
+  -webkit-flex-flow: $values;
+  -moz-flex-flow: $values;
+  -ms-flex-flow: $values;
+  flex-flow: $values;
+}
+
+// Flex order
+@mixin flex-order($val) {
+  -webkit-box-ordinal-group: $val;  
+  -moz-box-ordinal-group: $val;     
+  -ms-flex-order: $val;     
+  -webkit-order: $val;  
+  order: $val;
+}
+
+// Flex direction
+@mixin flex-direction($val) {
+  -webkit-box-direction: $val;
+  -moz-box-direction: $val;
+  -webkit-flex-direction: $val;
+  -ms-flex-direction: $val;
+  flex-direction: $val;
+}
+
+@mixin setHeightMinMax($val) {
+  height: $val;
+  min-height: $val;
+  max-height: $val;
+}
+
+@mixin setWidthMinMax($val) {
+  width: $val;
+  min-width: $val;
+  max-width: $val;
+}
+
+@mixin addEllipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin toFlex($fd, $fw, $jc, $ac, $ai) {
+  display: flex;
+  flex-direction: $fd;
+  flex-wrap: $fw;
+  justify-content: $jc;
+  align-content: $ac;
+  align-items: $ai;
+}

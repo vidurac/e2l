@@ -1,0 +1,113 @@
+<style type="text/css">
+    #search-wrapper {
+        margin: 100px auto;
+    }
+
+    .cursor-pointer:hover {
+        background-color: #EFEFEF;
+    }
+</style>
+<header  class="header bg-light bg-gradient b-b" ng-init="loadHouseMembers()">
+    <div class="col-md-6 pull-left no-padder">
+        <!--<button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>-->
+    </div>
+        <!--<div><span >Messages</span>
+    <button class="btn btn-success pull-right m-l-sm" ng-click="createNewMessage()" title="MESSAGE" >CREATE MESSAGE</button>
+    </div>-->
+</header>
+<div class="page-title col-md-12 col-xs-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Messages</h4>
+</div>
+<section class="hbox stretch padder padder-v">
+    <div class="messages-container bg-white">
+        <div class="col-md-4 col-xs-12 no-padder">
+        <section class="vbox">
+            <section class="scrollable">
+                <section class="w-f scrollable">
+                    <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333">
+                        <!-- nav -->
+                        <nav id="box1" class="nav-primary" ng-scrollbars  ng-scrollbars-config="configtop" style="height: 200px">
+                            <ul class="nav">
+                                <li ng-repeat="child in allHouseParticipants" ng-class="{'bg-light' : selectedMember == child.id}" >
+                                    <a scroll-down ng-click="loadEachChildMessage(child.id)">
+                                        <i class="">
+                                            <b class="bg-primary"></b>
+                                        </i>
+                                        <span><span>{{child.f_name}} {{child.l_name}} <i class="badge bg-warning" ng-if="child.counts>0">{{child.counts}}</i></span></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </section>
+            </section>
+        </section>
+    </div>
+        <div class="col-md-8 col-xs-12 no-padder">
+        <section class="vbox">
+            <section class="scrollable">
+                    <div ng-if="!loadingMessage">
+                        <article data-ng-view data-autoscroll class="media inbox-message wrapper-sm bg-white chat-block">
+                            <!--<div >
+                                <button ng-if="selectedChildId" ng-click="showAllMessages()" class="btn btn-sm btn-no-w btn-danger">View All Messages</button>
+                            </div>-->
+                                <div class="msg-container" >
+                                    <h3 ng-if="allMessages.length == 0 && selectedChildId != 0" class="text-center text-muted">
+                                        There are no messages.</h3>
+                                    <h3 ng-if="selectedChildId == 0 && allHouseParticipants.length != 0" class="text-center text-muted">
+                                        Please select your child .</h3>
+                                    <h3 ng-if="allHouseParticipants.length == 0" class="text-center text-muted">
+                                        You Don't have any child assigned Yet .</h3>
+                                    <div id="box" class="inbox-message-view"  ng-scrollbars  ng-scrollbars-config="config">
+                                    <div   ng-repeat="message in allMessages" ng-class="{'sent-msg': message.type ==1 , 'received-msg': message.type ==0}" >
+                                        <div ng-if="message.type ==0" class="user">{{message.f_name}} :</div>
+                                        <div ng-if="message.type ==1" class="user">Me :</div>
+                                        <div ng-class="(allMessage.status==0) ? 'unread-message' : 'read-message'"
+                                             class="msg-body">
+                                            <div class="chat-content">{{message.message}}</div>
+                                        </div>
+                                    </div>
+                                        </div>
+
+                                </div>
+
+                            <form ng-show="selectedChildId != 0" class="panel-body wrapper" name="addNewMessageForm" id="addNewMessageForm"
+                                  ng-submit="addNewMessage(resources.newMessage,selectedChildId)" data-validate="parsley">
+                                <input type="hidden" ng-model="resources.newMessage.receiver_id" value="">
+                                <div class="form-group">
+                    <textarea placeholder="Message " data-parsley-trigger="focusout"
+                              ng-model="resources.newMessage.message" class="form-control type-message" data-required="true"
+                              required></textarea>
+                                </div>
+                                <button type="submit"
+                                        ng-disabled="resources.isSaving"
+                                        class="btn btn-primary pull-right"><span ng-show="resources.isSaving"><i
+                                        class="fa fa-circle-o-notch fa-spin"></i></span> {{ sendButtonText }}
+                                </button>
+                            </form>
+
+                        </article>
+                    </div>
+            </section>
+        </section>
+    </div>
+    </div>
+</section>
+<section class="vbox" ng-if="loadingHouseMembers">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<script type="text/ng-template" id="readMessageBox">
+    <div class="">
+        <header class="panel-heading text-uc font-bold">Read Message
+        </header>
+        <article class="media b-b wrapper-sm">
+            <div >
+                <div><a ng-click="readMessage(inboxMessage)">{{inboxMessage.subject}}</a></div>
+                <div class="media-body">
+                    <div >{{inboxMessage.message}}</div>
+                </div>
+            </div>
+        </article>
+    </div>
+</script>

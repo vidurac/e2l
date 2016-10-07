@@ -1,0 +1,49 @@
+<style type="text/css">
+	.category {
+		cursor: pointer;
+		height: 110px;
+	}
+	
+	.categoryName {
+		font-size: 17px;
+	}
+</style>
+
+<header class="header bg-light bg-gradient b-b">
+	<p>Categories <span class="label bg-info">{{CategoryModel.categories.length}}</span></p>
+	<div class="col-md-4 pull-right m-t-sm">
+		<div class="input-group">
+			<input type="text" placeholder="search" ng-model="resources.searchCategoryName" class="input-sm form-control" />
+			<div class="input-group-btn">
+				<button class="btn btn-default btn-sm">Search</button>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-1 pull-right m-t-sm">
+		<button ng-click="openPopup(1)" class="btn btn-primary btn-sm">
+			<i class="fa fa-plus text"></i>
+			<span class="text">CREATE</span>
+		</button>
+	</div>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl">
+		<div class="col-md-3 m-t-sm" ng-repeat="category in CategoryModel.categories | filter : resources.searchCategoryName as numberOfCategories" ng-if="category.enable == 1">
+			<div class="category bg-white wrapper b-a hover" ng-click="openCategory(category);">
+				<a ui-sref="admin.category({ id: category.id })"><strong class="text-ellipsis categoryName" ng-bind="category.name"></strong></a>
+				<small>created on {{category.created_at | amDateFormat:'MM/DD/YYYY'}}</small><br />
+				<a class="btn btn-sm pull-right btn-danger" ng-click="deleteCategory(category)" title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
+				<a class="btn btn-sm pull-right btn-warning" ng-click="openPopup(3, category)" title="Edit" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
+			</div>
+		</div>
+    	<h4 class="text-center" ng-if="numberOfCategories.length == 0 && CategoryModel.categories.length > 0">No Search Results Found</h4>
+    	<section class="scrollable padder m-b-xl">
+            <div class="col-md-3 m-t-sm" ng-if="!(CategoryModel.categories.length > 0)">
+                <h3>No Any Categories</h3>
+            </div>
+        </section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

@@ -1,0 +1,170 @@
+
+<div  ng-init="loadParentHouse()"></div>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right"></i> My House</h4>
+</div>
+<section class="hbox stretch" ng-if="!resources.stillLoading">
+    <div class="col-md-5 col-sm-6 xol-xs-12 left-col">
+        <section class="vbox">
+            <section class="scrollable">
+                <div class="house-img-wrapper" id="house-img-wrapper">
+                    <div class="clearfix">
+                        <div class="thumb-xxl">
+                            <div style="text-align: left;" class="wrapper-sm bg-dark">
+                                <h3 class="m-t-sm" ng-bind-html="getUnsafeHtml(house.name)"></h3>
+                            </div>
+                            <!--<img src="uploads/house/{{house.image}}" style="width: 100%; height: 200px;" class="img img-responsive">-->
+                            <div class="wrapper houseNameHolder bg-info">
+                                <a ui-sref="parent.profile" class="thumb-profile pull-left m-r">
+                                    <img style="height: 100px !important; width: 100px !important;" src="{{house.profile_image}}" class="img-circle owner-image">
+                                </a>
+                                <div class="clear">
+                                    <a ui-sref="parent.profile" class="h4 m-b-xs text-ellipsis cursor-pointer"  ng-bind-html="getUnsafeHtml(house.f_name + ' ' + house.l_name)"></a>
+                                    <small class="text-white m-b ng-binding">You are the owner of this house</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--<section class="panel panel-default">
+                        <div class="panel-body">
+                            <h4 class="text-center">Update House Image</h4>
+                            <h5 class="text-center">
+    		                    <img ngf-src="picFile" class="img img-responsive">
+    		                    <div ng-show="picFile.progress >= 0" class="progress progress-sm progress-striped  active">
+                                    <div class="progress-bar progress-bar-success" data-toggle="tooltip" ng-bind="picFile.progress + '%'" data-original-title="{{picFile.progress + '%'}}" style="width:{{picFile.progress}}%"></div>
+                                </div>
+    		                </h5>
+                             <form >
+                                <input type="file" ngf-select="" ng-change="uploadFileValidate(picFile)" name="imageUploadForm" class="btn inline" ng-model="picFile" name="file" ngf-pattern="'image/*'"
+                                       ngf-accept="'image/*'" ngf-max-size="1MB" required="">
+                                 <span>accepted image formats gif ,png ,jpg and max upload size is 1MB</span>
+                                <br>
+                                <button ng-disabled="!isValidImageFormat || uploading" class="btn m-t-md btn-success btn-block" ng-click="uploadPic(picFile)">{{uploadImageBtnTxt}}</button>
+                            </form>
+                        </div>
+                    </section>-->
+                    <h5 ng-if="house.description && house.description != ''"><strong>Description</strong></h5>
+                    <p ng-if="house.description && house.description != ''">{{house.description}}</p>
+                </div>
+            </section>
+        </section>
+    </div>
+    <div class="col-md-7 col-sm-6 xol-xs-12 ui-tabs right-col">
+        <section class="vbox">
+            <header class="header bg-light bg-gradient">
+                <ul class="nav nav-tabs nav-white">
+                    <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'members'}"><a ng-click="resources.currentTab = 'members'" data-toggle="tooltip" title="Children"><i class="fa fa-user"></i></a></li>
+                    <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'lessons'}"><a ng-click="resources.currentTab = 'lessons'" data-toggle="tooltip" title="Lessons"><i class="fa fa-video-camera"></i></a></li>
+                    <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'house-settings'}"><a ng-click="resources.currentTab = 'house-settings'" data-toggle="tooltip" title="Settings"><i class="fa fa-gear"></i></a></li>
+                </ul>
+            </header>
+            <section class="scrollable">
+                <div class="tab-content">
+                    <div class="tab-pane" ng-class="{'active' : resources.currentTab == 'members'}">
+
+                        <header class="m-t-n">
+                            <div class="search-wrapper">
+                                <div class="page-title col-md-12 no-padder m-b">
+                                    <h5><i class="fa fa-angle-right"></i> <b>Children</b></h5>
+                                </div>
+                            <!-- mini search box start-->
+                            <div class="search input-group left">
+                                <div class="search-field">
+                                    <input type="text" placeholder="Search by Name" ng-model="searchUserName" class="input-sm form-control" />
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                </div>
+                            </div><!-- end mini search box -->
+                            </div>
+                        </header>
+                        <section class="scrollable m-b-xl">
+                            <div class="col-md-6 m-t-sm" ng-repeat="user in house.members | filter : searchUserName as houseCount">
+                                <section class="clearfix bg-light dker lter">
+                                    <div class="panel-body box-child" style="height : 95px">
+                                        <a ui-sref="parent.user({ id: user.id })" class="thumb pull-left m-r">
+                                            <img style="height: 64px; width: 64px;" src="{{user.profile_image}}" class="img-circle">
+                                        </a>
+                                        <div class="clear">
+                                            <a ui-sref="parent.user({ id: user.id })" class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</a>
+                                            <!--<a href="#" class="btn btn-xs btn-success m-t-xs">View</a>-->
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <div class="text text-center wrapper" ng-if="houseCount.length == 0 && house.members.length > 0">
+                                No Search Results Found.
+                            </div>
+                            <div class="text text-center wrapper" ng-if="house.members.length == 0">
+                                There are no children in this house.
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-pane" ng-class="{'active' : resources.currentTab == 'lessons'}">
+                        <header class="m-t-n">
+                            <div class="search-wrapper">
+                                <div class="page-title col-md-12 no-padder m-b">
+                                    <h5><i class="fa fa-angle-right"></i> <b>Lessons</b></h5>
+                                </div>
+                                <!-- mini search box start-->
+                                <div class="search input-group left">
+                                    <div class="search-field">
+                                        <input type="text" placeholder="Search by Name" ng-model="searchLessonName" class="input-sm form-control" />
+                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                    </div>
+                                </div><!-- end mini search box -->
+                            </div>
+                        </header>
+                        <section class="scrollable m-b-xl">
+                            <div class="col-md-4 m-t-sm" ng-if="!resources.stillLoadingLessons" ng-repeat="video in houseLessons | filter : {title : searchLessonName} as houseLessonCount">
+                    		    <div class="video bg-white b-a hover  m-b-xl">
+                    				<div class="control-group">
+                    					<a ui-sref="parent.lesson({id : video.video_id})">
+                    						<img ng-src="https://img.youtube.com/vi/{{video.video_url_id}}/0.jpg" ng-if="video.video_ref == 'youtube'" style="height:auto; width: 100%;" class="img img-responsive" />
+                    						<img ng-src="includes/images/ted-no-thumbnail.png" ng-if="video.video_ref == 'ted'" style="height:auto; width: 100%;" class="img img-responsive" />
+                    					</a>
+                    				</div>
+                    				<div class="wrapper bg-white">
+                    					<a ui-sref="parent.lesson({id : video.video_id})"><strong class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+                    				</div>
+                    			</div>
+                    		</div>
+                    		<div class="text-center wrapper" ng-if="resources.stillLoadingLessons">
+                                <i ng-if="loadingHouseLessons" class="fa fa-spinner fa fa-spin fa fa-large"></i>
+                            </div>
+                            <div class="text text-center wrapper" ng-if="houseLessonCount.length == 0 && houseLessons.length > 0">
+                                No Search Results Found.
+                            </div>
+                            <div class="text text-center wrapper" ng-if="houseLessons.length == 0">
+                                There are no lessons in this house.
+                            </div>
+                        </section>
+                    </div>
+                    <div class="tab-pane" ng-class="{'active' : resources.currentTab == 'house-settings'}">
+                        <header class="header m-t-n">
+                            <div class="page-title col-md-12 no-padder m-b">
+                                <h5><i class="fa fa-angle-right"></i> <b>Update House</b></h5>
+                            </div>
+                            <h3>Update House</h3>
+                        </header>
+                        <section class="scrollable m-b-xl">
+                            <form class="panel-body" name="updateHouseForm" id="updateHouseForm" ng-controller="AuthController" ng-submit="updateHouse(updateHouseData)" data-validate="parsley">
+                                <div class="form-group">
+                                    <label class="control-label" for="name">Name</label>
+                                    <input type="text" id="name" ng-model="updateHouseData.name" placeholder="Name" class="form-control" data-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="description">Description</label>
+                                    <textarea rows="6" id="description" ng-model="updateHouseData.description" placeholder="Description" class="form-control"></textarea>
+                                </div>
+                                <button ng-disabled="updateHouseForm.$invalid || isWaiting" type="submit" class="btn btn-primary">
+                                <span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.updateHouseBtnText }}</button>
+                            </form>
+                        </section>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </div>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

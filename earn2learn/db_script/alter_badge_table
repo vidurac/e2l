@@ -1,0 +1,1 @@
+ALTER TABLE badges MODIFY badges.description VARCHAR(255);

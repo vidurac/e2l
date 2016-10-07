@@ -1,0 +1,195 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-slick]').each(function () {
+            $(this).slick($(this).data('slick'))
+        });
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('[data-slick]').each(function () {
+                $(this).slick('setPosition');
+            });
+        });
+    });
+</script>
+<div ng-init="loadMyQuestionAnswers()"></div>
+<section class="vbox valid-quiz" ng-if="!resources.stillLoading && validQuiz">
+    <section class="scrollable text-center">
+        <!-- s lessons-section -->
+        <div class="fullWidth subject-title-section questions">
+            <!-- <img class="subject-cover-bg" src="includes/child_includes/img/subjectCoave.png"> -->
+            <section class="container">
+                <header class="quiz-title">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 start-quiz-head">
+                            <h2 title="{{quiz.parent_category}}" class="text-ellipsis main-category"
+                                ng-bind="quiz.parent_category"></h2>
+                            <h3 title="{{quiz.category}}" class="text-ellipsis m-t-sm quiz-category"
+                                ng-bind="quiz.category"></h3>
+                            <h4 title="{{quiz.title}}" class="text-ellipsis quiz-category" ng-bind="quiz.title"></h4>
+                        </div>
+                        <div class="col-md-12 quiz-points transition">
+                            <div class="col-xs-12 col-sm-12 col-lg-12">
+                                <div class="subtitleInfo col-xs-12 col-md-10 col-md-offset-2 no-padder">
+                                    <div class="col-sm-4 col-xs-4 col-md-2 col-lg-2 no-padder">
+                                        <span class="q-quiz pts">
+                                            <span class="count">{{questions.length}}</span>
+                                            <small class="clearfix">Questions</small>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-4 col-md-2 col-lg-2 no-padder">
+                                        <span ng-init="getAnsweredQuestionCount()" class="q-completed pts">
+                                            <span class="count">{{getAnsweredQuestionCount()}}</span>
+                                            <small class="clearfix">Completed</small>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-4 col-xs-4 col-md-2 col-lg-2 no-padder">
+                                        <span class="q-remain pts">
+                                            <span class="count">{{remainingAttempt}}</span>
+                                            <small class="clearfix">Attempts Left</small>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6 col-md-2 col-lg-2 no-padder">
+                                        <span class="q-pts pts"><span class="count">+{{points}}</span>
+                                            <small class="clearfix">E2L Bucks</small>
+                                        </span>
+                                    </div>
+                                    <div class="col-sm-6 col-xs-6 col-md-2 col-lg-2 no-padder">
+                                        <span class="p-rate pts"><span class="count">{{parsingRate}}%</span>
+                                            <small class="clearfix">Pass Rate</small>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-lg-12">
+                                <div class="subtitleInfo col-xs-12 no-padder">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </header>
+            </section>
+        </div>
+        <!-- s lessons-section -->
+        <div class="fullWidth lessons-section bg-bage other-lessons">
+
+            <section class="container">
+                <div class="col-xs-12 col-md-8 col-md-offset-2">
+                <header class="section-title">
+                    <h2 class="section-header quiz no-margin no-padder">Questions</h2>
+                </header>
+                <div>
+                    <div class="wrap-container"><!-- ng-if="(showQuestion && $index == nextIndex )" -->
+                        <span class="q-arrow"></span>
+                        <div class="container">
+                            <div class="col-md-12 q-wrapper question padder-v">
+                                <h3 class="text-left q-number padder">{{nextIndex + 1}}.</h3>
+
+                                <h3 class="text-left q-text" ng-bind="questions[nextIndex].question"></h3>
+                                <ul ng-if="questions.length > nextIndex"
+                                    class="list-group-lg list-group-sp quiz-points">
+                                    <li class=" cursor-pointer m-t-md"
+                                        ng-repeat="answer in questions[nextIndex].answers">
+                                        <div class="clear text-left">
+                                            <label class="pull-left">
+                                                <input type="radio" ng-click="selectAnswer(answer.id)"
+                                                       name="q{{questions[nextIndex].id}}"
+                                                       ng-checked="resources.answerList[questions[nextIndex].id].answerId == answer.id">
+                                                <span class="answer" ng-bind="answer.answer"></span><br/>
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                            <div class="col-md-12 q-wrapper control-nav btn-control-xs-12">
+                            <div class="col-md-7 col-sm-8 col-xs-12 no-padder">
+                                <a ng-click="backToLessonBtnAction()"
+                                   class="goBackbtn btn bg-orange btn-lg"><span
+                                        class="fa fa-angle-left text"></span> Back to Lessons</a>
+                                <button ng-if="hasMissingAnswer && missingAnswerIndex != nextIndex" ng-click="checkAllAnswered()"
+                                        type="button"
+                                        class="btn btn-success center-block btn-backToNotAnswered">Back to the
+                                    Missing Question
+                                </button>
+                            </div>
+                            <div class="col-md-5 col-sm-5 col-xs-12 no-padder">
+                                <span class="block">
+                                    <button  class="btn btn-success btn-prev no-transition" ng-disabled="!questions[nextIndex - 1]"
+                                            ng-click="clickPreviousButton((nextIndex - 1),questions.length ,questions[nextIndex - 1])">
+                                        <i class="fa fa-angle-left text"></i>&nbsp;&nbsp;Previous
+                                    </button>
+                                    <button ng-if="questions.length != (nextIndex+1)" class="btn-success btn-prev btn no-transition"
+                                            ng-click="clickNextButton((nextIndex + 1) ,questions.length , questions[nextIndex + 1])">
+                                        Next&nbsp;&nbsp;<i class="fa fa-angle-right text"></i>
+                                    </button>
+                                    <button ng-if="questions.length == (nextIndex+1)" ng-click="finishAttempt();"
+                                            class="btn btn-success no-transition center-block btn-finish-qz">
+                                        Finish
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+        </div>
+        <!-- s lessons-section -->
+
+        <!--<header class="header m-t-sm bg-light b-b" ng-if="!resources.attemptCompleted">
+            <button ng-disabled="resources.currentQuestionIndex == 0" class="btn btn-primary text-uc pull-left m-t-xl" ng-click="previousQuestion();"><i class="fa fa-chevron-left text"></i></button>
+            <div class="m-l-xl btn-group pull-left">
+                <button type="button" ng-repeat="question in questions track by $index" class="btn btn-default" ng-class="{ 'active' : $index==resources.currentQuestionIndex, 'btn-success' : resources.answerList[question.id], 'btn-danger' : (resources.isValidateChecked && resources.notAnsweredList.indexOf(question.id) != -1)}"
+                ng-click="gotoQuestion($index);">{{$index + 1}}</button>
+            </div>
+            <button ng-hide="resources.currentQuestionIndex >= questions.length-1" class="btn btn-primary text-uc pull-right m-t-xl" ng-click="nextQuestion();"><i class="fa fa-chevron-right text"></i></button>
+            <button ng-show="resources.currentQuestionIndex == questions.length-1" class="btn btn-info text-uc pull-right m-t-xl" ng-click="finishAttempt();">FINISH&nbsp;<i class="fa fa-chevron-right text"></i></button>
+        </header>
+        <div class="row" ng-if="!resources.attemptCompleted">
+            <div class="col-md-1">
+                <div class="scrollable">
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="media" style="color : black;">
+                    <div class="media-body text-left wrapper text-danger">
+                        <span class="pull-left media-xs ng-binding">
+                            <h4>{{resources.currentQuestionIndex + 1}}.</h4>
+                        </span>
+                        <div class="clear ng-binding">
+                            <h4 ng-bind="resources.currentQuestion.question"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="scrollable wrapper">
+                    <ul class="gutter list-group-lg list-group-sp" style="padding-left: 0;">
+                        <li class="list-group-item box-shadow cursor-pointer" ng-repeat="answer in resources.currentQuestion.answers track by $index" ng-class="{'active' : resources.answerList[resources.currentQuestion.id].answerId == answer.id}" ng-click="selectAnswer(answer.id)">
+                            <div class="clear text-left" ng-bind="answer.answer"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="scrollable">
+                </div>
+            </div>
+        </div>-->
+       <!-- {{remainingAttempt}}-->
+
+    </section>
+</section>
+<section class="vbox" ng-if="!resources.stillLoading && !validQuiz">
+    <h1 style="margin-top: 200px;" class="text-center">Not Valid Quiz.</h1>
+    <h4 class="text-center text-uc">
+        <a ui-sref="child.lessons" class="goBackbtn text-white btn-none-float"><span class="icon-arrow-left-thick"></span>View
+            Assigned Lessons</a>
+    </h4>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

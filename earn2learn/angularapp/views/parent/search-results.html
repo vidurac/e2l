@@ -1,0 +1,48 @@
+<style type="text/css">
+	#search-wrapper{
+		margin: 100px auto;
+	}
+	#triangle-topleft {
+		width: 0;
+		height: 0;
+		border-top: 100px solid #000000;
+		border-right: 100px solid transparent;
+		position: absolute;
+	}
+	
+	#triangle-topleft img{
+		width: 50px;
+	    height: 50px;
+	    position: relative;
+	    margin-top: -160px;
+	    margin-left: 5px;
+	}
+</style>
+<div ng-init="loadSearchVideos()"></div>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl text-center" style="padding-bottom: 70px;">
+		<h3>Search Results for "{{keyword}}"</h3>
+		<div class="col-md-3 m-t-sm" ng-repeat="video in searchLessons">
+			<div id="triangle-topleft" class="m-t-sm">
+				<img class="img" title="This Lesson is already in your house." src="includes/images/check.png" />
+			</div>
+		    <div class="video bg-white b-a hover  m-b-xl">
+				<!--<video-thumbnail video="{{video}}" video-ref="{{video.video_ref}}" video-id="{{video.video_id}}"></video-thumbnail>-->
+				<div class="control-group">
+					<a ui-sref="parent.lesson({id : video.id})">
+						<img ng-if="video.video_ref == 'youtube'" style="height: 142px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'" style="height: 142px; width: 100%;" class="img img-responsive" src="includes/images/ted-no-thumbnail.png" />
+					</a>
+				</div>
+				<div class="wrapper bg-white">
+					<a ui-sref="parent.lesson({id : video.id})"><strong class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+					<small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+				</div>
+			</div>
+		</div>
+		<h4 class="text-center" ng-if="searchLessons.length == 0">No Results found for "{{keyword}}"</h4>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

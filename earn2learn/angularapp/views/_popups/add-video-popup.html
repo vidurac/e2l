@@ -1,0 +1,38 @@
+<style type="text/css">
+    .ngdialog.ngdialog-theme-default .ngdialog-content {
+        max-width: 100%;
+        width: 450px;
+    }
+</style>
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center" ng-init="loadAllCategories()">
+        <strong class="text-uc">Create Lesson</strong>
+    </header>
+    <form class="panel-body wrapper-lg" name="registerForm" id="registerForm" ng-submit="addNewVideo(resources.newVideo)" data-validate="parsley">
+        <div class="form-group">
+            <select class="form-control input-lg" ng-model="resources.newVideo.video_ref">
+                <option value="youtube">Youtube</option>
+                <option value="ted">TED</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Video Title" data-parsley-trigger="focusout" ng-model="resources.newVideo.title" class="form-control input-lg" data-required="true">
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Video Description" data-parsley-trigger="focusout" ng-model="resources.newVideo.description" class="form-control input-lg" data-required="true">
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="URL" data-parsley-trigger="focusout" ng-model="resources.newVideo.url" class="form-control input-lg" data-required="true">
+        </div>
+        <div class="form-group">
+            <input type="text" placeholder="Iframe" data-parsley-trigger="focusout" ng-model="resources.newVideo.i_frame" class="form-control input-lg" data-required="true">
+        </div>
+        <div class="form-group">
+            <select class="form-control input-lg" ng-options="category.id as category.name for category in VideoModel.allCategories" ng-model="resources.newVideo.category_id">
+                <option style="display:none" value="">Select a Category</option>
+            </select>
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" class="btn btn-primary"><span ng-show="isRegWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addVideoButtonText }}</button>
+    </form>
+</section>

@@ -1,0 +1,90 @@
+<style type="text/css">
+    .task {
+        cursor: pointer;
+        height: 145px;
+    }
+    
+    .taskName {
+        font-size: 17px;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="getChildFinishedTask()">
+    <div class="col-md-6 col-xs-12 pull-left no-padder">
+        <div class="search input-group left">
+            <!-- mini search box start-->
+            <div class="input-group pull-left">
+                <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Chores">
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu animated fadeInUp">
+                    <span class="arrow top"></span>
+                    <li>
+                        <a ui-sref="parent.assignedTasks" class="cursor-pointer">My Chores</a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="search input-group left">
+            <div class="search-field">
+                <input type="text" placeholder="Search by Name" ng-model="resources.searchTaskName" class="input-sm form-control"/>
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div><!-- end mini search box -->
+        </div>
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetFinishChoresFilters()">Clear</div>
+    </div>
+</header>
+<div class="page-title col-md-12">
+
+    <div class="col-md-6 col-xs-12 no-padder">
+        <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Finished Chores</h4>
+    </div>
+    <div class="col-md-6 col-xs-12 no-padder">
+        <div class="col-md-12 no-padder">
+            <h5 class="m-l pull-right check-marks"><span class="un-satisfied m-r-xl"><img class="img-assigned" src="includes/images/un-check.png"/> <label>Unsatisfied</label></span> <span class="satisfied"><img class="img-assigned" src="includes/images/check.png"/> <label>Satisfied</label></span></h5>
+        </div>
+
+    </div>
+</div>
+<section class="vbox" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl wrapper">
+        <article class="media b-b wrapper-sm" ng-repeat = "task in childFinishedTasks | orderBy : '-created_at' | filter : {enable : 1, status : 2, task : resources.searchTaskName} as finishedTaskCount">
+            <span class="pull-left thumb-sm">{{$index + 1}}.</span>
+            <div class="media-body">   
+                <div class="col-md-1">
+                    <img style="height: 40px; width: 40px;" ng-src="{{task.profile_image}}" class="img-circle">
+                </div>
+                <div class="col-md-2">
+                    <span>{{task.f_name}} {{task.l_name}}</span>
+                </div>
+                <div class="col-md-7">
+                    <span class="h4" ng-bind-html="getUnsafeHtml(task.task)"></span>
+                    <small class="block m-t-xs" ng-bind-html="getUnsafeHtml(task.description)"></small>
+                </div>
+                <div  class="col-md-2 no-padder">
+                    <div ng-show="task.is_approved == 0" class="media-xs text-center text-muted pull-right">
+                        <a ng-disable="satising" ng-click="taskSatisfication(task, 1)" class="btn btn-sm btn-no-w btn-primary">Satisfy</a>
+                        <a ng-disable="satising" ng-click="taskSatisfication(task, 2)" class="btn btn-sm btn-no-w btn-danger">Unsatisfy</a>
+                    </div>
+                    <div ng-show="task.is_approved == 1 && task.is_satisfy == 1" class="media-xs text-center text-muted pull-right">
+                        <span data-toggle="tooltip" data-placement="left" title="Unsatisfy"><img class="img-assigned"  src="includes/images/check.png"/></span>
+                    </div>
+                    <div ng-show="task.is_approved == 1 && task.is_satisfy == 0" class="media-xs text-center text-muted pull-right">
+                        <span data-toggle="tooltip" data-placement="left" title="Unsatisfied"><img class="img-assigned"  src="includes/images/un-check.png"/></span>
+
+                    </div>
+                </div>
+            </div>
+        </article>
+        <div class="col-md-12 not-found m-t-sm">
+            <h3 class="text-muted" ng-if="!childFinishedTasks">
+                There are currently no finished chores
+            </h3>
+        </div>
+        <h4 class="text-center" ng-if="finishedTaskCount.length == 0 && (childFinishedTasks.length > 0)">No Search Results Found</h4>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

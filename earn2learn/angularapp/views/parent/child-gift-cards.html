@@ -1,0 +1,81 @@
+
+<header class="header bg-light bg-gradient b-b gift-cards" ng-init="loadRequestedGiftcards()">
+
+    <div class="col-md-6 pull-left no-padder">
+    <!-- mini search box start-->
+    <div class="search input-group left">
+        <div class="search-field">
+            <input type="text" placeholder="Search by Name" ng-model="searchCard" class="input-sm form-control" />
+            <i class="fa fa-search" aria-hidden="true"></i>
+        </div>
+    </div><!-- end mini search box -->
+    <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="searchCard=undefined">Clear</div>
+
+    </div>
+</header>
+<div class="page-title col-md-12 m-b">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Gift Cards <i class="fa fa-angle-right"></i> <span>Gift Card Requests</span></h4>
+</div>
+<section class="vbox gift-cards" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl">
+        <div class="grid" masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+            <div class="item-sizer col-lg-4 col-md-3 col-sm-6 col-xs-12"></div>
+		<div masonry-brick class="grid-item col-lg-3 col-md-4 col-sm-6 col-xs-12 m-t-sm" ng-repeat="card in requestedGiftCards | filter : searchCard as loadedResult track by $index">
+            <section class="panel b-a clearfix bg-light lter no-margin">
+                <div class="panel-body" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+                	<div class="panel-header"></div>
+                    <div class="card-wrapper">
+                        <a class="cursor-pointer text-ellipsis"><h4>{{card.Name}}</h4></a>
+                        <!--{{card.card_id}}-->
+                        <a class="card-val">
+                            <span class="clear badge pull-right card-val">${{card.card_points}}</span>
+                            <img class="img img-responsive" src="{{card.image.ImageUrl}}" />
+                            <!--<img src="{{card.user_image}}"  class="img-circle" width="35" height="35">-->
+                        </a>
+                        <div class="clear">
+                            <div class="card-info">
+                                <h5>Requested by {{card.child_f_name}} {{card.child_l_name}}</h5>
+                                <h6>Total points : <span class="txt-orange"></span>{{card.child_points}}</h6>
+                                <h6 class="text-info" ng-if="card.bundle_id">Completed lesson bundle - {{card.bundle_name}}</h6>
+                                <h6 class="text-info" ng-if="card.sponsor_id == ''">Assigned by parent</h6>
+                                <h6 class="text-info" ng-if="card.bundle_id == ''">Requested from child dashboard</h6>
+                                <h6 class="text-info" ng-if="card.sponsor_id">Assigned By Sponsor: <span class="txt-orange"></span>{{card.sponsor_name}}</h6>
+                            </div>
+                    	<!--<button ng-if="!card.sponsor_id" ng-disabled="card.child_points < card.card_points" class="btn btn-sm btn-no-w btn-default m-t-xs" ng-click="openGiftCardPaymentForm(card)" ng-class="{'btn-success' : card.child_points >= card.card_points}">Buy</button>-->
+                        <button ng-if="!card.sponsor_id" ng-disabled="card.bundle_id == '' && card.child_points < card.card_points" class="btn btn-sm btn-no-w btn-default m-t-xs" ng-click="openGiftCardPaymentForm(card)" ng-class="{'btn-success' : card.bundle_id != '' || card.child_points >= card.card_points}">Buy</button>
+                    	<button class="btn btn-sm btn-no-w btn-danger m-t-xs" ng-click="rejectGiftCard(card)">Reject</button>
+                    </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+		</div>
+
+        <section class="padder m-b-xl" style="padding-bottom: 70px;">
+    		<div class="col-md-12 not-found m-t-sm" ng-if="!(requestedGiftCards.length > 0) && searchCard == ''">
+    			<h3>There are currently no gift card requests pending</h3>
+    		</div>
+    	</section>
+        <section class="padder" ng-if="!(loadedResult.length > 0) && searchCard != ''">
+            <div class="col-md-12 not-found m-t-sm">
+                <h3>No Search Results Found</h3>
+            </div>
+        </section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+<script type="text/ng-template" id="giftCardPaymentTemplate">
+	<div>
+		<span class="clear badge pull-right card-val">{{selectedCard.card_points}}$</span>
+		<img class="img" src="{{selectedCard.image.ImageUrl}}"/>
+	</div>
+	<h4 class="text-ellipsis">{{selectedCard.Name}}</h4>
+	<form name="ccForm" class="m-t-md" ng-submit="payForGiftCard()">
+        <h2>Pay for you giftcards</h2>
+        <hr>
+         <!--|| ccForm.$invalid || !ccForm.ccNumber.$valid || !ccForm.ccCvc.$valid || !ccForm.ccExpMonth.$valid || !ccForm.ccExpYear.$valid || ccForm.$error.ccExp-->
+        <button type="submit" ng-disabled="isAddingCcWaiting" class="btn btn-success btn-block"><span ng-show="isAddingCcWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>Pay&nbsp;${{selectedCard.card_points}}</button>
+    </form>
+</script>

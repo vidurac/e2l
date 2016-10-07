@@ -1,0 +1,176 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-group, .panel-default {
+        position: relative;
+    }
+
+    .required {
+        position: absolute;
+        top: 33px;
+        right: -10px;
+        color: red;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 no-padder pull-left lesson-edit">
+        <button ui-sref="parent.badges" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i>
+        </button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Badges <i class="fa fa-angle-right"></i>
+        <span>Add New Badge</span></h4>
+</div>
+<section class="vbox add-badge">
+    <section class="scrollable no-padder m-b-xl">
+        <form class="panel-body wrapper no-padder col-xs-12" name="addNewBadgeForm" id="addNewBadgeForm"
+              ng-submit="addNewBadge(resources.newBadge)" data-validate="parsley">
+
+            <div class="col-lg-4 col-md-5 col-sm-6 col-xs-12 left-block">
+                <div class="col-md-12 col-sm-12 col-xs-12 b-a bg-white padder-v m-t m-b form-wrapper">
+                    <div class="form-group">
+                        <input type="hidden" data-parsley-trigger="focusout"
+                               ng-init="resources.newBadge.badge_types_id=2"
+                               ng-model="resources.newBadge.badge_types_id" class="form-control" value="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge Name <span class="txt-red">*</span></label>
+                        <input type="text" maxlength="45" placeholder="Badge Name" data-parsley-trigger="focusout"
+                               name="badgeName" ng-model="resources.newBadge.name" class="form-control"
+                               data-required="true" ng-pattern="/^[a-zA-Z@&._\s]*$/" required>
+                        <span style="color: #fb6b5b">{{45 - resources.newBadge.name.length}} characters left</span>
+
+                        <div class="text-danger msg-error" ng-show="addNewBadgeForm.badgeName.$touched"
+                             ng-messages="addNewBadgeForm.badgeName.$error" role="alert">
+                            <div ng-message="required">Badge name is required</div>
+                            <div ng-message="pattern">Invalid badge name</div>
+                        </div>
+                    </div>
+                    <!--<div class="form-group">
+                        <label class="control-label">Add E2L Bucks</label>
+                        <input type="number" placeholder="Add e2l bucks" data-parsley-trigger="focusout"
+                               ng-model="resources.newBadge.points" class="form-control" data-required="true" required>
+                        <span class="required">*</span>
+                    </div>-->
+                    <div class="form-group">
+                        <label>Badge Description <span class="txt-red">*</span></label>
+                    <textarea placeholder="Badge Description" data-parsley-trigger="focusout"
+                              ng-model="resources.newBadge.description" class="form-control" maxlength="128"  data-required="true"
+                              name="badgeDescription" required></textarea>
+                        <span style="color: #fb6b5b">{{128 - resources.newBadge.description.length}} characters left</span>
+                        <div class="text-danger msg-error" ng-show="addNewBadgeForm.badgeDescription.$touched"
+                             ng-messages="addNewBadgeForm.badgeDescription.$error" role="alert">
+                            <div ng-message="required">Badge description is required</div>
+                        </div>
+                    </div>
+
+                    <!-- image upload section -->
+                    <section class="panel panel-default">
+                        <div class="panel-body">
+                            <h4 class="text-center">Upload Badge Picture <span class="txt-red">*</span></h4>
+                            <h5 class="text-center">
+                                <div class="bg-light uploaded-badge">
+                                    <img ngf-src="resources.newBadge.badge_image" class="img img-responsive">
+                                </div>
+                                <div ng-show="resources.newBadge.badge_images.progress >= 0"
+                                     class="progress progress-sm progress-striped  active">
+                                    <div class="progress-bar progress-bar-success" data-toggle="tooltip"
+                                         ng-bind="resources.newBadge.badge_image.progress + '%'"
+                                         data-original-title="{{resources.newBadge.badge_image.progress + '%'}}"
+                                         style="width:{{picFile.progress}}%"></div>
+                                </div>
+                            </h5>
+                            <div class="profile-select">
+
+                                <input type="file" ngf-select="" class="profile-pic btn inline"
+                                       ng-model="resources.newBadge.badge_image"
+                                       name="file" ngf-accept="'image/*'" required="">
+                                <label class="choose-pic">Choose a file</label>
+                                <span>Accepted image formats gif, png, jpg and max upload size is 1MB </span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="line line-dashed"></div>
+                    <button type="submit" ng-disabled="addNewBadgeForm.$invalid || resources.isSaving "
+                            class="btn btn-primary pull-right"><span ng-show="resources.isSaving"><i
+                            class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addBadgeButtonText }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-8 col-md-7 col-sm-6 col-xs-12 right-block">
+                <div class="col-md-12 col-sm-12 col-xs-12 form-wrapper">
+                    <div class="col-md-6">
+                        <div class="form-group" ng-init="loadAllCategories()">
+                            <label for="category">Category <span class="txt-red">*</span></label>
+                            <select name="category" ng-if="!resources.addForSelectedCatedory" class="form-control select-cat"
+                                    ng-change="loadLessons(resources.newBadge.badgeCategory);"
+                                    ng-model="resources.newBadge.badgeCategory" data-required="true"
+                                    required>
+                                <option value="">Select a Category</option>
+                                <optgroup
+                                        ng-repeat="mainCategory in badgeModel.allCategories | filter:{ parent_cat_id: 0, enable: 1 }"
+                                        ng-init="mainCategoryId = mainCategory.id" label="{{mainCategory.name}}">
+                                    <option ng-repeat="category in badgeModel.allCategories | filter:{ parent_cat_id: mainCategoryId, enable: 1 }  track by category.id "
+                                            value="{{category.id}}"
+                                            ng-selected="category.id == resources.selectedCategory_id">{{category.name}}
+                                    </option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="b-a bg-white load-lessons col-md-12 col-xs-12 no-padder" ng-init="loadLessons(resources.newBadge.badgeSubCategory);">
+                    <div ng-show="lessonList.length != 0 && categoryLessons">
+                    <div class="col-md-3 m-b m-t" ng-repeat="video in lessonList ">
+                        <div class="video-wrapper b-a">
+                            <div id="triangle-topleft" class="" ng-if="video.inHouse">
+                                <img class="img" title="This Lesson is already in your house."
+                                     src="includes/images/check.png"/>
+                            </div>
+                            <div class="video  hover">
+                                <div class="control-group">
+                                    <a ui-sref="parent.lesson({id : video.id})">
+                                        <img ng-if="video.video_ref == 'youtube'" class="img img-responsive"
+                                             src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg"/>
+                                        <img ng-if="video.video_ref == 'ted'" class="img img-responsive"
+                                             src="{{video.thumb}}"/>
+                                    </a>
+                                </div>
+                                <div class="wrapper">
+                                    <a title="{{video.title}}" ><strong
+                                            class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+
+                                    <br/>
+                                    <small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div><input type="checkbox" id="{{video.id}}" name="lessons"
+                                    ng-model="resources.newBadge.badgeLessons[video.id]" value="{{video.id}}" /></div>
+                    </div>
+                        </div>
+                    <div class="col-md-12 m-b m-t" ng-show="lessonList.length == 0 && !categoryLessons">Lessons could not found for selected category.</div>
+                </div>
+            </div>
+
+        </form>
+    </section>
+</section>
+

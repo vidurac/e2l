@@ -1,0 +1,187 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-group, .panel-default {
+        position: relative;
+    }
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="loadAllQuizes();loadAllGiftCards()">
+    <div class="col-md-6 pull-left no-padder">
+        <button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Bundles <i class="fa fa-angle-right"></i> <span>Add Bundles</span></h4>
+</div>
+
+
+<section class="vbox bundles" ng-if="!resources.stillLoading">
+
+
+    <!--<h4 class="text-center" ng-if="!QuizModel.allQuizes.length" style="padding-top:60px;">-->
+        <!--Please add lessons to 'My Lesson' before creating lesson bundle-->
+    <!--</h4>-->
+
+    <section class="scrollable padder m-b-xl" ng-if="!QuizModel.allQuizes.length" style="padding-bottom: 70px;">
+        <div class="col-md-12 not-found m-t-sm" >
+            <h3>
+                Please add lessons to 'My Lesson' before creating lesson bundle
+            </h3>
+        </div>
+    </section>
+
+    <div class="scrollable padder m-b-xl" ng-if="QuizModel.allQuizes.length">
+        <form class="panel-body no-padder wrapper" name="addNewBundleForm" id="addNewBundleForm"
+              ng-submit="addNewBundle(resources.newBundle)" data-validate="parsley">
+            <div class="col-md-5 m-t no-padder">
+                <div class="col-md-12 bg-white b-a">
+                    <div class="form-group">
+                        <input type="hidden" data-parsley-trigger="focusout" ng-init="resources.newBundle.bundle_types_id=2"
+                               ng-model="resources.newBundle.bundle_types_id" class="form-control" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Add Name <span class="txt-red">*</span></label>
+                        <input type="text" placeholder="Add Name" maxlength="45" data-parsley-trigger="focusout"
+                               ng-model="resources.newBundle.name" class="form-control" data-required="true" required>
+
+                        <span style="color: #fb6b5b">{{45 - resources.newBundle.name.length}} characters left</span>
+                    </div>
+                </div>
+                <div class="col-md-12 no-padder m-t">
+
+                    <button type="submit" ng-disabled="resources.isSaving"
+                            class="btn btn-primary btn-lg pull-right"><span ng-show="resources.isSaving"><i
+                            class="fa fa-circle-o-notch fa-spin"></i></span>&nbsp;{{ resources.addBundleButtonText }}
+                    </button>
+
+                    <button type="button" ui-sref="parent.bundles" class="btn btn-default btn-lg pull-right m-r">Cancel
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12 m-t clearfix no-padder" ng-init="">
+
+                <section class="scrollable no-padder b-a bg-white bundle-items">
+                    <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                        <div class="item-sizer col-md-3 col-sm-6 col-xs-6"></div>
+                        <div masonry-brick class="grid-item col-md-3 col-sm-6 col-xs-6" ng-repeat="quiz in QuizModel.allQuizes  | filter : quizFilter ">
+                            <div class="video bg-white b-a m-t hover m-b">
+                                <div class="control-group">
+                                    <img ng-if="quiz.video_ref == 'youtube'" class="img img-responsive" src="https://img.youtube.com/vi/{{quiz.video_id}}/0.jpg" />
+                                    <img ng-if="quiz.video_ref == 'ted'" class="img img-responsive" src="{{quiz.thumb}}" />
+                                </div>
+                                <div class="bg-white b-b padder padder-v">
+                                    <strong class="categoryName" ng-bind="quiz.title"></strong>
+                                </div>
+                                <div class="padder padder-v"><input type="checkbox" id="{{quiz.id}}" ng-model="resources.newBundle.bundleLesson[quiz.id]" value="{{quiz.id}}" /></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+            </div>
+ <!-- ng-init="loadAllGiftCards()" -->
+
+                <div class="col-md-12 col-xs-12 col-sm-12 m-t-xl no-padder">
+
+                <a ng-click="UnselectGiftCardsForAdd()" class="btn btn-primary">Unselect all gift cards</a>
+
+                    <section class="scrollable no-padder bundle-items b-a bg-white" ng-init="">
+                        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                            <div class="item-sizer col-md-3 col-sm-6 col-xs-12"></div>
+                        <div masonry-brick class="grid-item col-md-3 col-sm-6 col-xs-12 m-t-sm" ng-repeat="card in giftCardModel.allGiftCards ">
+                            <section class="panel clearfix bg-light lter">
+                                <div class="panel-body b-a" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+                                    <a class="cursor-pointer text-ellipsis"><h4>{{card.Name}}</h4></a>
+                                    <a>
+                                        <img class="img img-responsive"  src="{{card.image.ImageUrl}}" />
+                                    </a>
+
+                                    <div class="clear form-group m-t m-b">
+
+
+                                        <!--<a ng-click="assignGiftCardPopup(card)" class="btn btn-block btn-success m-t-xs">Assign</a>-->
+
+                                        <input type="radio" id="{{card.Id}}" name="chk" ng-model="resources.newBundle.bundleCard[card.Id]" value="{{card.Id}}" ng-click="setGiftCardAmount(card.Id, '',card.image.ImageUrl)"/>
+                                    </div>
+
+                                    <div class="form-group card-values no-margin">
+                                    <span ng-repeat="value in giftCardModel.giftCardValues">
+                                        <!--<input type="button" style="margin : 5px" class="btn btn-danger" ng-if="(!card.VariableAmountDenominationMinimumValue && !card.VariableAmountDenominationMaximumValue) || (value > card.VariableAmountDenominationMinimumValue && value < card.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="giftCardModel.selectedGiftCardValue = value"/>-->
+
+                                        <input type="button" style="margin : 5px" 
+
+                                        class="btn btn-danger" ng-class="{'selectedAmount' : (resources.newBundle.giftCardValue[0].cardId == card.Id && resources.newBundle.giftCardValue[0].amount == value)}" 
+
+                                        ng-if="(!card.VariableAmountDenominationMinimumValue && !card.VariableAmountDenominationMaximumValue) || (value > card.VariableAmountDenominationMinimumValue && value < card.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="setGiftCardAmount(card.Id, value,card.image.ImageUrl)"/>
+                                    </span>
+                                        </div>
+                                    <!--<input type="hidden" id="{{giftCardModel.selectedGiftCardValue}}" ng-model="resources.newBundle.giftCardValue" value="{{giftCardModel.selectedGiftCardValue}}"/>-->
+                                </div>
+                            </section>
+                            <input type="hidden" ng-model="resources.newBundle.giftCardValue"/>
+                        </div>
+                    </div>
+                    </section>
+                </div>
+
+        </form>
+    </section>
+</section>
+
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+
+<script type="text/ng-template" id="assignGiftCardToHouseTemplate">
+    <img class="img img-responsive" src="{{selectedCard.image.ImageUrl}}" />
+
+    <form name="addGiftCardToHouseForm" ng-submit="assignGiftCardToHouse(selectedCard)" data-validate="parsley">
+        <label class="h4">Select Children to assign</label>
+        <div class="form-inline m-t-sm b-t scrollable wrapper-sm" ng-init="getAllParticipants()" style="max-height : 200px;">
+            <div ng-if="!loadingMembers">
+                <div class="row b-b m-t-sm" ng-repeat="child in allHouseParticipants">
+                    <div class="col-md-2">
+                        <img width="36" height="36" class="img-img-responsive img-circle thumb-sm" src="{{child.profile_image}}" />
+                    </div>
+                    <div class="col-md-8 wrapper-sm"><a class="text-ellipsis h5">{{child.f_name}} {{child.l_name}}</a></div>
+                    <div class="col-md-2 wrapper-sm">
+                        <input type="checkBox" ng-click="selectChild(child.id)"/>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="loadingMembers">
+                <h4 class="m-t-md text-center">Loading...</h4>
+            </div>
+        </div>
+        <label class="h4 m-t-sm">Select Gift Value</label>
+        <div class="form-inline m-t-sm">
+			<span ng-repeat="value in giftCardModel.giftCardValues">
+				<input type="button" style="margin : 5px" class="btn btn-danger" ng-if="(!selectedCard.VariableAmountDenominationMinimumValue && !selectedCard.VariableAmountDenominationMaximumValue) || (value > selectedCard.VariableAmountDenominationMinimumValue && value < selectedCard.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="giftCardModel.selectedGiftCardValue = value "/>
+			</span>
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" ng-disabled="!giftCardModel.selectedGiftCardValue || selectedCard.child_id.length == 0 || adding" class="btn btn-block btn-success">Assign Now</button>
+    </form>
+</script>

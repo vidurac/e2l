@@ -1,0 +1,72 @@
+<div ng-init="loadEmailConfig()"></div>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section ng-if="!loadingFailed" class="scrollable padder m-b-xl text-center" style="padding-bottom: 70px;">
+		<div class="row m-t-md">
+			<div class="col-md-12">
+				<section class="panel panel-default">
+					<header class="panel-heading text-muted text-left">
+						<p style="font-size: 16px;">E-mail subscription settings</p>
+					</header>
+					<div class="panel-body text-center">
+						<form ng-submit="updateEmailSubscriptions(emailSubscriptions)">
+							<div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.giftcard = emailSubscriptions.giftcard == 1? true : false" ng-model="emailSubscriptions.giftcard" ng-value="emailSubscriptions.giftcard">
+	                            	<h3 class="m-l-md">Gift Card Requested</h3><small class="m-l-md">Send me an email when my child requests a gift card</small>
+	                          	</label>
+	                        </div>
+	                        <div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.lesson = emailSubscriptions.lesson == 1? true : false" ng-model="emailSubscriptions.lesson" ng-value="emailSubscriptions.lesson">
+	                            	<h3 class="m-l-md">Passed Lesson</h3><small class="m-l-md">Send me an email when my child completes and passes a lesson.</small>
+	                          	</label>
+	                        </div>
+	                        <div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.newsletter = emailSubscriptions.newsletter == 1? true : false" ng-model="emailSubscriptions.newsletter" ng-value="emailSubscriptions.newsletter">
+	                            	<h3 class="m-l-md">Daily Reminder for Chores and Behavior Points</h3><small class="m-l-md">Send me a daily email to remind me to add Chores and Behavior Points for my child.</small>
+	                          	</label>
+	                        </div>
+	                        <div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.payment = emailSubscriptions.payment == 1? true : false" ng-model="emailSubscriptions.payment" ng-value="emailSubscriptions.payment">
+	                            	<h3 class="m-l-md">Payment Confirmation</h3><small class="m-l-md">Send me an email when a payment has been confirmed.</small>
+	                          	</label>
+	                        </div>
+	                        <div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.task = emailSubscriptions.task == 1? true : false" ng-model="emailSubscriptions.task" ng-value="emailSubscriptions.task">
+	                            	<h3 class="m-l-md">Completed Chores</h3><small class="m-l-md">Send me an email when my child completes a chore.</small>
+	                          	</label>
+	                        </div>
+							<div class="row checkbox">
+	                          	<label class="col-md-12 text-left m-l-md">
+	                            	<input style="margin-top: 28px;" type="checkbox" ng-init="emailSubscriptions.certificate = emailSubscriptions.certificate == 1? true : false" ng-model="emailSubscriptions.certificate" ng-value="emailSubscriptions.certificate">
+	                            	<h3 class="m-l-md">Certificates</h3><small class="m-l-md">Send me an email when my child achived a certifcate.</small>
+	                          	</label>
+	                        </div>
+							<input ng-disabled="subUpdating" type="submit" class="btn btn-primary pull-right" value="{{subBtnTxt}}"/>
+						</form>
+					</div>
+				</section>
+			</div>
+		</div>
+	</section>
+	<section ng-if="loadingFailed" class="scrollable padder m-b-xl text-center" style="padding-bottom: 70px;">
+		<div class="row m-t-md">
+			<div class="col-md-12">
+				<section class="panel panel-default">
+					<header class="panel-heading text-muted text-left">
+						<p style="font-size: 16px;">E-mail subscription settings</p>
+					</header>
+					<div class="panel-body text-center">
+						<p>Failed to load email subscription data.</p>
+					</div>
+				</section>
+			</div>
+		</div>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

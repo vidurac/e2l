@@ -1,0 +1,119 @@
+<div ng-init="getMyAssignedLessons();"></div>
+<section class="clearfix">
+    <header class="section-title main-head row">
+        <div class="col-xs-12 col-md-6">
+            <h2 class="section-header">Lessons</h2>
+        </div>
+        <!--<ul class="list-inline text-center" role="tablist">-->
+        <!--<li role="presentation" class="active"><a href="#lessonsAvalable" aria-controls="lessonsAvalable" role="tab" ng-click="getMyAssignedLessons()" data-toggle="tab">Available</a></li>-->
+        <!--<li role="presentation"><a href="#lessonsCompleted" aria-controls="lessonsCompleted" role="tab" data-toggle="tab" ng-click="getMyAssignedLessons()">Completed</a></li>-->
+        <!--</ul>-->
+        <div class="col-xs-12 col-md-6  availability-tab transition">
+            <div class="btn-group" role="group" aria-label="lesson type" ng-init="lessonType = 'available'">
+                <button type="button" class="btn btn-default" ng-class="{'active': lessonType == 'available'}"
+                        ng-click="lessonType='available'">Available
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{'active': lessonType == 'completed'}"
+                        ng-click="lessonType='completed'">Completed
+                </button>
+            </div>
+        </div>
+    </header>
+    <section class="tab-content container-fluid">
+
+
+            <div class="grid" ng-show="lessonType == 'available'">
+
+              <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 border-box"
+                 ng-repeat="lesson in lnc = (LessonModel.myLessons | filter : {status: '!3'})"
+                 ng-click="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.video && lesson.status != 3">
+                <div class="box-wrapper">
+                    <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" class="video-lessons">
+                        <span class="icon-play2"></span>
+                        <img class="img-responsive" ng-if="lesson.video.video_ref == 'youtube'"
+                             src="https://img.youtube.com/vi/{{lesson.video.url_id}}/0.jpg"/>
+                        <img class="img-responsive" ng-if="lesson.video.video_ref == 'ted'"
+                             src="{{lesson.video.thumb}}"/>
+                    </a>
+                    <div class="box-header grayLight-b-b text-center">
+                        <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})">
+                            <!--| cut:true:45:'...'-->
+                            <h3 class="category-parent-title txt-black m-t-sm  text-ellipsis">{{lesson.video.parent_category}}</h3>
+                            <h4 class="category-title txt-black  text-ellipsis">{{lesson.video.category}}</h4>
+                            <h5 class="lesson-title txt-black  text-ellipsis">{{lesson.video.title}}</h5>
+                        </a>
+                        <!--<p class="txt-gray"><span class="icon-play"></span><span class="count">3</span> videos</p>-->
+                    </div>
+                    <div class="lesson-footer box-footer">
+                        <div class="clearfix">
+                            <div class="col-md-8 col-sm-8 col-xs-6 text-left txt-orange points">+{{lesson.video.value}}
+                                <small>E2L Bucks</small>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-6 text-right txt-gray duration">
+                                <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})"
+                                   ng-if="lesson.status == 0 || lesson.status == 1 "
+                                   class="btn text-white pull-right bg-green view">View</a>
+                                <!--<a  ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.status == 1" class="btn text-white pull-right m-t-sm bg-green">Continue...</a>-->
+                                <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.status == 2"
+                                   class="btn text-white pull-right bg-green view">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end box-wrapper-->
+            </div><!-- end border-box-->
+
+
+            <div ng-if="!loadingAssignedLessons && (lnc.length == 0)" class="text-center">
+                <h1 class="text-center child-error child-message">There are no assigned lessons!</h1>
+            </div>
+        </div>
+
+            <div class="grid" ng-show="lessonType== 'completed'">
+
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 border-box"
+                     ng-repeat="lesson in lc = (LessonModel.myLessons | filter : {status: '3'})"
+                     ng-click="child.lessonDetails({quizid : lesson.quiz_id})"
+                     ng-if="lesson.video && lesson.status == 3">
+                    <div class="box-wrapper">
+                        <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" class="video-lessons">
+                            <span class="icon-play2"></span>
+                            <img class="img-responsive" ng-if="lesson.video.video_ref == 'youtube'"
+                                 src="https://img.youtube.com/vi/{{lesson.video.url_id}}/0.jpg"/>
+                            <img class="img-responsive" ng-if="lesson.video.video_ref == 'ted'"
+                                 src="includes/images/ted-no-thumbnail.png"/>
+                        </a>
+                        <div class="box-header grayLight-b-b text-center">
+                            <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})">
+                                <h3 class="fs1 txt-black m-t-sm text-ellipsis">{{lesson.video.parent_category}}</h3>
+                                <h4 class="fs2 txt-black text-ellipsis">{{lesson.video.category}}</h4>
+                                <h5 class="fs3 txt-black text-ellipsis">{{lesson.video.title}}</h5>
+                            </a>
+                            <!--<p class="txt-gray"><span class="icon-play"></span><span class="count">3</span> videos</p>-->
+                        </div>
+                        <section class="lesson-footer box-footer">
+                            <div class="clearfix">
+                                <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">
+                                    +{{lesson.video.value}}
+                                    <small>E2L Bucks</small>
+                                </div>
+                                <div class="col-md-4 col-sm-4 col-xs-12 text-right txt-gray"><a
+                                        ui-sref="child.lessonDetails({quizid : lesson.quiz_id})"
+                                        class="btn text-white pull-right bg-green view">View</a></div>
+                            </div>
+                        </section>
+                    </div>
+                </div><!-- end border-box-->
+
+
+                <div ng-if="!loadingAssignedLessons && (lc.length == 0)" class="text-center child-error">
+                <h1 class="child-message">There are no finished lessons!</h1>
+            </div>
+            </div>
+
+
+       <!--end completed tab-->
+    </section>
+</section>
+<section class="vbox" ng-if="loadingAssignedLessons">
+    <h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

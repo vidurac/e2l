@@ -1,0 +1,66 @@
+<!--<style type="text/css">
+	.card-val{
+		position: absolute;
+	    right: 0;
+	    margin-right: 40px;
+	    margin-top: 10px;
+	    padding: 10px;
+	    font-size: 30px;
+	    background-color: #A21C21;
+	    border: thin solid white;
+	}
+</style>-->
+<header class="gift-cards header bg-light bg-gradient b-b" ng-init="getHouseAssighedGiftCards()">
+	<div class="col-md-6 pull-left no-padder">
+		<!-- mini search box start-->
+		<div class="search input-group left">
+			<div class="search-field">
+				<input type="text" placeholder="Search by Name" ng-model="searchCard" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div><!-- end mini search box -->
+		<div class="btn btn-default m-t btn-no-w btn-clear" ng-click="searchCard=undefined">Clear</div>
+	</div>
+</header>
+<div class="page-title col-md-12 m-b">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Gift Cards <i class="fa fa-angle-right"></i> <span>My Gift Cards</span></h4>
+</div>
+<section class="vbox gift-cards" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl">
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 m-t-sm" ng-repeat="card in houseAssighedGiftCards | filter : searchCard as loadedResult track by $index" ng-if="asignedCards.indexOf(card.Id) != -1">
+            <section class="panel clearfix bg-light lter b-a">
+                <div class="panel-body" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+					<div class="card-wrapper">
+						<a class="cursor-pointer text-ellipsis"><h4>{{card.Name}}</h4></a>
+						<a class="card-val">
+							<span class="clear badge pull-right card-val">${{card.card_points}}</span>
+							<img class="img img-responsive" src="{{card.image.ImageUrl}}" />
+						</a>
+                    <div class="clear">
+						<div class="card-info">
+							<a class="text-info text-ellipsis">Assigned to <b>{{card.child_f_name}} {{card.child_l_name}}</b></a>
+							<div class="text-success text-ellipsis" ng-if="card.sponsor_id">Added By Sponsor: <b>{{card.sponsor_name}}</b></div>
+						</div>
+							<a ng-click="remove(card)" ng-disabled="removing" class="btn btn-sm btn-no-w btn-danger m-t-xs">Unassign</a>
+					</div>
+						</div>
+                </div>
+				<!--{{card}}-->
+            </section>
+        </div>
+        <!--<h4 class="text-center" ng-if="!(loadedResult.length > 0) && searchCard != ''">No Search Results Found</h4>-->
+		<section class="scrollable padder">
+    		<div class="col-md-12 not-found m-t-sm" ng-if="!(houseAssighedGiftCards.length > 0) && searchCard == ''">
+    			<h3>Assigned gift cards are unavailable</h3>
+    		</div>
+    	</section>
+		<section class="scrollable padder" ng-if="!(loadedResult.length > 0) && searchCard != ''">
+			<div class="col-md-12 not-found m-t-sm">
+				<h3>No Search Results Found</h3>
+			</div>
+		</section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

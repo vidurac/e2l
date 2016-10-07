@@ -1,0 +1,238 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+    
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .form-group, .panel-default {
+        position: relative;
+        width:100%;
+        display: inline-block;
+    }
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="loadAllCategoriesForLessons()">
+    <div class="col-md-6 pull-left no-padder">
+        <button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Add Lessons</h4>
+</div>
+<section class="vbox add-lessons m-b">
+    <section class="scrollable">
+        <form class="panel-body wrapper no-padder" name="addNewVideoForm" id="addNewVideoForm" ng-submit="addNewVideo(resources.newVideo)" data-validate="parsley">
+            <div class="col-md-5">
+                <div class="padder update-video bg-white">
+                    <div class="form-group" ng-if="!resources.addForSelectedCatedory">
+
+                        <select class="form-control m-t " ng-model="resources.newVideo.category_id" ng-options="v.id as v.name group by v.parent_category for v in LessonModel.allCategories" required>
+                            <option value="">Select a Category</option>
+                        </select>
+
+                        <!-- <select  class="form-control m-t" ng-model="resources.newVideo.category_id" required>
+                            <option value="">Select a Category</option>
+                            <optgroup ng-repeat="mainCategory in LessonModel.allCategories | filter:{ parent_cat_id: 0, enable: 1 }" ng-init="mainCategoryId = mainCategory.id" label="{{mainCategory.name}}">
+                                <option ng-repeat="category in LessonModel.allCategories | filter:{ parent_cat_id: mainCategoryId, enable: 1 }  track by category.id " value="{{category.id}}" ng-selected="category.id == resources.selectedCategory_id">{{category.name}}</option>
+                            </optgroup>
+                        </select> -->
+
+                        <span class="required">*</span>
+                    </div>
+                    <div class="form-group m-t">
+                        <input type="text" placeholder="Add Title" maxlength="100" data-parsley-trigger="focusout" ng-model="resources.newVideo.title" class="form-control" data-required="true" required>
+                        <span class="required">*</span>
+                        <span style="color: #fb6b5b">{{100 - resources.newVideo.title.length}} characters left</span>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="number" placeholder="Add Min Age Range" name="addMinAge" min="1" max="{{getMin(resources.newVideo.max_age,100)}}" data-parsley-trigger="focusout" ng-model="resources.newVideo.min_age" class="form-control" data-required="true" required>
+                        <span class="required">*</span>
+                        <div class="text-danger msg-error" ng-show="addNewVideoForm.addMinAge.$touched" ng-messages="addNewVideoForm.addMinAge.$error" role="alert">
+                            <div ng-message="required">Please enter minimum age</div>
+                            <div ng-message="number">Must be a valid number</div>
+                            <div ng-message="min">Min age should greater than 1</div>
+                            <div ng-message="max">Min age should less than or equal to {{ getMin(resources.newVideo.max_age,100) }}</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <!-- <input type="number" placeholder="Add Max Age Range" name="addMaxAge" min="1" max="100"  data-parsley-trigger="focusout" ng-model="resources.newVideo.max_age" class="form-control" data-required="true" required> -->
+
+                        <input type="number" name="addMaxAge" min="{{ resources.newVideo.min_age }}" max="100"  data-parsley-trigger="focusout" placeholder="Add Max Age Range" ng-model="resources.newVideo.max_age" class="form-control" data-required="true" required>
+
+                        <span class="required">*</span>
+                        <div class="text-danger msg-error" ng-show="addNewVideoForm.addMaxAge.$touched" ng-messages="addNewVideoForm.addMaxAge.$error" role="alert">
+                            <div ng-message="required">Please enter maximum age</div>
+                            <div ng-message="number">Must be a valid number</div>
+                            <div ng-message="min">Max age should greater than or equal to {{ getMax(1,resources.newVideo.min_age) }} </div>
+                            <div ng-message="max">Max age should less than 100</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Add Description" maxlength="100" data-parsley-trigger="focusout" ng-model="resources.newVideo.description" class="form-control" data-required="true" required></textarea>
+                        <span class="required">*</span>
+
+                        <span style="color: #fb6b5b">{{100 - resources.newVideo.description.length}} characters left</span>
+                    </div>
+                    
+
+                    <select ng-if="role_id == 2" class="form-control m-t " ng-model="resources.newVideo.visibility" >
+                        <option ng-selected="true" value="private">Private</option>
+                        <option value="public">Public</option>
+                    </select>
+
+                    <div class="form-group m-t" ng-if="role_id == 2">
+                        <input type="number" placeholder="Lesson Value" min="1" data-parsley-trigger="focusout" ng-model="resources.newVideo.value" name="value" class="form-control" data-required="true" required>
+                        <span class="required">*</span>   
+
+                        <div class="text-danger msg-error"  ng-show="addNewVideoForm.value.$touched" ng-messages="addNewVideoForm.value.$error" role="alert">
+                            <div ng-message="required">Please enter lesson value</div>
+                            <div ng-message="number">Must be a valid number</div>
+                            <div ng-message="min">Value should be greater than 1</div>
+                        </div>                   
+
+                    </div>
+
+
+                    <div class="line line-dashed"></div>
+
+                    <div class="form-group">
+                        <input type="url" placeholder="Youtube/Ted Video URL" data-parsley-trigger="focusout" ng-model="resources.newVideo.url" class="form-control" ng-change="onUrlChange()" data-required="true" required>
+                        <span class="required">*</span>
+                    </div>
+                    <div class="form-group">
+                        <div class="iframe-wrapper b-b b-t b-l b-r" id="video-wrapper" ng-bind-html="resources.videoIframeHolder">
+                            <!--<iframe src="https://www.youtube.com/embed/5LiD09JMqH8" id="video" width="1200" height="675" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="bg-light wrapper quiz">
+                    <div class="form-group">
+                        <div class="btn-group pull-left m-b" data-toggle="buttons">
+                            <label class="btn btn-sm btn-default btn-no-w m-r" ng-class="{'active' : resources.newVideo.questions[resources.newQuestionSelectedIndex].question_type == 1}" ng-click="changeQtype(1)">
+                                <input type="radio" ng-value="1" name="options" id="option1" checked><i class="fa fa-check text-active"></i> MULTIPLE CHOICE
+                            </label>
+                            <label class="btn btn-sm btn-default btn-no-w" ng-class="{'active' : resources.newVideo.questions[resources.newQuestionSelectedIndex].question_type == 0}" ng-click="changeQtype(0)">
+                                <input type="radio" ng-value="0" name="options" id="option2"><i class="fa fa-check text-active"></i> TRUE & FALSE
+                            </label>
+                            <span class="required">*</span>
+                        </div>
+                        <div class="btn-group pull-right m-b">
+                            <div class="btn-group">
+                                <button type="button" title="Delete this question" ng-click="removeQuestion()" class="btn btn-icon-new btn btn-danger" data-toggle="tooltip"><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea ng-change="isValidQuestion()" placeholder="Add Question" maxlength="255" name='add_question' ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].question" data-parsley-trigger="focusout" class="form-control" data-required="true" required></textarea>
+                        <span class="required">*</span>
+
+                        <span style="color: #fb6b5b">{{255 - resources.newVideo.questions[resources.newQuestionSelectedIndex].question.length}} characters left</span>
+
+                        <!-- <div class="text-danger msg-error" ng-show="addNewVideoForm.add_question.$touched" ng-messages="addNewVideoForm.add_question.$error"  role="alert">
+                            <div ng-message="maxlength">Maximum number of characters are 255 for the question</div>
+                        </div> -->
+
+                    </div>
+
+
+                    <div ng-if="resources.newVideo.questions[resources.newQuestionSelectedIndex].question_type==1 ">
+                        <div class="input-group m-b">
+                            <span class="input-group-addon">
+                                A.
+                            </span>
+                            <input type="text" ng-blur="isValidNumberOfAnswers()" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer" class="form-control" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == ''">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-click="changeSelectedRadio(0)" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].is_correct == 1" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer == ''">
+                            </span>
+                            <span class="required">*</span>
+                        </div>
+                        <div class="input-group m-b">
+                            <span class="input-group-addon">
+                                B.
+                            </span>
+                            <input type="text" ng-blur="isValidNumberOfAnswers()" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].answer" class="form-control" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer == ''">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-click="changeSelectedRadio(1)" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].is_correct == 1" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].answer == ''">
+                            </span>
+                        </div>
+                        <div class="input-group m-b ">
+                            <span class="input-group-addon ">
+                                C.
+                            </span>
+                            <input type="text" ng-blur="isValidNumberOfAnswers()" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2].answer" class="form-control" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].answer == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer == ''">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-click="changeSelectedRadio(2)" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2].is_correct == 1" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2].answer == ''">
+                            </span>
+                        </div>
+                        <div class="input-group m-b">
+                            <span class="input-group-addon">
+                                D.
+                            </span>
+                            <input type="text" ng-blur="isValidNumberOfAnswers()" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[3].answer" class="form-control" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[2].answer == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].answer == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer == ''">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-click="changeSelectedRadio(3)" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[3].is_correct == 1" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[3] == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[3].answer == ''">
+                            </span>
+                        </div>
+                    </div>
+                    <div ng-if="resources.newVideo.questions[resources.newQuestionSelectedIndex].question_type==0" style="height: 186px;">
+                        <div class="input-group m-b ">
+                            <span class="input-group-addon">
+                                A.
+                            </span>
+                            <input type="text" readonly="true" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].answer" class="form-control" ng-value="TRUE" ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == null || resources.newVideo.questions[resources.newQuestionSelectedIndex].question == ''">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[0].is_correct == 1" ng-click="changeSelectedRadio(0)">
+                            </span>
+                            <span class="required">*</span>
+                        </div>
+                        <div class="input-group m-b">
+                            <span class="input-group-addon">
+                                B.
+                            </span>
+
+                            <input type="text" readonly="true" ng-model="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].answer " class="form-control " ng-value="FALSE " ng-disabled="resources.newVideo.questions[resources.newQuestionSelectedIndex].question == '' ">
+                            <span class="input-group-addon">
+                                <input type="radio" name="answers-radio" ng-checked="resources.newVideo.questions[resources.newQuestionSelectedIndex].answers[1].is_correct == 1" ng-click="changeSelectedRadio(1)">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="line line-dashed"></div>
+                    <div class="alert alert-danger" ng-if="questionNotValidated">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        {{questionValidationError}}
+                    </div>
+                    <div class="btn-toolbar pagination">
+                        <div class="btn-group ">
+                            <a type="button" ng-repeat="question in resources.newVideo.questions track by $index" class="btn btn-default" ng-class="{ 'active' : $index==resources.newQuestionSelectedIndex}" ng-click="selectQuestion($index)">{{$index + 1}}</a>
+                        </div>
+                        <div class="btn-group">
+                            <a type="button" title="Add new question" ng-click="addNewQuestion()" class="btn btn-success" data-toggle="tooltip">+</a>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="btn-group pull-right">
+                    <span class="btn-nt add-new"><button type="submit" ng-disabled="addNewVideoForm.$invalid || resources.isSaving" class="btn btn-primary pull-right"><span ng-show="resources.isSaving"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addVideoButtonText }}</button></span>
+                </div>
+            </div>
+        </form>
+    </section>
+</section>

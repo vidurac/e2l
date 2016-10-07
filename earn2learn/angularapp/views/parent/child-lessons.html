@@ -1,0 +1,86 @@
+<style type="text/css">
+	#search-wrapper{
+		margin: 100px auto;
+	}
+	.cursor-pointer:hover{
+		background-color : #EFEFEF;
+	}
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="getHouseMembers()">
+	<p>Child Assigned Lessons</p>
+</header>
+<section class="hbox stretch">
+	<aside class="aside-xl bg-white b-r">
+		<section class="vbox">
+			<section class="scrollable m-b-xl">
+				<ul class="list-group alt" ng-if="!loadingHouseMembers">
+		            <li class="list-group-item cursor-pointer" ng-repeat="child in allHouseParticipants" ng-class="{'bg-light' : selectedMember == child.id}" ng-click="loadChildAssignedLessons(child.id)">
+		              	<div class="media">
+		              	  	<span class="pull-left thumb-sm">
+		              	  		<img style="height: 26px; width: 26px;" src="{{child.profile_image}}" class="img-circle">
+		              	  	</span>
+		              	  	<div class="media-body">
+		              	  	  	<div><a class=" text-ellipsis">{{child.f_name}} {{child.l_name}}</a></div>
+		              	  	  	<small class="text-muted text-ellipsis">Member since {{child.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+		              	  	</div>
+		              	</div>
+		            </li>
+		        </ul>
+        	</section>
+		</section>
+	</aside>
+	<aside>
+		<section class="vbox">
+			<section class="scrollable m-b-xl">
+				<div ng-if="selectedMember">
+					<div ng-if="!loadingChildAssignedLesson">
+						<div class="col-md-4 m-t-sm" ng-repeat="video in childLessons" ng-if="video.video">
+						    <div class="video bg-white b-a hover  m-b-xl">
+								<div class="control-group">
+									<a ui-sref="parent.lesson({id : video.video.video_id})">
+										<img ng-src="https://img.youtube.com/vi/{{video.video.url_id}}/0.jpg" ng-if="video.video.video_ref == 'youtube'" class="img img-responsive"/>
+										<img src="{{video.thumb}}" ng-if="video.video.video_ref == 'ted'" class="img img-responsive" />
+									</a>
+								</div>
+								<div class="wrapper bg-white bottom-content">
+									<a ui-sref="parent.lesson({id : video.video_id})"><strong class="text-ellipsis categoryName" ng-bind="video.video.title"></strong></a>
+									<small ng-if="video.sponsor_id" class="text-info">
+									Assigned By Sponsor: {{ video.sponsor_name}}
+									</small><br/>
+									<small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h4 class="text-center text-muted m-t-xl" ng-if="loadingChildAssignedLesson">Loading...</h4>
+					<h3 ng-if="childLessons.length == 0 && !loadingChildAssignedLesson" class="text-center text-muted">There are no lessons assigned to this user.</h3>
+				</div>
+				<h3 ng-if="!selectedMember" class="text-center text-muted">Select child to view assigned lessons</h3>
+			</section>
+		</section>
+	</aside>
+</section>
+<section class="vbox" ng-if="loadingHouseMembers">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+<!--<section class="vbox" ng-if="!resources.stillLoading && !allCategoriesLoading">
+	<section class="scrollable padder m-b-xl text-center" style="padding-bottom: 70px;">
+		<div class="col-md-3 m-t-sm" ng-repeat="video in myLessons | filter : searchLessonName">
+		    <div class="video bg-white b-a hover  m-b-xl">
+				<div class="control-group">
+					<a ui-sref="parent.lesson({id : video.video_id})">
+						<img ng-if="video.video_ref == 'youtube'" style="height: 142px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_url_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'" style="height: 142px; width: 100%;" class="img img-responsive" src="includes/images/ted-no-thumbnail.png" />
+					</a>
+				</div>
+				<div class="wrapper bg-white">
+					<a ui-sref="parent.lesson({id : video.video_id})"><strong class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+					<small class="text-ellipsis" ng-init="categoryObj = getMainSubCategoryNames(video.category_id)">{{categoryObj['main']}} -> {{categoryObj['sub']}}</small>
+					<br />
+					<small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+				</div>
+			</div>
+		</div>
+		<h4 class="text-center" ng-if="myLessons.length == 0">No Lessons in this house</h4>
+	</section>
+</section>-->

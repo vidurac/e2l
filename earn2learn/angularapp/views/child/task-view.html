@@ -1,0 +1,76 @@
+
+<div ng-init="loadChildSelectedTask()"></div>
+<section class="vbox chroes" ng-if="!resources.stillLoading">
+
+    <section class="vbox ">
+        <header class="section-title main-head row">
+            <div class="col-xs-12 col-md-12">
+                <h2 class="section-header">Chores</h2>
+            </div>
+
+        </header>
+        <div class="overlay"></div>
+        <div class="fullWidth subject-title-section chroes">
+            <section class="row padder panel-default">
+                <div class="container">
+                <div class="wrapper clearfix chores-detail">
+                    <h3 class="chroes-title no-margin">
+                        <span class="m-t-sm text-uc" ng-bind="taskData.task"></span>
+                    </h3>
+                    <h5 ng-bind="taskData.description"></h5>
+
+                </div>
+                <div class="subtitleInfo text-white">
+                    <div class="col-md-12 chroes-h2">
+                        <h2  class="text-center chroes-points"><!--{{taskData.duration}}min, --><span>+{{taskData.value}}<small>E2L Bucks</small></span></h2>
+                        <h2  ng-if="taskData.occurrence == 1" class="text-center">Do This Chore Today & Earn E2L Bucks.</h2>
+                        <h2  ng-if="taskData.occurrence == 2" class="text-center">Do This Chore Daily & Earn E2L Bucks.</h2>
+                        <h2  ng-if="taskData.occurrence == 3" class="text-center">Do This Chore Weekly & Earn E2L Bucks.</h2>
+                        <h2  ng-if="taskData.occurrence == 4" class="text-center">Do This Chore Monthly & Earn E2L Bucks.</h2>
+                        <h2  ng-if="taskData.occurrence == 5" class="text-center">Do This Chore Yearly & Earn E2L Bucks.</h2>
+                    </div>
+                </div>
+                </div>
+            </section>
+            <section class="row" ng-if="taskData && currentTaskAttempt.status != 2">
+                <div class="col-md-12">
+                    <h6 class="text-center text-muted" ng-if="taskData.hasFutureStartDate">
+                        This chore can be started on {{taskData.can_start_on}}
+                    </h6>
+                    <h1 class="form-inline text-center">
+                        <div class="btn-group">
+
+                                <a ui-sref="child.chores" ui-sref-opts="{reload: true}" class="goBackbtn btn bg-orange btn-block btn-lg"><span
+                                        class="fa fa-angle-left text"></span> Back to Chores</a>
+
+                            <input ng-if="!currentTaskAttempt && !taskData.hasFutureStartDate" type="button" value="{{startingChroesBtnTxt}}" ng-disabled="startingChroes" ng-click="startTask()" class="btn bg-green taskBtns"/>
+                            <input ng-if="currentTaskAttempt && !taskData.hasFutureStartDate" type="button" value="{{finishingChroesBtnTxt}}" ng-disabled="finishing" ng-click="finishTask()" class="btn bg-danger taskBtns"/>
+                        </div>
+                    </h1>
+
+                    {{taskData.hasFutureStartDate}}
+                    <!--<h1 class="chart m-t-xl text-center" easypiechart options="options" percent="taskFinishedPercentage">
+                    </h1>-->
+                    <!--<h1 id="duration-time" class="text-center">
+                        You Have, <br />
+                        <timer autostart="{{timerRunning}}" countdown="countdown" max-time-unit="'hour'" interval="1000">{{hours}} hr{{hoursS}}, {{mminutes}} min{{minutesS}}, {{sseconds}} sec{{secondsS}}</timer>
+                    </h1>-->
+                </div>
+            </section>
+            <section class="row" ng-if="taskData && currentTaskAttempt.status == 2">
+                <h2 class="text-center">You have finished the chroes.</h2>
+                <h1 class="form-inline text-center">
+                    <div class="btn-group">
+
+                        <a ui-sref="child.chores" ui-sref-opts="{reload: true}" class="goBackbtn btn bg-orange btn-block btn-lg"><span
+                                class="fa fa-angle-left text"></span> Back to Chores</a>
+                        </div>
+                    </h1>
+                <!--<h4 class="text-center">This will notify to the parent.</h4>-->
+            </section>
+        </div>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

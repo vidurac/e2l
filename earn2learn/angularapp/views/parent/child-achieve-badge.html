@@ -1,0 +1,110 @@
+
+<header class="header bg-light bg-gradient b-b" ng-init="getHouseMembers()">
+    <div class="col-md-6 pull-left no-padder">
+        <button onclick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm m-t"><i class="fa fa-angle-left text"></i></button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Badges <i class="fa fa-angle-right"></i> <span>Child Achieved Badges</span></h4>
+</div>
+<section class="hbox stretch">
+    <aside class="aside-xl bg-white b-r">
+        <section class="vbox">
+            <section class="scrollable m-b-xl">
+                <ul class="list-group alt" ng-if="!loadingHouseMembers">
+                    <li class="list-group-item cursor-pointer" ng-repeat="child in allHouseParticipants  track by $index"
+                        ng-class="{'bg-light' : selectedMember == child.id}"
+                        ng-click="loadChidAchieveBadges(child.id)">
+                        <div class="media">
+		              	  	<span class="pull-left thumb-sm">
+		              	  		<img style="height: 26px; width: 26px;" src="{{child.profile_image}}"
+                                     class="img-circle">
+		              	  	</span>
+                            <div class="media-body">
+                                <div><a class=" text-ellipsis">{{child.f_name}} {{child.l_name}}</a></div>
+                                <small class="text-muted text-ellipsis">Member since {{child.created_at |
+                                    amDateFormat:'MM/DD/YYYY'}}
+                                </small>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </section>
+    </aside>
+    <aside>
+        <section class="vbox child-badge">
+            <section class="scrollable m-b m-t">
+                <div ng-if="selectedMember">
+                    <div ng-if="childBadges.length != 0">
+                        <div class="col-md-4 col-sm-6 col-xs-6 m-t-sm" ng-repeat="badge in childBadges track by $index">
+                            <div class="wrapper bg-white no-padder" ng-class="(badge.badge_types_id==2) ? 'm-badge' : ''">
+                                <div class="badge-container">
+                                <div class="row no-margin">
+                                    <div class="col-md-12 no-padder">
+                                        <div class="col-md-12 bg-primary col">
+                                            <div class="m-t m-b no-border">
+                                                <a class="pull-left thumb avatar b-2x m-r">
+                                                    <img src="uploads/badge/{{badge.badge_image}}" class="img-circle">
+                                                </a>
+                                                <div class="clear">
+                                                    <div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding badge-title">
+                                                        <a class="text-info text-ellipsis"><h4>{{badge.description}}</h4></a>
+                                                        <!-- ng-click="editBadge(badge)  " -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 bg-info col">
+                                            <div class="padder-v">
+                                                <span class="m-b-xs h3 block text-white ng-binding">{{badge.points}}</span>
+                                                <span>E2L Bucks</span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 ng-if="childBadges.length == 0" class="text-center text-muted">
+                        There are no badges assigned to this user.</h3>
+                    <!--<div ng-if="childBadges.length == 0">
+                        <h3 class="text-center text-muted">
+                            There are no badges assigned to this user.</h3>
+                    </div>-->
+                    <!--<h4 class="text-center text-muted m-t-xl" ng-if="loadingChildAssignedLesson">Loading...</h4>-->
+                    <!--<h4 class="text-center text-muted m-t-xl" ng-if="loadChildAssignedBadges">Loading...</h4>-->
+                    <!--<h3 ng-if="childBadges.length == 0 && !loadingChildAssignedLesson" class="text-center text-muted">
+                        There are no badges assigned to this user.</h3>-->
+                </div>
+                <h3 ng-if="!selectedMember" class="text-center text-muted">Select child to view achieved badges</h3>
+            </section>
+        </section>
+    </aside>
+</section>
+<section class="vbox" ng-if="loadingHouseMembers">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>
+<!--<section class="vbox" ng-if="!resources.stillLoading && !allCategoriesLoading">
+	<section class="scrollable padder m-b-xl text-center" style="padding-bottom: 70px;">
+		<div class="col-md-3 m-t-sm" ng-repeat="video in myLessons | filter : searchLessonName">
+		    <div class="video bg-white b-a hover  m-b-xl">
+				<div class="control-group">
+					<a ui-sref="parent.lesson({id : video.video_id})">
+						<img ng-if="video.video_ref == 'youtube'" style="height: 142px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_url_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'" style="height: 142px; width: 100%;" class="img img-responsive" src="includes/images/ted-no-thumbnail.png" />
+					</a>
+				</div>
+				<div class="wrapper bg-white">
+					<a ui-sref="parent.lesson({id : video.video_id})"><strong class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+					<small class="text-ellipsis" ng-init="categoryObj = getMainSubCategoryNames(video.category_id)">{{categoryObj['main']}} -> {{categoryObj['sub']}}</small>
+					<br />
+					<small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+				</div>
+			</div>
+		</div>
+		<h4 class="text-center" ng-if="myLessons.length == 0">No Lessons in this house</h4>
+	</section>
+</section>-->

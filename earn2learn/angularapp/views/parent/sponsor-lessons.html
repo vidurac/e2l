@@ -1,0 +1,186 @@
+
+<header class="header bg-light bg-gradient b-b" ng-init="getAllSponsorLessons();">
+	<div class="col-md-12 pull-left no-padder">
+		<div class="search input-group left">
+
+			<div class="input-group pull-left">
+				<button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Category">
+					<span class="caret"></span>
+				</button>
+
+
+				<ul class="dropdown-menu animated fadeInUp">
+					<span class="arrow top"></span>
+					<li>
+						<a ng-click="getFilteredIdList(null, true)" class="cursor-pointer">All Categories</a>
+					</li>
+					<li ng-repeat="mainCategory in LessonModel.allCategories | filter:{ parent_cat_id: 0, enable: 1 } : true" ng-init="mainCategoryId = mainCategory.id" ng-class="{'dropdown-submenu' : LessonModel.subCategories[mainCategoryId]}">
+						<a data-id="{{mainCategory.id}}" ng-click="getFilteredIdList(mainCategory.id, true)" class="cursor-pointer">{{mainCategory.name}}</a>
+						<ul class="dropdown-menu" ng-if="LessonModel.subCategories[mainCategoryId]">
+							<li ng-repeat="subCat in LessonModel.subCategories[mainCategoryId]">
+								<a data-id="{{subCat.id}}" ng-click="getFilteredIdList(subCat.id, false)" class="cursor-pointer">{{subCat.name}}</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<div class="input-group pull-left">
+				<button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Lesson Added By">
+					<span class="caret"></span>
+				</button>
+				<ul class="dropdown-menu animated fadeInUp">
+					<span class="arrow top"></span>
+					<!--<li>-->
+						<!--<a ng-click="setFilterAddedBy(undefined)" class="cursor-pointer">-->
+							<!--Added by both-->
+							<!--<span ng-show="filterOpt.selectedAddedBy == undefined">-->
+								<!--&#10003;-->
+							<!--</span>-->
+						<!--</a>-->
+					<!--</li>-->
+					<!--<li>-->
+						<!--<a ng-click="setFilterAddedBy('parent')" class="cursor-pointer">-->
+							<!--Added by parent-->
+							<!--<span ng-show="filterOpt.selectedAddedBy == 'parent'">-->
+								<!--&#10003;-->
+							<!--</span>-->
+						<!--</a>-->
+					<!--</li>-->
+					<!--<li>-->
+						<!--<a ng-click="setFilterAddedBy('sponsor')" class="cursor-pointer">-->
+							<!--Added by sponsor-->
+							<!--<span ng-show="filterOpt.selectedAddedBy == 'sponsor'">-->
+								<!--&#10003;-->
+							<!--</span>-->
+						<!--</a>-->
+					<!--</li>-->
+					<li class="dropdown-submenu">
+						<a ng-click="setFilterAddedBy(undefined)" class="cursor-pointer">
+							Added by all
+							<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.uid == undefined">
+								&#10003;
+							</span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a class="cursor-pointer" ng-click="setFilterOwnerRole (1)">
+									Created by admin
+									<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.role_id == 1">
+								                &#10003;
+                                            </span>
+								</a>
+							</li>
+							<li>
+								<a class="cursor-pointer" ng-click="setFilterOwnerRole (2)">
+									Created by parent
+									<span ng-show="filterOpt.selectedAddedBy == undefined && filterOpt.role_id == 2">
+								                &#10003;
+                                            </span>
+								</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a ng-click="setFilterCurrentUser(resources.current_user_id)" class="cursor-pointer">
+							Added by me
+							<span ng-show="filterOpt.uid != undefined && filterOpt.selectedAddedBy == undefined">
+								&#10003;
+							</span>
+						</a>
+					</li>
+					<li>
+						<a ng-click="setFilterAddedBy('parent')" class="cursor-pointer">
+							Added by parent
+							<span ng-show="filterOpt.selectedAddedBy == 'parent'">
+								&#10003;
+							</span>
+						</a>
+					</li>
+					<li>
+						<a ng-click="setFilterAddedBy('sponsor')" class="cursor-pointer">
+							Added by sponsor
+							<span ng-show="filterOpt.selectedAddedBy == 'sponsor'">
+								&#10003;
+							</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+
+		</div>
+		<div class="search input-group left">
+			<div class="age-filter">
+				<span><input type="text" ng-model="filterByMinAge" placeholder="Min Age"></span>
+				<span><input type="text" ng-model="filterByMaxAge" placeholder="Max Age"></span>
+			</div>
+
+			<div class="search-field">
+				<input type="text" placeholder="Search by name" ng-model="searchLessonName" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div>
+
+		<div class="search input-group left">
+			<div class="btn btn-default btn-no-w btn-clear" ng-click="resetSponsorLessonFilters()">Clear</div>
+		</div>
+
+	</div>
+
+</header>
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Sponsor Lessons </h4>
+</div>
+<section class="vbox" ng-show="!resources.stillLoading && !allCategoriesLoading">
+	<section class="scrollable padder m-b-xl text-center">
+		<div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+			<div class="item-sizer col-md-3 col-sm-4 col-xs-6"></div>
+			<div masonry-brick class="grid-item col-md-3 col-sm-4 col-xs-6 m-t-sm" ng-repeat="video in myLessons | filter : keywordSearch | filter : {min_age : filterByMinAge} | filter : {max_age : filterByMaxAge} | filter : filterByCategory | filter: filterBySponsorAdded |  filter: filterByCurrentParent | filter: filterByCurrentRole as loadedSections">
+		    	<div class="video bg-white b-a hover">
+				<div class="control-group">
+					<a ui-sref="parent.sponsorLesson({id : video.video_id, houseId: video.house_id})">
+						<img ng-if="video.video_ref == 'youtube'" style="height: 142px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_url_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'" style="height: 142px; width: 100%;" class="img img-responsive" src="{{video.thumb}}" />
+					</a>
+				</div>
+				<div class="wrapper text-left">
+					<div class="category-item">{{categoryObj['main']}}</div>
+					<div class="sub-item m-b ">
+						<small ng-init="categoryObj = getMainSubCategoryNames(video.category_id);video.catName = categoryObj['main'];video.subCatName = categoryObj['sub'];">{{categoryObj['sub']}}</small>
+					</div>
+					<a class="video-name m-b" ui-sref="parent.lesson({id : video.video_id})"><span class="categoryName" ng-bind="video.title"></span></a>
+					<div class="padder-v">
+						<span class="m-r"><strong>Min Age</strong> - {{::video.min_age}}</span>
+						<span class="m-l"><strong>Max Age</strong> - {{::video.max_age}}</span>
+					</div>
+					<!--<small class="text-ellipsis" ng-init="categoryObj = getMainSubCategoryNames(video.category_id)">{{categoryObj['main']}} -> {{categoryObj['sub']}}</small>-->
+					<!--<br />-->
+					<!--<small>House: {{video.house_name}}</small>-->
+					<div class="clearfix m-t">
+					<small class="clearfix added-by"><strong>Parent:</strong> {{video.f_name + ' ' + video.l_name}}</small>
+					<small class="clearfix added-by" ng-if="video.sponsor_id"><strong>Added by:</strong> {{video.sponsor_f_name + ' ' + video.sponsor_l_name}}</small>
+					<div class="average rating">
+						<ng-rate-it style="display: inline" ng-model="video.rating_value" resetable="false" read-only="true"></ng-rate-it>
+						<span ng-show="video.rating_value">({{video.rating_value}})</span>
+					</div>
+					<small class="clearfix">created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+						</div>
+				</div>
+			</div>
+			</div>
+		</div>
+		<div class="col-md-12 not-found m-t-sm">
+			<!--<h3 class="text-center" ng-if="loadedSections.length == 0 && (FilteredIdList.length || (searchLessonName && searchLessonName != ''))">No Search Results Found</h3>-->
+			<h3 class="text-center" ng-if="loadedSections.length == 0 && myLessons.length > 0">No Search Results Found</h3>
+		</div>
+			<section class="scrollable padder m-b-xl">
+            <!--<div class="col-md-12 not-found m-t-sm" ng-if="!(myLessons.length > 0)">-->
+            <div class="col-md-12 not-found m-t-sm" ng-if="!resources.stillLoading && !myLessons.length > 0">
+                <h3>No Any Lessons</h3>
+            </div>
+        </section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading && allCategoriesLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

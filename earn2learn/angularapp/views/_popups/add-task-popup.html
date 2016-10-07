@@ -1,0 +1,24 @@
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center">
+        <strong class="text-uc">Create a new chores</strong>
+    </header>
+    <form class="panel-body wrapper-lg" name="addTaskForm" id="addTaskForm" ng-submit="addNewTask()" data-validate="parsley">
+        <div class="form-group">
+            <input type="text" placeholder="Enter Chores Name" name="choresName" data-parsley-trigger="focusout" ng-model="resources.newTask.name" ng-trim="false" minlength="1" maxlength="100" class="form-control" data-required="true" required>
+            <span style="color: #fb6b5b">{{100 - resources.newTask.name.length}} characters left</span>
+            <div class="text-danger msg-error" ng-show="addTaskForm.choresName.$touched" ng-messages="addTaskForm.choresName.$error" ng-keypress="limitKeypress($event,resources.newTask.name,4)" role="alert">
+                <div ng-message="required">You must enter a Chores Name</div>
+                <div ng-message="minlength">Please enter a minimum required name</div>
+                <div ng-message="maxlength">Maximum number of characters are 100 for the name</div>
+            </div>
+            <textarea placeholder="Enter Chores Description" name="choresDescription" rows="6" data-parsley-trigger="focusout" ng-model="resources.newTask.description" ng-trim="false" minlength="1" maxlength="255" class="form-control m-t-sm" data-required="true"></textarea>
+            <span style="color: #fb6b5b">{{255 - resources.newTask.description.length}} characters left</span>
+            <div class="text-danger msg-error" ng-show="addTaskForm.choresDescription.$touched" ng-messages="addTaskForm.choresDescription.$error" role="alert">
+                <div ng-message="minlength">Please enter a minimum required description</div>
+                <div ng-message="maxlength">Maximum number of characters are 255 for the description</div>
+            </div>
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" ng-disabled="addTaskForm.$invalid || isAddTaskWaiting" class="btn btn-primary"><span ng-show="isAddTaskWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addTaskButtonText }}</button>
+    </form>
+</section>

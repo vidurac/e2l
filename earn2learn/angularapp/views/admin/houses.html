@@ -1,0 +1,83 @@
+<style type="text/css">
+    .house {
+        cursor: pointer;
+        height: 145px;
+    }
+    
+    .houseName {
+        font-size: 17px;
+    }
+    
+    .houseNameHolder {
+        margin-top: -73px;
+        color: white;
+        background: rgba(0, 0, 0, 0.38);
+        position: relative;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="getAllHouses()">
+    <p>The Houses&nbsp;&nbsp;&nbsp;<span class="label bg-info">{{allHouses.length}}</span></p>
+    <div class="col-md-4 pull-right m-t-sm">
+        <div class="input-group">
+            <input type="text" placeholder="search" ng-model="searchHouseName" class="input-sm form-control" />
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-sm">Search</button>
+            </div>
+        </div>
+    </div>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+        <div class="col-md-4 m-t-sm" ng-repeat="house in allHouses | filter : searchHouseName as numberOfHouses" ng-if="house.enable == 1">
+            <section class="panel panel-default">
+                <div class="clearfix">
+                    <div class="thumb-xxl">
+                        <img src="uploads/house/{{house.image}}" style="width: 100%; height: 200px;" class="img img-responsive">
+                        <div class="wrapper houseNameHolder">
+                            <a ui-sref="admin.house({ id: house.id })" class="h4 m-b-xs text-ellipsis cursor-pointer" ng-bind-html="getUnsafeHtml(house.name)"></a>
+                            <small class="m-b">Created on {{house.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                        </div>
+                    </div>
+                </div>
+                <footer class="panel-footer text-center">
+                    <div class="row pull-out">
+                        <div class="col-xs-8 bg-primary">
+                            <div class="m-t m-b no-border">
+                                <a ui-sref="admin.user({ id: house.user_id })" class="pull-left thumb avatar b-2x m-r" style="margin-bottom: 10px; width: 54px; height: 54px;">
+                                    <img style="height: 50px; width: 50px;" src="{{house.profile_image}}" class="img-circle">
+                                </a>
+                                <div class="clear">
+                                    <div class="m-t-xs m-b-xs text-white text-ellipsis">
+                                        {{house.f_name}} {{house.l_name}}
+                                    </div>
+                                    <small class="text-muted">Owner</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-4 bg-info">
+                            <div class="padder-v">
+                                <span class="m-b-xs h3 block text-white">{{house.members.length}}</span>
+                                <small class="text-muted">Children</small>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </section>
+            <!--<div class="category bg-light wrapper b-a hover">
+				<a ui-sref="admin.house({ id: 1 })" class="text-ellipsis houseName cursor-pointer">House sfsdf dfgdfg name comes here</a>
+				<small>created on MM/DD/YYYY</small><br />
+				<a ui-sref="admin.house({ id: 1 })" class="btn btn-primary btn-sm pull-right m-t-xl">Open</a>
+			</div>-->
+        </div>
+        <h4 class="text-center" ng-if="numberOfHouses.length == 0 && allHouses.length > 0">No Search Results Found</h4>
+        <section class="scrollable padder m-b-xl">
+            <div class="col-md-3 m-t-sm" ng-if="!(allHouses.length > 0)">
+                <h3>No Any Houses</h3>
+            </div>
+        </section>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

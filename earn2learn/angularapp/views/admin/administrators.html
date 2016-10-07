@@ -1,0 +1,202 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b" ng-init="init(1)">
+    <p>Administrators</p>
+    <div class="col-md-4 pull-right m-t-sm">
+		<div class="input-group">
+			<input type="text" ng-model="searchUserName" placeholder="search" class="input-sm form-control" />
+			<div class="input-group-btn">
+				<button class="btn btn-default btn-sm">Search</button>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-1 pull-right m-t-sm">
+		<button class="btn btn-primary btn-sm">
+			<i class="fa fa-plus text"></i>
+			<span ng-click="createUserPopup(1)" class="text">CREATE</span>
+		</button>
+	</div>
+</header>
+
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+		<div class="col-md-4 m-t-sm" ng-repeat="user in usersModel.users | filter : searchUserName as userCount">
+            <section class="panel clearfix bg-light lter">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-left m-r">
+                        <img src="{{user.profile_image}}" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info text-ellipsis">{{user.f_name}} {{user.l_name}}</a>
+                        <small class="block text-muted text-ellipsis">Administrator since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                        <a href="#" class="btn btn-xs btn-success m-t-xs">View</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <h4 class="text-center" ng-if="userCount.length == 0 && (usersModel.users.length > 0)">No Search Results Found</h4>
+		<section class="scrollable padder m-b-xl">
+    		<div class="col-md-3 m-t-sm" ng-if="!(usersModel.users.length > 0)">
+    			<h3>No Any Administrators</h3>
+    		</div>
+    	</section>
+	</section>
+</section>
+
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<!--<section class="hbox stretch">
+    <aside class="aside aside-xl bg-white">
+        <section class="vbox">
+            <header class="panel-heading">
+                <div class="col-md-12 pull-right">
+                    <div class="input-group">
+                        <input type="text" id="search_user_txt" ng-model="resources.searchUserTxtName" placeholder="Search" class="input-sm form-control">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default btn-sm dropdown-toggle" ng-model="filter" data-toggle="dropdown">
+                                <span class="dropdown-label">{{resources.silectedFilterRole.name}}</span>
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-select pull-right">
+                                <li ng-repeat="role in resources.filterRoles" ng-class="{'active': role.value == resources.silectedFilterRole.value}">
+                                    <a href="" ng-click="resources.filterRoleChange(role)">{{role.name}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <section class="scrollable m-b-lg">
+                <ul class="list-group alt">
+                    <li class="list-group-item user-item" ng-repeat="user in filteredUsers() | filter : resources.searchUserTxtName | orderBy:'f_name'" ng-click="selectUser(user)" ng-class="{'active': user.id == resources.selectedUser.id}">
+                        <div class="media">
+                            <span class="pull-left thumb-sm"><img src="includes/template/images/avatar.jpg" alt="John said" class="img-circle"></span>
+                            <div class="media-body">
+                                <div><a href="#">{{user.f_name}} {{user.l_name}}</a></div>
+                                <small class="text-muted">{{getRoleName(user.role_id)}} since {{user.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </section>
+    </aside>
+    <aside class="bg-light lter b-l">
+        <section class="vbox" ng-include src="resources.defaultTemplate"></section>
+            <script type="text/ng-template" id="add-user-template">
+                <section class="panel-default bg-white">
+                    <header class="panel-heading text-center">
+                        <strong>Create a new user</strong>
+                    </header>
+                    <section class="hbox stretch">
+                        <section class="vbox">
+                            <section class="scrollable">
+                                <section class="hbox stretch">
+                                    <aside class="aside-sm">
+                                    </aside>
+                                    <aside class="bg-light lter">
+                                        <form class="panel-body wrapper-lg" name="registerForm" id="createUserForm" ng-submit="createUser(credentials)" data-validate="parsley">
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Your First Name" data-parsley-trigger="focusout" ng-model="credentials.f_name" class="form-control input-lg" data-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Your Last Name" data-parsley-trigger="focusout" ng-model="credentials.l_name" class="form-control input-lg" data-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="email" placeholder="Email (test@example.com)" data-parsley-trigger="focusout" ng-model="credentials.email" class="form-control input-lg" data-parsley-type="email" data-required="true">
+                                            </div>
+                                            <select class="form-group" ng-model="credentials.role_id">
+                                                <option ng-repeat="role in resources.userRoles" value="{{role.value}}">{{role.name}}</option>
+                                            </select>
+                                            <div class="form-group">
+                                                <input type="text" placeholder="Username" ng-model="credentials.username" data-parsley-trigger="focusout" class="form-control input-lg" data-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" id="inputPassword" ng-model="credentials.password" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="password" class="form-control input-lg" data-required="true">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" id="confirmPassword" ng-model="credentials.confirm_password" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="Confirm Password" class="form-control input-lg" data-required="true">
+                                            </div>
+                                            <div class="line line-dashed"></div>
+                                            <button type="submit" ng-disabled="resources.isCreateWaiting" class="btn btn-primary"><span ng-show="resources.isCreateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.createButtonText }}</button>
+                                            
+                                        </form>
+                                    </aside>
+                                    <aside class="aside-sm">
+                                    </aside>
+                                </section>
+                            </section>
+                        </section>
+                    </section>
+                </section>
+            </script>
+        
+            <script type="text/ng-template" id="user-profile-template">
+                <header class="header bg-white b-b b-light">
+                    <p>{{resources.selectedUser.f_name}}'s profile</p>
+                </header>
+                <section class="hbox stretch">
+                    <aside class="aside-lg bg-light lter b-r">
+                        <section class="vbox">
+                            <section class="scrollable">
+                                <div class="wrapper">
+                                    
+                                        <div class="clearfix m-b">
+                                            <a href="#" class="pull-left thumb m-r">
+                                                <img src="includes/template/images/avatar.jpg" class="img-circle">
+                                            </a>
+                                            <div class="clear">
+                                                <div class="text-ellipsis h3 m-t-xs m-b-xs">{{resources.selectedUser.f_name}}.{{resources.selectedUser.l_name}}</div>
+                                                <small class="text-muted">ID : &nbsp;{{resources.selectedUser.id}}</small><br/>
+                                                <small class="text-muted">ROLE : &nbsp;{{getRoleName(resources.selectedUser.role_id)}}</small>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span ng-if="resources.selectedUser.email != ''">
+                                                <small class="text-uc text-xs text-muted">Email</small>
+                                                <p>{{resources.selectedUser.email}}</p>
+                                            </span>
+                                            <span ng-if="resources.selectedUser.telephone != 0">
+                                                <small class="text-uc text-xs text-muted">Telephone</small>
+                                                <p>{{resources.selectedUser.telephone}}</p>
+                                            </span>
+                                            <span ng-if="resources.selectedUser.mobile != 0">
+                                                <small class="text-uc text-xs text-muted">Mobile</small>
+                                                <p>{{resources.selectedUser.mobile}}</p>
+                                            </span>
+                                            <span ng-if="resources.selectedUser.address != ''">
+                                                <small class="text-uc text-xs text-muted">Address</small>
+                                                <p>{{resources.selectedUser.address}}</p>
+                                            </span>
+                                            <span ng-if="resources.selectedUser.city != ''">
+                                                <p>{{resources.selectedUser.city}}, 
+                                            </span>
+                                            <span ng-if="resources.selectedUser.country != ''">
+                                                    {{resources.selectedUser.country}}</p>
+                                            </span>
+                                            <span ng-if="resources.selectedUser.profession != ''">
+                                                <small class="text-uc text-xs text-muted">Profession</small>
+                                                <p>{{resources.selectedUser.profession}}</p>
+                                            </span>
+                                        </div>
+                                    
+                                </div>
+                            </section>
+                        </section>
+                    </aside>
+                    <aside class="bg-white">
+                        <section class="vbox">
+                            
+                        </section>
+                    </aside>
+                </section>
+            </script>
+        
+    </aside>
+</section>-->

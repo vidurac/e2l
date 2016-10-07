@@ -1,0 +1,99 @@
+
+<style type="text/css">
+    .house {
+        cursor: pointer;
+        height: 145px;
+    }
+    
+    .houseName {
+        font-size: 17px;
+    }
+    
+    .houseNameHolder {
+        margin-top: -73px;
+        color: white;
+        background: rgba(0, 0, 0, 0.38);
+        position: relative;
+    }
+</style>
+<div ng-init="loadUserProfile()"></div>
+<section class="hbox stretch" ng-if="!resources.stillLoading && userData && userData.role_id != 1">
+	<aside class="aside aside-xs lter" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable padder m-t">
+			    <section class="panel panel-default">
+			        <div class="panel-body">
+			            <div class="clearfix text-center m-t">
+			                <div class="inline">
+		                        <div class="thumb-lg">
+		                            <img src="{{userData.profile_image}}" class="img-circle">
+		                        </div>
+			                    <div class="h4 m-t m-b-xs">{{userData.f_name}} {{userData.l_name}}</div>
+			                    <small class="text-info m-b">{{getRoleName(userData.role_id)}}</small>
+			                </div>
+			            </div>
+			        </div>
+			    </section>
+			    <div class="bg-info wrapper" ng-if="!resources.isCurrentLoggedUser && userData.house_name">
+                    <strong>{{userData.f_name}}</strong> is in house <strong><a ui-sref="admin.house({ id: userData.house_id })" class="alert-link">"{{userData.house_name}}"</a></strong>.
+                </div>
+			</section>
+		</section>
+	</aside>
+	<!--<aside class="aside bg-white aside-xl lter" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable b-l">
+			    <header class="header bg-light bg-gradient b-b">
+			        <p class="clear text-ellipsis" ng-if="!resources.isCurrentLoggedUser">Update {{userData.f_name}}'s Profile</p>
+			        <p class="clear text-ellipsis" ng-if="resources.isCurrentLoggedUser">Update My Profile</p>
+			    </header>
+			    <header>
+			        <div class="row">
+			            <div class="col-md-12 padder">
+    			            <a class="btn btn-sm pull-right m-t-sm m-r-sm btn-danger" ng-click="deleteUser(userData)" ng-if="!resources.isCurrentLoggedUser"><i class="fa fa-trash"></i>&nbsp;&nbsp;Delete User</a>
+    			            <a class="btn btn-sm pull-right m-t-sm m-r-sm btn-default" ng-click="changeUserPassword(userData)" ng-if="resources.isCurrentLoggedUser">Reset Password</a>
+			            </div>
+			        </div>
+			        <div class="row">
+			            <div class="col-md-12">
+			                <form class="panel-body m-b-xl wrapper-lg" name="updateUserForm" id="updateUserForm" ng-submit="updateUser(updateUserData)" data-validate="parsley">
+                                <div class="form-group">
+                                    <label class="control-label" for="f_name">First Name</label>
+                                    <input type="text" id="f_name" ng-model="updateUserData.f_name" placeholder="First Name" class="form-control" data-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="l_name">Last Name</label>
+                                    <input type="text" id="l_name" ng-model="updateUserData.l_name" placeholder="Last Name" class="form-control" data-required="true">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="email">E-mail</label>
+                                    <input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail (Optional)" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="gender">Gender</label>
+                                    <select name="gender" ng-model="updateUserData.gender" class="form-control"> 
+                                        <option value="" ng-selected="updateUserData.gender == ''"> Select Gender </option> 
+                                        <option value="Male" ng-selected="updateUserData.gender == 'Male'">Male</option> 
+                                        <option value="Female" ng-selected="updateUserData.gender == 'Female'">Female</option> 
+                                    </select> 
+                                </div>
+                                <div class="line line-dashed"></div>
+                                <button ng-disabled="updateUserForm.$invalid || isWaiting" type="submit" class="btn btn-primary">
+                                    <span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.updateUserButtonText }}</button>
+                            </form>
+			            </div>
+			        </div>
+			    </header>
+			</section>
+		</section>
+	</aside>-->
+</section>
+<section ng-if="!resources.stillLoading && !userData">
+    <h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section ng-if="!resources.stillLoading && userData && userData.role_id == 1 && userData.role_id == 2">
+    <h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <h1 style="margin-top: 200px;"><img src="includes/images/still-loading.gif" class="loading" /></h1>
+</section>

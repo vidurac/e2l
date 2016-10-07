@@ -1,0 +1,65 @@
+
+<header class="header bg-light bg-gradient b-b" ng-init="getAllTasks()">
+    <div class="col-md-6 pull-left no-padder">
+        <div class="col-md-3 col-sm-3 col-xs-2 no-padder chores-select">
+        <select data-ng-options="o.name for o in resources.filterOptions track by o.id"
+                class="input-sm form-control" ng-model="resources.filterBy">
+        </select>
+        </div>
+        <!-- mini search box start-->
+        <div class="search input-group left">
+            <div class="search-field">
+                <input type="text" placeholder="Search by Name" ng-model="resources.searchTaskName" class="input-sm form-control" />
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div>
+        </div><!-- end mini search box -->
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetBrowseChoresFilters()">Clear</div>
+
+    </div>
+
+    <div class="col-md-6 pull-right top-buttons no-padder">
+        <span class="pull-right"><a ng-click="openAddTaskPopup()" class="btn btn-primary btn-sm btn-no-w">
+            <span class="text">Add New Chores</span>
+        </a>
+            </span>
+    </div>
+
+
+</header>
+<div class="page-title col-md-12 col-xs-12 col-sm-12">
+    <h4 class="pull-left"><i class="fa fa-angle-right" aria-hidden="true"></i> Chores</h4>
+
+        <h5 class="pull-right"><span><img class="img-assigned" title="This Lesson is already assigned."
+                                              src="includes/images/check.png"/></span> Already Assigned</h5>
+
+</div>
+
+<section class="vbox chores" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl wrapper">
+        <article class="media b-b wrapper-sm no-margin" ng-repeat = "task in resources.allTasks | orderBy : '-created_at' | filter : {enable : 1, by_admin : resources.filterBy.id , task : resources.searchTaskName} as taskCount track by task.id">
+            <span class="col-md-1 col-sm-1 col-xs-2">{{$index + 1}}.</span>
+            <div class="assigned" ng-if="task.inHouse">
+                <img class="img-assigned" title="This Lesson is already in your house." src="includes/images/check.png"/>
+            </div>
+            <div class="col-md-9 col-sm-8 col-xs-10">
+                <span class="h4" ng-bind-html="getUnsafeHtml(task.task)"></span>
+                <small class="block m-t-xs" ng-bind-html="getUnsafeHtml(task.description)"></small>
+                <em ng-if="task.by_admin == 0" class="text-s">Posted by <span class="text-info">{{task.f_name}} {{task.l_name}}</span></em>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-12 no-padder process-buttons m-t">
+                <a ng-if="task.by_admin != 1" href="" ng-click="openEditTaskPopup(task)" title="Edit" data-toggle="tooltip" class="btn btn-sm btn-warning"><i class="fa fa-pencil"></i></a>
+                <a ng-if="task.by_admin != 1" href="" ng-click="deleteUnAssignTask(task)" title="Delete" data-toggle="tooltip" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                <a ui-sref="parent.task({id : task.id})" ng-click="assignTask(task)" class="btn btn-sm btn-no-w btn-primary">Assign</a>
+            </div>
+        </article>
+        <h4 class="text-center" ng-if="taskCount.length == 0 && (resources.allTasks.length > 0)">No Search Results Found</h4>
+        <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+            <div class="col-md-12 not-found m-t-sm" ng-if="!(resources.allTasks.length > 0)">
+                <h3>No Any Chores</h3>
+            </div>
+        </section>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

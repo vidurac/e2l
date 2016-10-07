@@ -1,0 +1,615 @@
+<!--<section class="vbox">
+    <section class="scrollable">-->
+<!-- s lessons-section -->
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('[data-slick]').each(function() {
+            $(this).slick($(this).data('slick'))
+        });
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            $('[data-slick]').each(function() {
+                $(this).slick('setPosition');
+            });
+        });
+    });
+</script>
+<div ng-init="getMyAssignedLessons(); getMyAssignedTasks(); getChildAssignedGiftCards();getMyAssignedLessonBundles()"></div>
+<!--ng-if="!resources.stillLoading"-->
+<section class="vbox">
+    <section class="scrollable text-center">
+        <div class="fullWidth lessons-section">
+            <section class="container">
+                <header class="section-title">
+                    <h2 class="section-header">Lessons</h2>
+                    <ul class="list-inline text-center" role="tablist">
+                        <li role="presentation" class="active"><a href="#lessonsAvalable" aria-controls="lessonsAvalable" role="tab" ng-click="getMyAssignedLessons()" data-toggle="tab">Available</a></li>
+                        <li role="presentation"><a href="#lessonsCompleted" aria-controls="lessonsCompleted" role="tab" data-toggle="tab" ng-click="getMyAssignedLessons()">Completed</a></li>
+                    </ul>
+                </header>
+                <section class="tab-content">
+                    <article role="tabpanel" class="tab-pane fade in active" id="lessonsAvalable">
+                        <slick ng-if="!loadingAssignedLessons" init-onload=true data="LessonModel.myLessons"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="lesson in lnc = (LessonModel.myLessons | filter : {status: '!3'})" ng-click="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.video && lesson.status != 3">
+                                <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" class="video-lessons">
+                                    <span class="icon-play2"></span>
+        							<img ng-if="lesson.video.video_ref == 'youtube'" src="https://img.youtube.com/vi/{{lesson.video.url_id}}/0.jpg" />
+        							<img ng-if="lesson.video.video_ref == 'ted'" src="includes/images/ted-no-thumbnail.png" />
+        						</a>
+                                <header class="grayLight-b-b" style="height: 125px; overflow: hidden;">
+                                    <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})">
+                                        <!--| cut:true:45:'...'-->
+                                        <h3 class="fs1 txt-black text-ellipsis m-t-sm">{{lesson.video.parent_category}}</h3>
+                                        <h4 class="fs2 txt-black text-ellipsis">{{lesson.video.category}}</h4>
+                                        <h5 class="fs3 txt-black text-ellipsis">{{lesson.video.title}}</h5>
+                                    </a>
+                                    <!--<p class="txt-gray"><span class="icon-play"></span><span class="count">3</span> videos</p>-->
+                                </header>
+                                <section class="lesson-footer">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{lesson.video.value}}<small>E2L Bucks</small></div>
+                                        <div class="col-md-4 col-sm-4 col-xs-12 text-right txt-gray duration">
+                                            <a  ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.status == 0 || lesson.status == 1 " class="btn text-white pull-right bg-green view">View</a>
+                                            <!--<a  ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.status == 1" class="btn text-white pull-right m-t-sm bg-green">Continue...</a>-->
+                                            <a  ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.status == 2" class="btn text-white pull-right bg-green view">View</a>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedLessons && (lnc.length == 0)" class="text-center"><h1 style="margin-top: 50px;color:#545454" >There are no assigned lessons!</h1></article>
+                        </slick>
+                    </article>
+                    <article role="tabpanel" class="tab-pane fade" id="lessonsCompleted">
+                        <slick ng-if="!loadingAssignedLessons" responsive="breakpoints"  init-onload=true data="LessonModel.myLessons"  dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="lesson in lc = (LessonModel.myLessons | filter : {status: '3'})" ng-click="child.lessonDetails({quizid : lesson.quiz_id})" ng-if="lesson.video && lesson.status == 3">
+                                <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" class="video-lessons">
+                                    <span class="icon-play2"></span>
+        							<img ng-if="lesson.video.video_ref == 'youtube'" src="https://img.youtube.com/vi/{{lesson.video.url_id}}/0.jpg" />
+        							<img ng-if="lesson.video.video_ref == 'ted'" src="includes/images/ted-no-thumbnail.png" />
+        						</a>
+                                <header class="grayLight-b-b" style="height: 125px; overflow: hidden;">
+                                    <a ui-sref="child.lessonDetails({quizid : lesson.quiz_id})">
+                                        <h3 class="fs1 txt-black text-ellipsis m-t-sm">{{lesson.video.parent_category}}</h3>
+                                        <h4 class="fs2 txt-black text-ellipsis">{{lesson.video.category}}</h4>
+                                        <h5 class="fs3 txt-black text-ellipsis">{{lesson.video.title}}</h5>
+                                    </a>
+                                    <!--<p class="txt-gray"><span class="icon-play"></span><span class="count">3</span> videos</p>-->
+                                </header>
+                                <section class="lesson-footer">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{lesson.video.value}}<small>E2L Bucks</small></div>
+                                        <div class="col-md-4 col-sm-4 col-xs-12 text-right txt-gray"><a  ui-sref="child.lessonDetails({quizid : lesson.quiz_id})" class="btn text-white pull-right bg-green view">View</a></div>
+                                    </div>
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedLessons && (lc.length == 0)" class="text-center"><h1 style="margin-top: 50px;color:#545454" >There are no finished lessons!</h1></article>
+                        </slick>
+                    </article>
+                    <article ng-if="loadingAssignedLessons" class="text-center"><h1 style="margin-top: 200px;" class="text-white"> <img src="includes/images/still-loading.svg" class="loading" /></h1></article>
+                </section>
+            </section>
+        </div>
+        <!-- s lessons-section -->
+
+        <!-- s bundles-section -->
+        <div class="fullWidth lesson-bundles-section">
+            <section class="container">
+                <header class="section-title">
+                    <h2 class="section-header">Lesson Bundles</h2>
+                    <ul class="list-inline text-center" role="tablist">
+                        <li role="presentation" class="active"><a href="#bundlesAvalable" aria-controls="lessonsAvalable" role="tab" ng-click="getMyAssignedLessonBundles()" data-toggle="tab">Available</a></li>
+                        <li role="presentation"><a href="#bundlesCompleted" aria-controls="lessonsCompleted" role="tab" data-toggle="tab" ng-click="getMyAssignedLessonBundles()">Completed</a></li>
+                    </ul>
+                </header>
+                <section class="tab-content">
+                    <article role="tabpanel" class="tab-pane fade in active" id="bundlesAvalable">
+                        <slick ng-if="!loadingAssignedBundles" init-onload=true data="LessonModel.myBundles"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="bundle in lbnc = (LessonModel.myBundles | filter: {completion: '!100'})">
+                                <header class="grayLight-b-b" style="height: 75px;">
+                                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="bundle.name"></h3>
+                                    <h4 class="fs3 txt-black text-ellipsis">{{bundle.child_quiz_allocations.length}} Lessons</h4>
+                                </header>
+                                <section class="lesson-footer">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">
+                                            <div ng-if="bundle.amount && bundle.gift_card_id">${{bundle.amount}}<small>Gift Card</small></div>
+                                        </div>
+                                        <div class="col-md-4 col-sm-4 col-xs-12">
+                                        <a class="btn view text-white pull-right bg-green" ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">
+                                            <span ng-if="bundle.status == 0">View</span>
+                                            <span ng-if="bundle.status == 1">Continue</span>
+                                        </a></div>
+                                    </div>
+
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedBundles && (lbnc.length == 0)" class="text-center"><h1 style="margin-top: 50px;color:#545454" >There are no assigned lesson bundles!</h1></article>
+
+                        </slick>
+                    </article>
+
+                    <article role="tabpanel" class="tab-pane fade" id="bundlesCompleted">
+                        <slick ng-if="!loadingAssignedBundles" init-onload=true data="LessonModel.myBundles"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="bundle in lbc = (LessonModel.myBundles | filter: {completion: '100'})">
+                                <header class="grayLight-b-b" style="height: 75px;">
+                                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="bundle.name"></h3>
+                                    <h4 class="fs3 txt-black text-ellipsis">{{bundle.child_quiz_allocations.length}} Lessons</h4>
+                                </header>
+                                <section class="lesson-footer">
+                                    <div class="row">
+                                        <!--<div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{task.value}}<small>E2L Bucks</small></div>-->
+                                        <!--<div class="col-md-5 text-right txt-gray duration">{{task.duration}} mins</div>-->
+                                        <div class="col-md-4 col-sm-4 col-xs-12 pull-right">
+                                            <a class="btn view text-white bg-green" ui-sref="child.lessonBundleDetails({bundleId: bundle.id})">
+                                                <span>View</span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedBundles && (lbc.length == 0)" class="text-center"><h1 style="margin-top: 50px;color:#545454" >There are no finished lesson bundles!</h1></article>
+                        </slick>
+                    </article>
+                    <article ng-if="loadingAssignedLessons" class="text-center"><h1 style="margin-top: 200px;" class="text-white"> <img src="includes/images/still-loading.svg" class="loading" /></h1></article>
+                </section>
+            </section>
+        </div>
+        <!-- s bundles-section -->
+
+        <!-- s chroes-section -->
+        <div class="fullWidth chroes-section bg-bage">
+            <section class="container">
+
+                <header class="section-title">
+                    <h2 class="section-header">Chores</h2>
+                    <ul class="list-inline text-center" role="tablist">
+                        <li role="presentation" class="active"><a href="#chroesAvalable" ng-click="getMyAssignedTasks();" aria-controls="chroesAvalable" role="tab" data-toggle="tab">Available</a></li>
+                        <li role="presentation"><a href="#chroesCompleted" ng-click="getMyAssignedTasks();" aria-controls="chroesCompleted" role="tab" data-toggle="tab">Completed</a></li>
+                    </ul>
+                </header>
+
+                <section class="tab-content">
+                    <article role="tabpanel" class="tab-pane active" id="chroesAvalable">
+                        <slick ng-if="!loadingAssignedTasks"  init-onload=true data="LessonModel.myTasks"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="task in mm = (LessonModel.myTasks | filter : {allocation_status : '!3'})">
+                                <header class="grayLight-b-b" style="height: 75px;">
+                                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="task.task"></h3>
+                                    <h4 class="fs3 txt-black text-ellipsis" ng-bind="task.description"></h4>
+                                </header>
+                                <section class="chores-footer">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{task.value}}<small>E2L Bucks</small></div>
+                                        <!--<div class="col-md-5 text-right txt-gray duration">{{task.duration}} mins</div>-->
+                                        <div class="col-md-4 col-sm-4 col-xs-12"><a  ui-sref="child.task({allocation_id : task.allocation_id})" class="btn view text-white pull-right bg-green">
+                                        <span ng-if="task.allocation_status == 0">View</span>
+                                        <span ng-if="task.allocation_status == 1">Continue</span>
+                                    </a></div>
+                                    </div>
+                                    
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedTasks && (mm.length == 0)" class="text-center"><h1 style="margin-top: 50px;color:#545454" >There are no assigned chores!</h1></article>
+                        </slick>
+                    </article>
+
+                    <article role="tabpanel" class="tab-pane" id="chroesCompleted">
+                        <slick ng-if="!loadingAssignedTasks"  init-onload=true data="LessonModel.myTasks"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                            <div class="fade" ng-repeat="task in ( ll = (LessonModel.myTasks | filter : {allocation_status : '3'}))">
+                                <header class="grayLight-b-b" style="height: 75px;">
+                                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="task.task"></h3>
+                                    <h4 class="fs3 txt-black text-ellipsis" ng-bind="task.description"></h4>
+                                </header>
+                                <section class="chores-footer">
+                                    <div class="row">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{task.value}}<small>E2L Bucks</small></div>
+                                        <!--<div class="col-md-5 text-right txt-gray duration">{{/* task.duration */}} mins</div>-->
+                                        <div class="col-md-4 col-sm-4 col-xs-12"><a  ui-sref="child.task({allocation_id : task.allocation_id})" class="btn view text-white pull-right bg-green">
+                                        <span ng-if="task.allocation_status == 3">View</span>
+                                    </a></div>
+                                    </div>
+                                    
+                                </section>
+                            </div>
+                            <article ng-if="!loadingAssignedTasks && (ll.length == 0)" class="text-center">
+                                <h1 style="margin-top: 50px;color:#545454">There are no finished chores!</h1>
+                            </article>
+                        </slick>
+
+                    </article>
+                    <article ng-if="loadingAssignedTasks" class="text-center"><h1 style="margin-top: 150px;" class="text-white"><img src="includes/images/still-loading.svg" class="loading" /></h1></article>
+                </section>
+            </section>
+        </div>
+        <!-- s chroes-section -->
+
+        <div class="fullWidth insentive-section">
+            <div class="container gift-cards">
+                <header class="section-title" style="margin-top: -40px;">
+                    <h2 class="section-header">Gift Cards</h2>
+                </header>
+                <div class="row">
+
+                    <slick ng-if="!loadingAssignGiftCards" init-onload=true data="houseAssighedGiftCards"  responsive="breakpoints" dots=false infinite=false speed=300 slides-to-show=4 touch-move=true slides-to-scroll=1>
+                        <div class="fade" ng-repeat="card in hah = (houseAssighedGiftCards | orderBy : 'card_points')">
+                            <div class="panel-body" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+                                <a class="cursor-pointer text-ellipsis card-title"><h3>{{card.Name}}</h3></a>
+                               <div class="card-container clearfix">
+
+                                    <span class="card-img"> <img class="img img-responsive" src="{{card.image.ImageUrl}}" /></span>
+                                   <div class="clearfix"></div>
+                                    <span ng-init="getTotalPoints()" class="card-details clearfix">
+                                    <span class="clear badge card-val"><b>${{card.card_points}}</b></span>
+                                    <span class="card-req"><button class="btn bg-green pull-right" ng-if="getInt(card.card_points) <= getInt(child_total_points)" ng-click="childRequestGiftCard(card)">Request</button></span>
+                                </span>
+                               </div>
+                            </div>
+                            <!--<a>
+    						</a>
+                            <header class="grayLight-b-b" style="height: 125px; overflow: hidden;">
+                                <a>
+                                    <h3 class="fs3 txt-black" ng-bind="card.video.title"></h3>
+                                </a>
+                            </header>
+                            <section>
+                                <div class="row">
+                                    <div class="col-md-6 text-left txt-orage points">+{{lesson.video.value}}<small>E2L Bucks</small></div>
+                                    <div class="col-md-6 text-right txt-gray duration"><a class="btn text-white pull-right m-t-sm bg-green">View</a></div>
+                                </div>
+                            </section>-->
+                        </div>
+                        <article ng-if="!loadingAssignGiftCards && (hah.length == 0)" class="text-center">
+                            <h1 style="margin-top: 50px;" class="text-white">There are no assigned gift cards!</h1>
+                        </article>
+                    </slick>
+
+                    <!--<div class="col-md-6 ">
+                        <div class="certfi">
+                            <span class="done">3</span><span class="pending">/25</span>
+                            <div>Certificates</div>
+                        </div>
+                    </div>-->
+                    <!--<div class="col-md-12 ">
+                        <div class="gitcard">
+                            <span class="done">3</span><span class="pending">/25</span>
+                            <div>Gift cards</div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.svg" class="loading" />
+</section>
+<!-- /.container
+        
+        
+        
+        
+        <!--<ul class="breadcrumb no-border no-radius b-b b-light pull-in">
+            <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+            <li class="active">Workset</li>
+        </ul>
+        <div class="m-b-md">
+            <h3 class="m-b-none">Workset</h3>
+            <small>Welcome back, Noteman</small>
+        </div>
+        <section class="panel panel-default">
+            <div class="row m-l-none m-r-none bg-light lter">
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x text-info"></i>
+                                    <i class="fa fa-male fa-stack-1x text-white"></i>
+                              </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong>52,000</strong></span>
+                        <small class="text-muted text-uc">New robots</small>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light lt">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x text-warning"></i>
+                                    <i class="fa fa-bug fa-stack-1x text-white"></i>
+                                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#fff" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="2000" data-target="#bugs" data-update="3000"></span>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong id="bugs">468</strong></span>
+                        <small class="text-muted text-uc">Bugs intruded</small>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                                    <i class="fa fa-fire-extinguisher fa-stack-1x text-white"></i>
+                                    <span class="easypiechart pos-abt" data-percent="100" data-line-width="4" data-track-Color="#f5f5f5" data-scale-Color="false" data-size="50" data-line-cap='butt' data-animate="3000" data-target="#firers" data-update="5000"></span>
+                    </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong id="firers">359</strong></span>
+                        <small class="text-muted text-uc">Extinguishers ready</small>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-md-3 padder-v b-r b-light lt">
+                    <span class="fa-stack fa-2x pull-left m-r-sm">
+                                    <i class="fa fa-circle fa-stack-2x icon-muted"></i>
+                                    <i class="fa fa-clock-o fa-stack-1x text-white"></i>
+                              </span>
+                    <a class="clear" href="#">
+                        <span class="h3 block m-t-xs"><strong>31:50</strong></span>
+                        <small class="text-muted text-uc">Left to exit</small>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col-md-8">
+                <section class="panel panel-default">
+                    <header class="panel-heading font-bold">Statistics</header>
+                    <div class="panel-body">
+                        <div id="flot-1ine" style="height:210px"></div>
+                    </div>
+                    <footer class="panel-footer bg-white no-padder">
+                        <div class="row text-center no-gutter">
+                            <div class="col-xs-3 b-r b-light">
+                                <span class="h4 font-bold m-t block">5,860</span>
+                                <small class="text-muted m-b block">Orders</small>
+                            </div>
+                            <div class="col-xs-3 b-r b-light">
+                                <span class="h4 font-bold m-t block">10,450</span>
+                                <small class="text-muted m-b block">Sellings</small>
+                            </div>
+                            <div class="col-xs-3 b-r b-light">
+                                <span class="h4 font-bold m-t block">21,230</span>
+                                <small class="text-muted m-b block">Items</small>
+                            </div>
+                            <div class="col-xs-3">
+                                <span class="h4 font-bold m-t block">7,230</span>
+                                <small class="text-muted m-b block">Customers</small>
+                            </div>
+                        </div>
+                    </footer>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="panel panel-default">
+                    <header class="panel-heading font-bold">Data graph</header>
+                    <div class="bg-light dk wrapper">
+                        <span class="pull-right">Friday</span>
+                        <span class="h4">$540<br>
+                                          <small class="text-muted">+1.05(2.15%)</small>
+                                    </span>
+                        <div class="text-center m-b-n m-t-sm">
+                            <div class="sparkline" data-type="line" data-height="65" data-width="100%" data-line-width="2" data-line-color="#dddddd" data-spot-color="#bbbbbb" data-fill-color="" data-highlight-line-color="#fff" data-spot-radius="3" data-resize="true" values="280,320,220,385,450,320,345,250,250,250,400,380"></div>
+                            <div class="sparkline inline" data-type="bar" data-height="45" data-bar-width="6" data-bar-spacing="6" data-bar-color="#65bd77">10,9,11,10,11,10,12,10,9,10,11,9,8</div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <span class="text-muted">Total:</span>
+                            <span class="h3 block">$2500.00</span>
+                        </div>
+                        <div class="line pull-in"></div>
+                        <div class="row m-t-sm">
+                            <div class="col-xs-4">
+                                <small class="text-muted block">Market</small>
+                                <span>$1500.00</span>
+                            </div>
+                            <div class="col-xs-4">
+                                <small class="text-muted block">Referal</small>
+                                <span>$600.00</span>
+                            </div>
+                            <div class="col-xs-4">
+                                <small class="text-muted block">Affiliate</small>
+                                <span>$400.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="m-t-none">Todos</h4>
+                <ul class="list-group gutter list-group-lg list-group-sp sortable">
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-1" data-toggle="class:text-lt text-success" class="active">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-success"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear text-success text-lt" id="todo-1">
+                            Browser compatibility
+                        </div>
+                    </li>
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-2" data-toggle="class:text-lt text-danger">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-danger"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear" id="todo-2">
+                            Looking for more example templates
+                        </div>
+                    </li>
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-3" data-toggle="class:text-lt">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-success"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear" id="todo-3">
+                            Customizing components
+                        </div>
+                    </li>
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-4" data-toggle="class:text-lt">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-success"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear" id="todo-4">
+                            The fastest way to get started
+                        </div>
+                    </li>
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-5" data-toggle="class:text-lt">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-success"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear" id="todo-5">
+                            HTML5 doctype required
+                        </div>
+                    </li>
+                    <li class="list-group-item box-shadow">
+                        <a href="#" class="pull-right" data-dismiss="alert">
+                            <i class="fa fa-times icon-muted"></i>
+                        </a>
+                        <span class="pull-left media-xs">
+                                          <i class="fa fa-sort icon-muted fa m-r-sm"></i>
+                                          <a  href="#todo-6" data-toggle="class:text-lt">
+                                                <i class="fa fa-square-o fa-fw text"></i>
+                                                <i class="fa fa-check-square-o fa-fw text-active text-success"></i>
+                                          </a>
+                                    </span>
+                        <div class="clear" id="todo-6">
+                            LessCSS compiling
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <section class="panel b-light">
+                    <header class="panel-heading bg-primary dker no-border"><strong>Calendar</strong></header>
+                    <div id="calendar" class="bg-primary m-l-n-xxs m-r-n-xxs"></div>
+                    <div class="list-group">
+                        <a href="#" class="list-group-item text-ellipsis">
+                            <span class="badge bg-danger">7:30</span> Meet a friend
+                        </a>
+                        <a href="#" class="list-group-item text-ellipsis">
+                            <span class="badge bg-success">9:30</span> Have a kick off meeting with .inc company
+                        </a>
+                        <a href="#" class="list-group-item text-ellipsis">
+                            <span class="badge bg-light">19:30</span> Milestone release
+                        </a>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div>
+            <div class="btn-group m-b" data-toggle="buttons">
+                <label class="btn btn-sm btn-default active">
+                    <input type="radio" name="options" id="option1"> Timeline
+                </label>
+                <label class="btn btn-sm btn-default">
+                    <input type="radio" name="options" id="option2"> Activity
+                </label>
+            </div>
+            <section class="comment-list block">
+                <article id="comment-id-1" class="comment-item">
+                    <span class="fa-stack pull-left m-l-xs">
+                                    <i class="fa fa-circle text-info fa-stack-2x"></i>
+                                    <i class="fa fa-play-circle text-white fa-stack-1x"></i>
+                              </span>
+                    <section class="comment-body m-b-lg">
+                        <header>
+                            <a href="#"><strong>John smith</strong></a> shared a <a href="#" class="text-info">video</a> to you
+                            <span class="text-muted text-xs">
+                                                24 minutes ago
+                                          </span>
+                        </header>
+                        <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi id neque quam.</div>
+                    </section>
+                </article>
+                <article id="comment-id-2" class="comment-reply">
+                    <article class="comment-item">
+                        <a class="pull-left thumb-sm">
+                            <img src="includes/template/images/avatar_default.jpg" class="img-circle">
+                        </a>
+                        <section class="comment-body m-b-lg">
+                            <header>
+                                <a href="#"><strong>John smith</strong></a>
+                                <span class="text-muted text-xs">
+                                                      26 minutes ago
+                                                </span>
+                            </header>
+                            <div> Morbi id neque quam. Aliquam.</div>
+                        </section>
+                    </article>
+                    <article class="comment-item">
+                        <a class="pull-left thumb-sm">
+                            <img src="includes/template/images/avatar.jpg" class="img-circle">
+                        </a>
+                        <section class="comment-body m-b-lg">
+                            <header>
+                                <a href="#"><strong>Mike</strong></a>
+                                <span class="text-muted text-xs">
+                                                      26 minutes ago
+                                                </span>
+                            </header>
+                            <div>Good idea.</div>
+                        </section>
+                    </article>
+                </article>
+                <article id="comment-id-2" class="comment-item">
+                    <span class="fa-stack pull-left m-l-xs">
+                                    <i class="fa fa-circle text-danger fa-stack-2x"></i>
+                                    <i class="fa fa-file-o text-white fa-stack-1x"></i>
+                              </span>
+                    <section class="comment-body m-b-lg">
+                        <header>
+                            <a href="#"><strong>John Doe</strong></a>
+                            <span class="text-muted text-xs">
+                                                1 hour ago
+                                          </span>
+                        </header>
+                        <div>Lorem ipsum dolor sit amet, consecteter adipiscing elit.</div>
+                    </section>
+                </article>
+                <article id="comment-id-2" class="comment-item">
+                    <span class="fa-stack pull-left m-l-xs">
+                                    <i class="fa fa-circle text-success fa-stack-2x"></i>
+                                    <i class="fa fa-check text-white fa-stack-1x"></i>
+                              </span>
+                    <section class="comment-body m-b-lg">
+                        <header>
+                            <a href="#"><strong>Jonathan</strong></a> completed a task
+                            <span class="text-muted text-xs">
+                                                1 hour ago
+                                          </span>
+                        </header>
+                        <div>Consecteter adipiscing elit.</div>
+                    </section>
+                </article>
+            </section>
+            <a href="#" class="btn btn-default btn-sm m-b"><i class="fa fa-plus icon-muted"></i> more</a>
+        </div>-->
+<!--</section>
+</section>-->

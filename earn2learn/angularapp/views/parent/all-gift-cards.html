@@ -1,0 +1,91 @@
+<header class="gift-cards header bg-light bg-gradient b-b" ng-init="getAllGiftCards()">
+
+	<div class="col-md-6 pull-left no-padder">
+		<!-- mini search box start-->
+		<div class="search input-group left">
+			<div class="search-field">
+				<input type="text" placeholder="Search by Name or Category" ng-model="searchCard" class="input-sm form-control" />
+				<i class="fa fa-search" aria-hidden="true"></i>
+			</div>
+		</div><!-- end mini search box -->
+		<div class="btn btn-default m-t btn-no-w btn-clear" ng-click="searchCard=undefined">Clear</div>
+	</div>
+</header>
+<div class="page-title col-md-12 m-b">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Gift Cards <i class="fa fa-angle-right"></i> <span>Browse All Gift Cards </span></h4>
+</div>
+<section class="vbox gift-cards" ng-if="!resources.stillLoading && !loadinAssignedCards">
+	<section class="scrollable padder">
+<!--	     | filter : {cardName : searchCard}-->
+		<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 m-t-sm" ng-repeat="card in giftCardModel.allGiftCards | filter : searchCard as loadedResult track by $index ">
+            <section class="panel b-a clearfix bg-light lter">
+                <div class="panel-body" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+					<div class="card-wrapper">
+						<a class="cursor-pointer text-ellipsis"><h4>{{card.Name}}</h4></a>
+						 <!--ui-sref="parent.user({ id: user.id })"-->
+						<a>
+							<img class="img img-responsive" src="{{card.image.ImageUrl}}">
+
+						</a>
+
+                    <div class="clear">
+                        <!--<a ng-if="asignedCards.indexOf(card.Id) == -1" ng-click="assignGiftCardPopup(card)" class="btn btn-block btn-success m-t-xs">Assign</a>-->
+                        <!--<a ng-if="asignedCards.indexOf(card.Id) != -1" ng-disabled="true" class="btn btn-block btn-default m-t-xs">Assigned</a>-->
+						<span class="padder-v assign-to">Assign gift card to:</span>
+						<a ng-click="assignGiftCardPopup(card)" class="btn btn-info btn-no-w btn-sm m-t-xs">My Child</a>
+						<a ng-click="assignGiftCardPopupBySponsor(card)" class="btn btn-success btn-no-w btn-sm m-t-xs">Sponsored Child</a>
+                    </div>
+					</div>
+                </div>
+            </section>
+        </div>
+		<section class="scrollable padder">
+    		<div class="col-md-12 not-found m-t-sm" ng-if="!(giftCardModel.allGiftCards.length > 0) && searchCard == ''">
+    			<h3>No Any Giftcards</h3>
+    		</div>
+    	</section>
+		<section class="scrollable padder">
+    		<div class="col-md-12 not-found m-t-sm" ng-if="!(loadedResult.length > 0) && searchCard != ''">
+    			<h3>No Search Results Found</h3>
+    		</div>
+    	</section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading && loadinAssignedCards">
+	<img src="includes/images/still-loading.gif" style="margin: 250px auto;text-align: center;display: block;">
+</section>
+
+<script type="text/ng-template" id="assignGiftCardToHouseTemplate">
+   <div class="col-md-12 bg-white padder-v">
+	   <div class="card-img m-b"><img class="img img-responsive" src="{{selectedCard.image.ImageUrl}}"></div>
+
+	<form name="addGiftCardToHouseForm" ng-submit="assignGiftCardToHouse(selectedCard)" data-validate="parsley">
+		<label class="h4">Select Children to assign</label>
+		<div class="form-inline m-t-sm b-t scrollable wrapper-sm" ng-init="getAllParticipants()" style="max-height : 200px;">
+			<div ng-if="!loadingMembers">
+				<div class="row b-b m-t-sm" ng-repeat="child in allHouseParticipants">
+					<div class="col-md-2">
+						<img width="36" height="36" class="img-img-responsive img-circle thumb-sm" src="{{child.profile_image}}" />
+					</div>
+					<div class="col-md-8 wrapper-sm"><a class="text-ellipsis h5">{{child.f_name}} {{child.l_name}}</a></div>
+					<div class="col-md-2 wrapper-sm">
+						<input type="checkBox" ng-click="selectChild(child.id)"/>
+					</div>
+				</div>
+			</div>
+			<div ng-if="loadingMembers">
+				<h4 class="m-t-md text-center">Loading...</h4>
+			</div>
+			<div ng-if="allHouseParticipants.length == 0">No Child Found</div>
+		</div>
+    	<label class="h4 m-t-sm">Select Gift Value</label>
+		<div class="form-inline m-t-sm card-val">
+			<span ng-repeat="value in giftCardModel.giftCardValues">
+				<input type="button" style="margin : 5px" class="btn btn-danger" ng-class="{'selectedAmount' : giftCardModel.selectedGiftCardValue == value }" ng-if="(!selectedCard.VariableAmountDenominationMinimumValue && !selectedCard.VariableAmountDenominationMaximumValue) || (value > selectedCard.VariableAmountDenominationMinimumValue && value < selectedCard.VariableAmountDenominationMaximumValue)" ng-value="'$' + value"  ng-click="giftCardModel.selectedGiftCardValue = value" />
+			</span>
+		</div>
+		<div class="line line-dashed"></div>
+		<button type="submit" ng-disabled="!giftCardModel.selectedGiftCardValue || selectedCard.child_id.length == 0 || adding" class="btn btn-success btn-block m-t-xs">Assign Now</button>
+	</form>
+	</div>
+</script>

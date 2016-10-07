@@ -1,0 +1,20 @@
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center">
+        <strong class="text-uc">Report Video</strong>
+    </header>
+    <form class="panel-body wrapper-lg" name="addFlagForm" id="addFlagForm" ng-submit="addNewFlag()" data-validate="parsley">
+
+        <!-- <input type="text" ng-model="resources.newFlag.video_id" ng-value="video_id"> -->
+
+        <div class="form-group"> 
+            <textarea placeholder="Enter Flag Description" name="flagDescription" rows="6" data-parsley-trigger="focusout" ng-model="resources.newFlag.description" ng-trim="false" minlength="1" maxlength="255" class="form-control m-t-sm" data-required="true"></textarea>
+            <span style="color: #fb6b5b">{{255 - resources.newFlag.description.length}} characters left</span>
+            <div class="text-danger msg-error" ng-show="addFlagForm.flagDescription.$touched" ng-messages="addFlagForm.flagDescription.$error" role="alert">
+                <div ng-message="minlength">Please enter a minimum required description</div>
+                <div ng-message="maxlength">Maximum number of characters are 255 for the description</div>
+            </div>
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" ng-disabled="addFlagForm.$invalid || isAddTaskWaiting" class="btn btn-primary"><span ng-show="isAddTaskWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addFlagButtonText }}</button>
+    </form>
+</section>

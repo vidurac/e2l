@@ -1,0 +1,21 @@
+<div id="user-notification-panel" class="animated fadeInUp">
+    <h5>Notifications</h5>
+    <ul ng-show="!isNotificationLoading">
+        <li ng-show="!unreadNotification || unreadNotification.length == 0" class="text-muted">
+            No new notifications
+        </li>
+        <li ng-repeat="notification in unreadNotification">
+            <span ng-if="notification.link == ''" href="{{notification.link}}">
+                {{notification.message}}
+            </span>
+            <a ng-if="notification.link != ''" ng-click="navigateTo(notification.link)">
+                {{notification.message}}
+            </a>
+        </li>
+    </ul>
+    <ul ng-show="isNotificationLoading">
+        <li class="text-muted">
+            Loading notifications
+        </li>
+    </ul>
+</div>

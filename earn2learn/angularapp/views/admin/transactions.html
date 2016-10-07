@@ -1,0 +1,30 @@
+<style type="text/css">
+    .user-item{
+        cursor: pointer;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="getAllTransactions()">
+    <p>Transactions Details</p>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+	<section class="scrollable padder m-b-xl">
+		<div class="col-md-12 m-t-sm no-padder" ng-if="transactionHistory.length > 0">
+			<div class="table-responsive">
+			    <table id="transactionTable" cellspacing="0" width="100%" ng-init="renderAllTransactionTable()" class="display table responsive nowrap dataTable dataTables_wrapper">
+
+				</table>
+				<!--<table datatable="" dt-options="dtOptions" dt-columns="dtColumns" class="row-border hover">-->
+				<!--</table>-->
+			</div>
+        </div>
+		<section class="scrollable padder m-b-xl">
+    		<div class="col-md-3 m-t-sm" ng-if="transactionHistory.length == 0">
+    			<h3>No Any Transactions</h3>
+    		</div>
+    	</section>
+	</section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

@@ -1,0 +1,204 @@
+<style type="text/css">
+    .house {
+        cursor: pointer;
+        height: 145px;
+    }
+    
+    .houseName {
+        font-size: 17px;
+    }
+    
+    .houseNameHolder {
+        margin-top: -73px;
+        color: white;
+        background: rgba(0, 0, 0, 0.38);
+        position: relative;
+    }
+</style>
+<div ng-init="loadSelectedUser()"></div>
+<header class="header bg-light bg-gradient b-b" ng-if="!resources.stillLoading && !resources.isCurrentLoggedUser">
+    <p ng-if="userData">
+        <a ui-sref="admin.parents" ng-if="userData.role_id == 2" class="btn btn-primary btn-sm btn-no-w">
+            <i class="fa fa-angle-left text"></i>&nbsp;&nbsp;&nbsp;View All Parents
+        </a>
+        <a ui-sref="admin.members" ng-if="userData.role_id == 3" class="btn btn-primary btn-sm btn-no-w">
+            <i class="fa fa-angle-left text"></i>&nbsp;&nbsp;&nbsp;View All Children
+        </a>
+    </p>
+    <p ng-if="!userData">
+        <a ui-sref="admin.parents" class="btn btn-default">
+			View All Parents
+		</a>
+        <a ui-sref="admin.members" class="btn btn-default">
+			View All Children
+		 </a>
+    </p>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Users <i class="fa fa-angle-right"></i> <span>{{userData.f_name}} {{userData.l_name}}</span></h4>
+</div>
+<section class="hbox stretch profile-view" ng-if="!resources.stillLoading && userData">
+    <aside class="aside aside-xs lter" ng-if="!notAvailable">
+        <section class="vbox">
+            <section class="scrollable padder m-t">
+                <section class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="clearfix text-center m-t">
+                            <div class="thumb-lg">
+                                <img style="height : 128px; width : 128px;" src="{{userData.profile_image}}" class="img-circle">
+                            </div>
+                            <div class="h4 m-t m-b-xs text-ellipsis">{{userData.f_name}} {{userData.l_name}}</div>
+                            <div class="h5 m-b-xs text-ellipsis">({{userData.username}})</div>
+                            <small class="text-info text-ellipsis">{{userData.email}}</small>
+                            <small class="text-info text-ellipsis">{{getRoleName(userData.role_id)}}</small>
+                        </div>
+                    </div>
+                </section>
+                <section class="panel panel-default">
+                    <div class="panel-body">
+                        <h4 class="text-center">Update Profile Picture</h4>
+                        <h5 class="text-center">
+		                    <div class="bg-light" style="width: 100%; min-height: 225px;">
+		                    	<img ngf-src="picFile" class="img img-responsive" width="100%">
+		                    </div>
+		                    <div ng-show="picFile.progress >= 0" class="progress progress-sm progress-striped  active">
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" ng-bind="picFile.progress + '%'" data-original-title="{{picFile.progress + '%'}}" style="width:{{picFile.progress}}%"></div>
+                            </div>
+		                </h5>
+                         <form name="imageUploadForm" class="profile-select">
+                            <input type="file" ngf-select="" class="profile-pic btn inline" ng-model="picFile" name="file" ngf-accept="'image/*'" required="">
+                             <label class="choose-pic" for="file">Choose a file</label>
+                            <br><span>Accepted image formats gif ,png ,jpg and max upload size is 1MB</span>
+                            <button ng-disabled="!imageUploadForm.$valid || uploading" class="btn update btn-primary ng-binding" ng-click="uploadPic(picFile)">{{uploadImageBtnTxt}}</button>
+                        </form>
+                    </div>
+                </section>
+                <!--<div class="bg-info wrapper" ng-if="!resources.isCurrentLoggedUser && userData.house_name">
+                    <strong>{{userData.f_name}}</strong> is in house <strong><a ui-sref="admin.house({ id: userData.house_id })" class="alert-link">"{{userData.house_name}}"</a></strong>.
+                </div>-->
+            </section>
+        </section>
+    </aside>
+    <aside class="aside aside-xl lter" ng-if="!notAvailable">
+        <section class="vbox">
+            <section class="scrollable">
+                <header class="header update-profile">
+                    <div class="pull-left"> <div class="clear text-ellipsis" ng-if="!resources.isCurrentLoggedUser">Update {{userData.f_name}}'s Profile</div>
+                    <div class="clear text-ellipsis" ng-if="resources.isCurrentLoggedUser">Update My Profile</div></div>
+                    <div class="pull-right m-t"><button ng-click="loadChildren(userData)" ng-if="userData.role_id == 2" class="btn btn-success btn-sm btn-no-w">View Children </button></div>
+                </header>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form class="panel-body bg-white m-r b-a m-l m-t m-b" name="updateUserForm" id="updateUserForm" ng-submit="updateUser(updateUserData)" data-validate="parsley">
+                                <div class="form-group">
+                                    <label class="control-label" for="f_name">First Name</label><span style="color: red"> *</span>
+                                    <input type="text" id="f_name" name="fname" ng-pattern="/^[a-zA-Z\s]*$/"
+                                           ng-model="updateUserData.f_name" placeholder="First Name" class="form-control" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="updateUserForm.fname.$touched" ng-messages="updateUserForm.fname.$error" role="alert">
+                                        <div ng-message="required">You must enter a First Name</div>
+                                        <div ng-message="pattern">You can't enter numeric values</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="l_name">Last Name</label><span style="color: red"> *</span>
+                                    <input type="text" id="l_name" name="lname" ng-pattern="/^[a-zA-Z\s]*$/"
+                                           ng-model="updateUserData.l_name" placeholder="Last Name" class="form-control" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="updateUserForm.lname.$touched" ng-messages="updateUserForm.lname.$error" role="alert">
+                                        <div ng-message="required">You must enter a Last Name</div>
+                                        <div ng-message="pattern">You can't enter numeric values</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" ng-if="updateUserData.role_id == 1">
+                                    <label class="control-label" for="l_name">Email</label><span style="color: red"> *</span>
+                                    <input type="text" id="email" name="email" lowercase class="form-control" ng-model="updateUserData.email" required ng-pattern="/^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.(([0-9]{1,3})|([a-zA-Z]{2,3})|(aero|coop|info|museum|name))$/">
+                                    <div class="text-danger msg-error" ng-show="updateUserForm.email.$touched" ng-messages="updateUserForm.email.$error" role="alert">
+                                        <div ng-message="required">Please enter email</div>
+                                        <div ng-message="pattern">Invalid email address</div>
+                                        <div ng-message="email">Invalid email address</div>
+                                    </div>
+                                </div>
+                                <!--<div ng-if="updateUserData.role_id == 2 || updateUserData.role_id == 1" class="form-group">
+									<label class="control-label" for="email">E-mail</label>
+									<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail" class="form-control" data-required="true">
+								</div>
+								
+								<div ng-if="updateUserData.role_id == 3" class="form-group">
+									<label class="control-label" for="email">E-mail</label>
+									<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail (Optional)" class="form-control">
+								</div>-->
+                                <div class="form-group">
+                                    <label class="control-label" for="gender">Gender</label>
+                                    <select name="gender" ng-model="updateUserData.gender" class="form-control">
+                                        <option value="" ng-selected="updateUserData.gender == ''"> Select Gender </option>
+                                        <option value="Male" ng-selected="updateUserData.gender == 'Male'">Male</option>
+                                        <option value="Female" ng-selected="updateUserData.gender == 'Female'">Female</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="telephone">Phone Number</label>
+                                    <input type="telephone" id="telephone" ng-model="updateUserData.telephone"
+                                           placeholder="Phone Number" name="phoneNumber" class="form-control"  international-phone-number>
+                                    <div class="text-danger msg-error" ng-show="updateUserForm.phoneNumber.$touched" ng-messages="updateUserForm.phoneNumber.$error" role="alert">
+                                        <div ng-message="internationalPhoneNumber">Invalid phone number</div>
+                                    </div>
+                                </div>
+                                <div class="form-group hidden">
+                                    <label class="control-label" for="mobile">Mobile</label>
+                                    <input type="telephone" id="mobile" ng-model="updateUserData.mobile" placeholder="Mobile" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="address">Address</label>
+                                    <textarea id="address" ng-model="updateUserData.address" row="3" placeholder="Address" class="form-control"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="country">Country</label>
+                                    <select name="gender" id="country" ng-model="updateUserData.country" ng-change="loadStates(updateUserData.country);" class="form-control">
+                                        <option value="" ng-selected="updateUserData.country == ''"> Select Country </option>
+                                        <option ng-repeat="country in countryList" ng-value="country" ng-selected="updateUserData.country == country">{{country}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="state">State</label>
+                                    <select name="gender" id="state" placeholder="Select State" ng-init="updateUserData.country = updateUserData.country == '' ? 'USA' : updateUserData.country; loadStates(updateUserData.country)" ng-model="updateUserData.state" class="form-control">
+                                        <option value="" ng-selected="updateUserData.state == ''"> Select a state </option>
+                                        <option ng-repeat="state in state_list" ng-value="state" ng-selected="updateUserData.state == state">{{state}}</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="city">City</label>
+                                    <input type="text" id="city" ng-model="updateUserData.city" placeholder="City" class="form-control">
+                                </div>
+
+                                <!--<div class="form-group">
+                                    <label class="control-label" for="profession">Profession</label>
+                                    <input type="text" id="profession" ng-model="updateUserData.profession" placeholder="Profession" class="form-control">
+                                </div>-->
+
+                                <div class="line line-dashed"></div>
+
+                                <button ng-disabled="updateUserForm.$invalid || isWaiting" type="submit" class="pull-left btn update btn-primary m-r">
+                                    <span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.updateUserButtonText }}</button>
+                                <button type="button" class="btn update btn-danger pull-left" ng-click="softdeleteUser(userData)" ng-if="!resources.isCurrentLoggedUser">Delete User</button>
+
+
+
+                                    <a class="change-pass" ng-click="changeUserPassword(userData)" ng-if="resources.isCurrentLoggedUser"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
+
+
+
+                            </form>
+                        </div>
+                    </div>
+
+            </section>
+        </section>
+    </aside>
+</section>
+<section ng-if="!resources.stillLoading && !userData">
+    <h2 class="text-muted text-center">This User is not an authorized user.</h2>
+</section>
+<section class="vbox loading" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

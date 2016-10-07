@@ -1,0 +1,194 @@
+
+<style type="text/css">
+	.video {
+		cursor: pointer;
+		height: 145px;
+	}
+
+	.videoName {
+		font-size: 17px;
+	}
+
+	#video-player {
+		position: relative;
+	}
+
+	#video {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.container1 {
+		/*height: 100%;*/
+		text-align: center;
+		padding: 1em;
+		box-sizing: border-box;
+	}
+
+	img {
+		/*max-width: 100%;
+	    max-height: 100%;
+	    display: inline-block;*/
+	}
+
+	.iframe-wrapper {
+		position: relative;
+		height: 0;
+		padding-top: 56.25%;
+		overflow: hidden;
+	}
+
+	.iframe-wrapper iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+
+	.question-panel{
+		border-radius: 0px !important;
+		margin-bottom: 0 !important;
+	    margin-top: 0px !important;
+	    border: 0 !important;
+	    border-bottom: 1px solid #e8e8e8 !important;
+	}
+
+	.question-panel .answer{
+		border-radius: 0px !important;
+		border: 0 !important;
+	}
+
+	.question-icons a{
+		padding: 10px 5px;
+		cursor: pointer;
+	}
+
+	.fa-check-square-o{
+		color: green;
+	}
+
+	.fa-square-o{
+		color: red;
+	}
+</style>
+<div ng-init="loadLesson()"></div>
+<header class="header bg-light bg-gradient b-b">
+	<div class="col-md-6 no-padder pull-left lesson-edit">
+		<button ui-sref="admin.lessons" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button> 
+	</div>
+</header>
+<section class="hbox stretch lessons lessons-view" ng-if="!resources.stillLoading">
+	<div class="col-md-5 col-sm-12 xol-xs-12 left-col">
+	<div ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable">
+					<div class="iframe-wrapper" id="video-wrapper" ng-bind-html="videoIframe">
+					</div>
+					<header class="video-group header bg-light bg-gradient b-b">
+						
+						<div  class="pull-left m-t">
+								
+							<ng-rate-it style="display: inline;" ng-model="averageRating" resetable="false" read-only="true" before-rated="confirmRating"></ng-rate-it>
+
+
+							{{averageRating > 0 ? averageRating : 0}} out of 5
+						</div>
+						
+
+						<div class="btn-group pull-right">
+						<button class="btn btn-icon-new btn-danger pull-right" ng-click="deleteLesson(cur_lesson)"  title="Delete lesson" data-toggle="tooltip">
+			                  <i class="fa fa-trash"></i>
+		                </button>
+		                <button ng-if="user_role_id == 1" ui-sref="admin.editlesson({id : vid})" class="btn btn-icon-new btn btn-warning" title="Edit lesson" data-toggle="tooltip">
+			                  <i class="fa fa-pencil"></i>
+		                </button>
+
+		                <button ng-if="user_role_id == 2" ui-sref="parent.editlesson({id : vid})" class="btn btn-icon-new btn btn-warning" title="Edit lesson" data-toggle="tooltip">
+			                  <i class="fa fa-pencil"></i>
+		                </button>
+
+							</div>
+					</header>
+					<div class="padder">
+						<h3 ng-bind-html="videoTitle"></h3>
+						<small class="text-muted">Created on {{cur_lesson.created_at}}</small>
+						<p class="text-muted" ng-bind-html="videoDescription"></p>
+					</div>
+			</section>
+		</section>
+	</div>
+		</div>
+	<div class="col-md-7 col-sm-12 xol-xs-12 right-col q-container">
+	<div ng-if="!notAvailable">
+		<header class="header bg-light bg-gradient b-a">
+			<div class="col-md-6 pull-right m-t-sm no-padder">
+				<!-- mini search box start-->
+				<div class="search sm-right input-group">
+					<div class="search-field">
+						<input type="text" placeholder="Search" ng-model="searchVideoName" class="input-sm form-control" />
+						<i class="fa fa-search" aria-hidden="true"></i>
+					</div>
+				</div><!-- end mini search box -->
+			</div>
+		</header>
+		<section class="vbox">
+			<section class="scrollable">
+				<div class="page-title col-md-12">
+					<h4><i class="fa fa-angle-right"></i> Questions</h4>
+				</div>
+				<!--Question and answer panel start-->
+				
+				<ul class="list-group alt inline">
+					<li class="list-group-item panel question-panel" ng-repeat="question in cur_lesson.questions | filter : searchVideoName as loadedResult track by $index">
+						<div class="media" style="color : black;">
+		                	<ul class="nav nav-pills pull-right">
+								<!--<li class="question-icons">
+									<a class="text-muted pointer"><i class="fa fa-pencil"></i></a>
+								</li>-->
+								<li class="question-icons">
+									<a class="panel-toggle text-muted pointer"><i class="fa fa-caret-down text-active"></i><i class="fa fa-caret-up text"></i></a>
+								</li>
+							</ul>
+		                	<div class="media-body">
+		                		<span class="pull-left media-xs">{{$index+1}}</span>
+								<div class="clear" ng-bind-html="getUnsafeHtml(question.question)">
+								</div>
+		                	</div> 
+	                    </div>
+	                    <section class="panel-body no-padder"> <!--Add 'collapse' class to collapse by defaults-->
+	                    	<div class="line pull-in"></div>
+							<ul class="list-group bg-white">
+			                    <li href="#" class="list-group-item answer" ng-repeat="answer in question.answers">
+			                    	<span class="pull-left media-xs">
+			                    		<i class="fa" ng-class="{'fa-check-square-o' : answer.is_correct == 1, 'fa-square-o' : answer.is_correct == 0}"></i>
+			                    	</span>
+			                    	<div class="clear" ng-bind-html="getUnsafeHtml(answer.answer)">
+			                    	</div>
+			                    </li>
+		                  	</ul>
+						</section>
+					</li>
+					
+				</ul>
+				<h4 class="text-center" ng-if="loadedResult.length == 0">No search results found</h4>
+				<!--Question and answer panel end-->
+				
+			</section>
+		</section>
+	</aside>
+		</div>
+	<div ng-if="notAvailable">
+		<div ng-if="notAvailable" class="ng-scope not-available">
+			<h3 class="text-muted text-center">This Lesson is not available.</h3>
+		</div>
+	</div>
+</section>
+
+<!-------------------------------------------------------------------->
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

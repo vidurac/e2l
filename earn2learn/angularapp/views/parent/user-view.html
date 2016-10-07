@@ -1,0 +1,656 @@
+<style type="text/css">
+	.card-val{
+	    position: absolute;
+	    right: 0;
+	    margin-right: 35px;
+	    margin-top: 5px;
+	    padding: 5px;
+	    font-size: 24px;
+	    background-color: red;
+	    border: thin solid white;
+	}
+	.house {
+		cursor: pointer;
+		height: 145px;
+	}
+	
+	.houseName {
+		font-size: 17px;
+	}
+	
+	.houseNameHolder {
+		margin-top: -73px;
+		color: white;
+		background: rgba(0, 0, 0, 0.38);
+		position: relative;
+	}
+	.p-r-0{
+		padding-right : 0 !important;
+	}
+	.btn-fb {
+		color: #fff !important;
+		background-color: #355394;
+		border-color: #355394;
+	}
+	
+	.btn-fb:hover,
+	.btn-fb:focus,
+	.btn-fb:active,
+	.btn-fb.active,
+	.open .dropdown-toggle.btn-fb {
+	  color: #fff !important;
+	  background-color: #2C4479;
+	  border-color: #355394;
+	}
+	
+	.certificatePopup{
+		padding-top: 50px !important;
+	}
+	
+	.certificatePopup .ngdialog-content{
+		width: 870px !important;
+	}
+
+	.form-group, .panel-default {
+		position: relative;
+	}
+	.required {
+		position: absolute;
+		top: 33px;
+		right: -10px;
+		color: red;
+	}
+</style>
+<div ng-init="loadParentSelectedUser(); summaryByChildId();"></div>
+<header class="header bg-light bg-gradient b-b" ng-if="!resources.stillLoading && !resources.isCurrentLoggedUser">
+	<div class="col-md-6 no-padder pull-left lesson-edit">
+		<button ui-sref="parent.dashboard" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+	</div>
+	<p ng-if="userData">
+		<!--<a ui-sref="parent.allParticipant" ng-if="userData.role_id == 3" class="btn btn-default">
+			<i class="fa fa-angle-left text"></i>&nbsp;&nbsp;&nbsp;View All Children
+		</a>-->
+	</p>
+	<p ng-if="!userData">
+		<a ui-sref="parent.allParticipant" class="btn btn-default">
+			View All Children
+		</a>
+	</p>
+</header>
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Children <i class="fa fa-angle-right"></i> <span>{{userData.f_name}} {{userData.l_name}}</span></h4>
+</div>
+<section class="" ng-if="!resources.stillLoading && userData && userData.role_id != 1">
+	<div class="row no-margin">
+	<div class="col-md-5 col-sm-6 col-xs-12" ng-if="!notAvailable">
+		<section class="vbox">
+			<section class="scrollable m-t">
+				<section class="panel panel-default user-points">
+					<div class="panel-body b-b">
+						<div class="col-md-6 b-r media">
+							<div class="clearfix text-center m-t">
+								<div class="inline">
+									<div class="thumb">
+										<img style="height : 64px; width : 64px;" src="{{userData.profile_image}}" class="img-circle">
+									</div>
+									<div class="h5 m-t m-b-xs">{{userData.f_name}} {{userData.l_name}}</div>
+									<div class="h5 m-b-xs text-ellipsis">({{userData.username}})</div>
+		                            <small class="text-info text-ellipsis">{{userData.email}}</small>
+									<small class="text-info m-b">{{getRoleName(userData.role_id)}}</small>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6" ng-if="!resources.isCurrentLoggedUser">
+							<h3 class="text-muted text-center"><b>Total E2L Bucks</b></h3>
+							<h1 class="text-center text-info"><b>{{usersModel.userSummary.totalPoints}} <small class="text-center text-info">E2L Bucks</small></b></h1>
+						</div>
+					</div>
+					<div class="row padder" ng-if="!resources.isCurrentLoggedUser">
+						<div class="col-md-5 p-r-0">
+							<div class="h6" style="padding-top : 10px;">Behavior E2L Bucks</div>
+						</div>
+						<div class="col-md-7 p-r-0">
+							<div class="h6" style="padding-top : 10px;"><span class="text-danger"><i class="fa fa-arrow-down"></i>{{usersModel.userSummary.behaviorMinus}} E2L Bucks</span>&nbsp;&nbsp;<span class="text-success"><i class="fa fa-arrow-up"></i>{{usersModel.userSummary.behaviorPlus}} E2L Bucks</span></div>
+						</div>
+					</div>
+					<div class="row padder" ng-if="!resources.isCurrentLoggedUser">
+						<div class="col-md-5 p-r-0">
+							<div class="h6" style="padding-top : 10px;">Lesson E2L Bucks</div>
+						</div>
+						<div class="col-md-7 p-r-0">
+							<div class="h6" style="padding-top : 10px;"><span class="text-info">{{usersModel.userSummary.lessonsPoints}} E2L Bucks</span></div>
+						</div>
+					</div>
+					<div class="row padder" ng-if="!resources.isCurrentLoggedUser">
+						<div class="col-md-5 p-r-0">
+							<div class="h6" style="padding-top : 10px;">Chores E2L Bucks</div>
+						</div>
+						<div class="col-md-7 p-r-0">
+							<div class="h6" style="padding-top : 10px;"><span class="text-info">{{usersModel.userSummary.choresPoints}} E2L Bucks</span></div>
+						</div>
+					</div>
+					<div class="row padder" ng-if="!resources.isCurrentLoggedUser">
+						<div class="col-md-5 p-r-0">
+							<div class="h6" style="padding-top : 10px;">Giftcards Issued</div>
+						</div>
+						<div class="col-md-7 p-r-0">
+							<div class="h6" style="padding-top : 10px;"><span class="text-info">${{usersModel.userSummary.giftCardPoints}}</span></div>
+						</div>
+					</div>
+					<div class="row wrapper" ng-if="!resources.isCurrentLoggedUser">
+						<div class="col-md-12 b-t">
+							<div class="h4" style="padding-top : 10px;">Lessons Completed&nbsp;<span class="badge">{{usersModel.userSummary.passedLessons}}</span></div>
+						</div>
+						<div class="col-md-12">
+							<div class="h6" style="padding-top : 10px;">Passed&nbsp;<span class="text-success"><b>{{usersModel.userSummary.passedLessons}}</b></span>&nbsp;&nbsp;&nbsp;Failed&nbsp;<span class="text-danger"><b>{{usersModel.userSummary.failedLessons}}</b></span></div>
+						</div>
+					</div>
+				</section>
+			</section>
+		</section>
+	</div>
+	<div class="col-md-7 col-sm-6 col-xs-12 right-col user-data" ng-if="!notAvailable">
+		<section class="vbox m-b">
+			<header class="header bg-light bg-gradient b-b">
+			<ul ng-if="!resources.isCurrentLoggedUser" class="nav nav-tabs nav-white pull-left">
+				<li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'behaviorTab'}"><a ng-click="resources.currentTab = 'behaviorTab'" data-toggle="tooltip" title="Behavior"><i class="icon-happy"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'lessonsTab'}"><a ng-click="resources.currentTab = 'lessonsTab'" data-toggle="tooltip" title="Completed Lessons"><i class="fa fa-book"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'choresTab'}"><a ng-click="resources.currentTab = 'choresTab'" data-toggle="tooltip" title="Completed Chores"><i class="fa fa-tasks"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'giftCardTab'}"><a ng-click="resources.currentTab = 'giftCardTab'" data-toggle="tooltip" title="Gift Cards"><i class="fa fa-gift"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'certificatesTab'}"><a ng-click="resources.currentTab = 'certificatesTab'" data-toggle="tooltip" title="Certificates"><i class="fa fa-certificate"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'badgesTab'}"><a ng-click="resources.currentTab = 'badgesTab'" data-toggle="tooltip" title="Badges"><i class="fa fa-star"></i></a></li>
+	            <li class="cursor-pointer text-muted" ng-class="{'active' : resources.currentTab == 'settingsTab'}"><a ng-click="resources.currentTab = 'settingsTab'" data-toggle="tooltip" title="Profile"><i class="fa fa-user"></i></a></li>
+			</ul>
+			<!--<p class="clear text-ellipsis" ng-if="!resources.isCurrentLoggedUser">Update {{userData.f_name}}'s Profile</p>-->
+			<p class="clear text-ellipsis" ng-if="resources.isCurrentLoggedUser">Update My Profile</p>
+				<div class="pull-right m-t">
+					<a class="btn btn-sm pull-right btn-danger" ng-click="softdeleteChildUser(userData)" ng-if="!resources.isCurrentLoggedUser" title="Delete User" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
+					<a class="btn btn-sm pull-right btn-default" ng-click="changeUserPassword(userData)" ng-if="resources.isCurrentLoggedUser">Change Password</a>
+				</div>
+		</header>
+			<section class="scrollable">
+				<div class="tab-content behaviors" ng-if="!resources.isCurrentLoggedUser">
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'behaviorTab'}">
+						<div class="wrapper" ng-if="!resources.isCurrentLoggedUser">
+							<div class="page-title col-md-12 no-padder m-b">
+								<h5><i class="fa fa-angle-right"></i> <b>Behavior</b></h5>
+							</div>
+							<h3 class="text-center">Add E2L Bucks for Good Behavior</h3>
+							<p class="text-center"><small>You can also add negative E2L Bucks for bad behavior!</small> </p>
+							<div class="row">
+								<div class="col-md-12 col-xs-12 inline v-middle m-t-md">
+									<div class="input-group main-wrap">
+										<div class="input-group-btn btn-min col">
+											<button type="button" ng-click="resources.behaviorPoints = resources.behaviorPoints - 1" class="btn btn-danger input-xl form-control">
+												-
+											</button>
+										</div>
+										<div class="col"><input type="number" id="appendedInput" ng-model="resources.behaviorPoints" class="input-xl form-control text-center spinner-input"></div>
+										<div class="input-group-btn btn-plus col">
+											<button type="button" ng-click="resources.behaviorPoints = resources.behaviorPoints + 1" class="btn btn-success input-xl form-control">
+												+
+											</button>
+										</div>
+										<div class="input-group-btn btn-add col"><button type="button" ng-disabled="resources.behaviorPoints == 0" ng-click="behaviorPoints(resources.behaviorPoints, userData.id)" class="btn btn-default input-xl form-control b-a">
+											Add
+										</button></div>
+									</div>
+									<div class="padder">
+										<h4 ng-class="{'text-success behave' : resources.behaviorPoints > 0, 'text-danger behave' : resources.behaviorPoints < 0}">
+											<span ng-class="{'icon-happy' : resources.behaviorPoints > 0, 'icon-sad' : resources.behaviorPoints < 0}"></span>&nbsp;&nbsp;
+											<span ng-if="resources.behaviorPoints > 0">Good Behavior</span>
+											<span ng-if="resources.behaviorPoints < 0">Bad Behavior</span>
+										</h4>
+									</div>
+								</div>
+
+							</div>
+							<div class="row">
+								<div class="col-md-6"></div>
+								<div class="col-md-3">
+									<h4 class="text-center text-danger label-sm">Bad E2L Bucks</h4>
+									<h1 class="text-center text-danger"><span style="font-size: 45px;" class="icon-sad"></span></h1>
+								</div>
+								<div class="col-md-3">
+									<h4 class="text-center text-success label-sm">Good E2L Bucks</h4>
+									<h1 class="text-center text-success"><span style="font-size: 45px;" class="icon-happy"></span></h1>
+								</div>
+							</div>
+							<div class="row odd">
+								<div class="col-md-6">
+									<h3 class="">Today's Behavior</h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-danger"><b>{{child_behavior_rewards.this_day.bad}}</b></h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-success"><b>{{child_behavior_rewards.this_day.good}}</b></h3>
+								</div>
+							</div>
+							<div class="row even">
+								<div class="col-md-6">
+									<h3 class="">This Week's Behavior</h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-danger"><b>{{child_behavior_rewards.this_week.bad}}</b></h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-success"><b>{{child_behavior_rewards.this_week.good}}</b></h3>
+								</div>
+							</div>
+							<div class="row odd">
+								<div class="col-md-6">
+									<h3 class="">This Month's Behavior</h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-danger"><b>{{child_behavior_rewards.this_month.bad}}</b></h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-success"><b>{{child_behavior_rewards.this_month.good}}</b></h3>
+								</div>
+							</div>
+							<div class="row even">
+								<div class="col-md-6">
+									<h3 class="">This Year's Behavior</h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-danger"><b>{{child_behavior_rewards.this_year.bad}}</b></h3>
+								</div>
+								<div class="col-md-3">
+									<h3 class="text-center text-success"><b>{{child_behavior_rewards.this_year.good}}</b></h3>
+								</div>
+							</div>
+							
+							<!--<h3 class="">Today’s Behavior</h3>
+							<div class="v-middle">
+								<div class="col-md-6">
+									
+									<h2 class="text-center text-danger"><b>{{child_rewards.today_bad_points}}</b></h2>
+									
+								</div>
+								<div class="col-md-6">
+									<h2 class="text-center text-success"><b>{{child_rewards.today_good_points}}</b></h2>
+								</div>
+							</div>-->
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'lessonsTab'}">
+						<div ng-init="getChildAssignedLessons(); getChildLessonpoints()">
+							<div ng-if="!loadingAssignedLessons" class="padder m-t">
+								<div class="page-title col-md-12 no-padder m-b">
+									<h5><i class="fa fa-angle-right"></i> <b>Completed Lessons</b></h5>
+								</div>
+								<section class="panel panel-default">
+									<div class="h4 bg-warning wrapper-sm">Points earn from completed lessons.</div>
+									<div class="row m-l-none m-r-none bg-light lter pnts-wrap">
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light"><span><b>Today</b></span> <span class="bg-warning badge m-t">{{ChildLessonpoints.this_day}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light lt"><span><b>This Week</b></span> <span class="bg-warning badge m-t">{{ChildLessonpoints.this_week}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light"><span><b>This Month</b></span> <span class="bg-warning badge m-t">{{ChildLessonpoints.this_month}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light lt"><span><b>This Year</b></span> <span class="bg-warning badge m-t">{{ChildLessonpoints.this_year}} E2L Bucks</span></div>
+									</div>
+								</section>
+								<hr>
+								<div class="col-md-3 m-t-sm" ng-repeat="video in ChildAssignedLessons | filter : {status : 3}" ng-if="video.video">
+								    <div class="video bg-white b-a hover  m-b-sm">
+										<div class="control-group">
+											<a ui-sref="parent.lesson({id : video.video.video_id})">
+												<img ng-if="video.video.video_ref == 'youtube'" style="height: 120px; width: 100%;" class="img img-responsive" src="https://img.youtube.com/vi/{{video.video.url_id}}/0.jpg" />
+												<img ng-if="video.video.video_ref == 'ted'" style="height: 120px; width: 100%;" class="img img-responsive" src="{{video.thumb}}" />
+											</a>
+										</div>
+										<div class="wrapper-sm bg-white">
+											<a ui-sref="parent.lesson({id : video.video.video_id})"><strong class="text-ellipsis categoryName" title="{{video.video.title}}">{{video.video.title}}</strong></a>
+											<a><span class="badge bg-info">{{video.video.value}} E2L Bucks</span></a>
+											<div class="clearfix status">
+											<small class="text-danger" ng-if="video.attempts > 0">Failed {{video.attempts}} times.</small>
+											<!-- <small class="text-success" ng-if=" video.is_passed">Successfully completed.</small> -->
+												</div>
+										</div>
+									</div>
+								</div>
+								<section class="padder">
+						    		<div class="col-md-12" ng-if="!loadingAssignedLessons && ChildAssignedLessons.length == 0">
+						    			<h3 class="no-recs">No completed Lessons</h3>
+						    		</div>
+						    	</section>
+							</div>
+							<h4 class="text-center text-muted m-t-xl" ng-if="loadingAssignedLessons">Loading...</h4>
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'choresTab'}">
+						<div ng-init="getChildAssignedChoresByChildId(); getChildChorepoints()">
+							<div ng-if="!loadingAssignedChores" class="padder m-t">
+								<div class="page-title col-md-12 no-padder m-b">
+									<h5><i class="fa fa-angle-right"></i> <b>Completed Chores</b></h5>
+								</div>
+								<section class="panel panel-default">
+									<div class="h4 bg-success wrapper-sm">Points earn from completed chores.</div>
+									<div class="row m-l-none m-r-none bg-light lter pnts-wrap">
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light"><span><b>Today</b></span> <span class="bg-success badge m-t">{{ChildChorepoints.this_day}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light lt"><span><b>This Week</b></span> <span class="bg-success badge m-t">{{ChildChorepoints.this_week}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light"><span><b>This Month</b></span> <span class="bg-success badge m-t">{{ChildChorepoints.this_month}} E2L Bucks</span></div>
+										<div class="h5 text-muted col-md-3 col-sm-3 padder-v b-r b-light lt"><span><b>This Year</b></span> <span class="bg-success badge m-t">{{ChildChorepoints.this_year}} E2L Bucks</span></div>
+									</div>
+								</section>
+								<hr>
+								<article class="media b-b m-t-md wrapper-sm" ng-repeat = "task in ChildAssignedChores | orderBy : '-created_at' | filter : {enable : 1, status : 3}">
+						            <span class="pull-left thumb-sm">{{$index + 1}}.</span>
+						            <div class="media-body">   
+						                <h4 class="h4">{{task.task}}&nbsp;&nbsp;<span class="bg-info badge ">{{task.value}} E2L Bucks</span></h4>
+						                <p class="block m-t-xs" ng-bind-html="getUnsafeHtml(task.description)"></p>
+						            </div>
+					        	</article>
+					        	<section class="padder">
+						    		<div class="col-md-12" ng-if="ChildAssignedChores.length == 0">
+						    			<h3 class="no-recs">There are no chores</h3>
+						    		</div>
+						    	</section>
+					        </div>
+							<h4 class="text-center text-muted m-t-xl" ng-if="loadingAssignedChores">Loading...</h4>
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'giftCardTab'}">
+						<div ng-init="getChildAssignedGiftcards()">
+							<section class="scrollable padder m-b-xl" ng-if="!loadingGiftcards">
+								<div class="page-title col-md-12 no-padder m-b m-t">
+									<h5><i class="fa fa-angle-right"></i> <b>Gift Cards</b></h5>
+								</div>
+								<div class="col-md-4 m-t-sm" ng-repeat="card in ChildGiftcards | filter : {is_approved : 1} as loadedCards track by $index">
+						            <section class="panel clearfix bg-light lter">
+						                <div class="panel-body" ng-init="card.image = jsonDecodeStr(card.card.CardImages)">
+						                	<div class="panel-header"></div>
+						                    <a>
+						                    	<span class="clear badge bg-danger pull-right card-val">${{card.card_points}}</span>
+						                        <img class="img img-responsive" src="{{card.image.ImageUrl}}" />
+						                    </a>
+						                    <div class="clear">
+						                        <a class="cursor-pointer text-ellipsis"><h4 class="text-ellipsis">{{card.card.Name}}</h4></a>
+						                    </div>
+						                </div>
+						            </section>
+						        </div>
+								<section class="padder">
+						    		<div class="col-md-12" ng-if="!(loadedCards.length > 0)">
+										<h3 class="no-recs">There are no gift cards</h3>
+						    		</div>
+						    	</section>
+							</section>
+							<h4 class="text-center text-muted m-t-xl" ng-if="loadingGiftcards">Loading...</h4>
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'certificatesTab'}">
+						<div ng-init="getCertificateByUser()">
+							<section class="scrollable padder m-b-xl" ng-if="!loadingCertificates">
+								<div class="page-title col-md-12 no-padder m-b m-t">
+									<h5><i class="fa fa-angle-right"></i> <b>Certificates</b></h5>
+								</div>
+								<div class="col-xs-12 col-md-6 col-lg-6 m-t-sm cert" ng-repeat="certificate in ChildCertificates track by $index">
+				                	<div class="panel category bg-white wrapper b-a hover">
+										<strong class="text-ellipsis categoryName" ng-bind="certificate.name"></strong>
+										<small class="text-info text-ellipsis">{{certificate.certificate_id}}</small>
+										<img class="img img-responsive" src="includes/images/badge.png" />
+										<small>Certified on {{certificate.issue_date | amDateFormat:'MM/DD/YYYY'}}</small>
+										<div class="btn-container text-center">
+											<button title="Print" ng-click="printCertificate(certificate, 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350)" class="btn btn-sm btn-success inline" data-toggle="tooltip"><i class="fa fa-print"></i></button>
+											<button title="Share" ng-click="shareOnFb(certificate)" class="btn m-l-sm btn-sm btn-fb inline" data-toggle="tooltip"><i class="fa fa-facebook"></i></button>
+											<button title="View" ng-click="viewCertificate(certificate)" class="btn btn-sm btn-info m-l-sm inline" data-toggle="tooltip"><i class="fa fa-search"></i></button>
+										</div>
+										<!--FB Share-->
+										
+										<!-- Load Facebook SDK for JavaScript -->
+										<!--<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count">Fb Share</div>
+										<div id="fb-root"></div>
+										<script>
+										
+										(function(d, s, id) {
+										  var js, fjs = d.getElementsByTagName(s)[0];
+										  if (d.getElementById(id)) return;
+										  js = d.createElement(s); js.id = id;
+										  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=1059869117410898";
+										  fjs.parentNode.insertBefore(js, fjs);
+										}(document, 'script', 'facebook-jssdk'));
+										
+										</script>-->
+									
+										<!-- Your share button code -->
+										<!--<a href="javascript:fbShare('http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350)">Share</a>-->
+										<!--<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>
+										<script>(function(d, s, id) {
+											var js, fjs = d.getElementsByTagName(s)[0];
+											if (d.getElementById(id)) return;
+											js = d.createElement(s); js.id = id;
+											js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=1059869117410898";
+										  	fjs.parentNode.insertBefore(js, fjs);
+										}(document, 'script', 'facebook-jssdk'));
+										</script>-->
+										<!---->
+									</div>
+						        </div>
+								<section class="padder">
+									<div class="col-md-12 m-t-sm" ng-if="ChildCertificates.length == 0">
+										<h3 class="no-recs">There are no certificates</h3>
+									</div>
+								</section>
+
+							</section>
+							<h4 class="text-center text-muted m-t-xl" ng-if="loadingCertificates">Loading...</h4>
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'badgesTab'}">
+						<div ng-init="getBadgesByUser()">
+							<section class="scrollable padder m-b-xl" ng-if="!loadingBadges">
+								<div class="page-title col-md-12 no-padder m-b m-t">
+									<h5><i class="fa fa-angle-right"></i> <b>Badges</b></h5>
+								</div>
+								<div class="col-xs-6 col-md-6 col-lg-6 m-t-sm cert" ng-repeat="badge in childBadges track by $index">
+				                	<div class="panel category b-a hover">
+										<div class="badge-container">
+											<div class="bg-primary">
+											<div class="badge-image">
+												<img class="pull-left thumb avatar b-2x img-circle" src="uploads/badges/{{badge.badge_image}}"/>
+												</div>
+											<div class="badge-label">
+												<div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding badge-title">
+													<h4 title="{{badge.name}}" class="text-ellipsis">{{badge.name}}</h4>
+												</div>
+
+											</div>
+
+										<div class="btn-container wrapper text-center">
+											<button title="Share" ng-click="badgeShareOnFb(badge)" class="btn m-l-sm btn-sm btn-fb inline" data-toggle="tooltip"><i class="fa fa-facebook"></i></button>
+										</div>
+												</div>
+										</div>
+										<!--FB Share-->
+
+										<!-- Load Facebook SDK for JavaScript -->
+										<!--<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count">Fb Share</div>
+										<div id="fb-root"></div>
+										<script>
+
+										(function(d, s, id) {
+										  var js, fjs = d.getElementsByTagName(s)[0];
+										  if (d.getElementById(id)) return;
+										  js = d.createElement(s); js.id = id;
+										  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=1059869117410898";
+										  fjs.parentNode.insertBefore(js, fjs);
+										}(document, 'script', 'facebook-jssdk'));
+
+										</script>-->
+
+										<!-- Your share button code -->
+										<!--<a href="javascript:fbShare('http://jsfiddle.net/stichoza/EYxTJ/', 'Fb Share', 'Facebook share popup', 'http://goo.gl/dS52U', 520, 350)">Share</a>-->
+										<!--<div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>
+										<script>(function(d, s, id) {
+											var js, fjs = d.getElementsByTagName(s)[0];
+											if (d.getElementById(id)) return;
+											js = d.createElement(s); js.id = id;
+											js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=1059869117410898";
+										  	fjs.parentNode.insertBefore(js, fjs);
+										}(document, 'script', 'facebook-jssdk'));
+										</script>-->
+										<!---->
+									</div>
+						        </div>
+								<section class="padder">
+									<div class="col-md-12 m-t-sm" ng-if="childBadges.length == 0">
+										<h3 class="no-recs">There are no badges</h3>
+									</div>
+								</section>
+
+							</section>
+							<h4 class="text-center text-muted m-t-xl" ng-if="loadingCertificates">Loading...</h4>
+						</div>
+					</div>
+					<div class="tab-pane" ng-class="{'active' : resources.currentTab == 'settingsTab'}">
+						<ng-include src="'profileForm.html'"></ng-include>
+					</div>
+				</div>
+				<div ng-if="resources.isCurrentLoggedUser">
+					<ng-include src="'profileForm.html'"></ng-include>
+				</div>
+			</section>
+		</section>
+	</div>
+	</div>
+</section>
+<section ng-if="!resources.stillLoading && !userData">
+	<h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section ng-if="!resources.stillLoading && userData && userData.role_id == 1">
+	<h2 class="text-muted text-center">This User is not available.</h2>
+</section>
+<section class="vbox loading" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<script type="text/ng-template" id="profileForm.html">
+	<header class="wrapper">
+		<div class="row">
+			<div class="col-md-12">
+			<div class="page-title col-md-12 no-padder m-b">
+				<h5><i class="fa fa-angle-right"></i> <b>Edit Profile</b></h5>
+			</div>
+			</div>
+			<div class="col-md-6">
+				<section class="panel panel-default">
+					<form class="panel-body wrapper" name="updateUserForm" id="updateUserForm" ng-submit="updateUser(updateUserData)" data-validate="parsley">
+						<h4 class="text-center">Update Profile Info</h4>
+						<div class="form-group">
+							<label class="control-label" for="f_name">First Name <span class="txt-red">*</span></label>
+							<input type="text" id="f_name" name="f_name" ng-model="updateUserData.f_name" placeholder="First Name" class="form-control" data-required="true" required  ng-pattern="/^[A-Za-z ]+$/">
+
+
+							<div class="text-danger msg-error" ng-show="updateUserForm.f_name.$touched" ng-messages="updateUserForm.f_name.$error" role="alert">
+	                            <div ng-message="required">Please enter First Name</div>
+								<div ng-message="pattern">Invalid first name</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label" for="l_name">Last Name <span class="txt-red">*</span></label>
+							<input type="text" id="l_name" name="l_name" ng-model="updateUserData.l_name" placeholder="Last Name" class="form-control" data-required="true" required  ng-pattern="/^[A-Za-z ]+$/">
+
+
+							<div class="text-danger msg-error" ng-show="updateUserForm.l_name.$touched" ng-messages="updateUserForm.l_name.$error" role="alert">
+	                            <div ng-message="required">Please enter Last Name</div>
+								<div ng-message="pattern">Invalid last name</div>
+
+							</div>
+						</div>
+						
+
+						
+
+						<!--<div ng-if="updateUserData.role_id == 2" class="form-group">
+							<label class="control-label" for="email">E-mail</label>
+							<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail" class="form-control" data-required="true">
+						</div>
+						<div ng-if="updateUserData.role_id == 3" class="form-group">
+							<label class="control-label" for="email">E-mail</label>
+							<input type="email" lowercase id="email" ng-model="updateUserData.email" placeholder="E-mail (Optional)" class="form-control">
+						</div>-->
+						<div class="form-group">
+	                        <label class="control-label" for="telephone">Phone Number</label>
+	                        <input type="telephone" id="telephone" ng-model="updateUserData.telephone" placeholder="Phone Number" class="form-control" name="phoneNumber" international-phone-number>
+							<div class="text-danger msg-error" ng-show="updateUserForm.phoneNumber.$touched" ng-messages="updateUserForm.phoneNumber.$error" role="alert">
+								<div ng-message="internationalPhoneNumber">Invalid phone number</div>
+							</div>
+						</div>
+						<div class="form-group hidden">
+	                        <label class="control-label" for="mobile">Mobile</label>
+	                        <input type="telephone" id="mobile" ng-model="updateUserData.mobile" placeholder="Mobile" class="form-control">
+	                    </div>
+	                    <div class="form-group">
+	                        <label class="control-label" for="address">Address</label>
+	                        <textarea id="address" ng-model="updateUserData.address" row="3" placeholder="Address" class="form-control"></textarea>
+	                    </div>
+	                    <div class="form-group">
+	                        <label class="control-label" for="city">City</label>
+	                        <input type="text" id="city" ng-model="updateUserData.city" placeholder="City" class="form-control">
+	                    </div>
+	                    <!--<div class="form-group">
+	                        <label class="control-label" for="country">Country</label>
+	                        <select name="gender" id="country" ng-model="updateUserData.country" class="form-control">
+	                            <option value="" ng-selected="updateUserData.country == ''"> Select Country </option>
+	                            <option ng-repeat="country in countryList" ng-value="country.name" ng-selected="updateUserData.country == country.name">{{country.name}}</option>
+	                        </select>
+	                    </div>-->
+	                    
+	                    <div class="form-group">
+	                        <label class="control-label"  ng-init="updateUserData.country = updateUserData.country == '' ? 'USA' : updateUserData.country; loadStates(updateUserData.country)" for="state">State</label>
+	                        <select name="gender" id="state" placeholder="Select State" ng-model="updateUserData.state" class="form-control">
+								<option value="" ng-selected="updateUserData.state == ''"> Select a state </option>
+	                            <option ng-repeat="state in state_list" ng-value="state" ng-selected="updateUserData.state == state">{{state}}</option>
+	                        </select>
+	                    </div>
+	                    
+	                    <div class="form-group">
+	                        <label class="control-label" for="country">Country</label>
+	                        <select name="gender" id="country" ng-model="updateUserData.country" ng-change="loadStates(updateUserData.country);" class="form-control">
+	                            <option value="" ng-selected="updateUserData.country == ''"> Select Country </option>
+	                            <option ng-repeat="country in countryList" ng-value="country" ng-selected="updateUserData.country == country">{{country}}</option>
+	                        </select>
+	                    </div>
+	                    
+						<div class="form-group">
+							<label class="control-label" for="gender">Gender</label>
+							<select name="gender" ng-model="updateUserData.gender" class="form-control">
+								<option value="" ng-selected="updateUserData.gender == ''"> Select Gender </option>
+								<option value="Male" ng-selected="updateUserData.gender == 'Male'">Male</option>
+								<option value="Female" ng-selected="updateUserData.gender == 'Female'">Female</option>
+							</select>
+						</div>
+						<div class="line line-dashed"></div>
+						<button ng-disabled="updateUserForm.$invalid || isWaiting" type="submit" class="btn btn-primary">
+						<span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.updateUserButtonText }}</button>
+						<a ng-click="changeChildPassword(userData)" class="m-r m-t no-padder btn-block"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a>
+						
+					</form>
+				</section>
+			</div>
+			<div class="col-md-6">
+				<section class="panel panel-default">
+                    <div class="panel-body">
+                        <h4 class="text-center">Update Profile Picture</h4>
+                        <h5 class="text-center">
+	                        <div class="bg-light" style="width: 100%; min-height: 225px;">
+		                    	<img ngf-src="picFile" class="img img-responsive" width="100%">
+								<!--<img ng-src="{{userData.profile_image}}" class="img img-responsive" width="100%">-->
+		                    </div>
+		                    <div ng-show="picFile.progress >= 0" class="progress progress-sm progress-striped  active">
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" ng-bind="picFile.progress + '%'" data-original-title="{{picFile.progress + '%'}}" style="width:{{picFile.progress}}%"></div>
+                            </div>
+		                </h5>
+                	<form name="imageUploadForm" class="profile-select">
+							<input type="file" ngf-select="" class="profile-pic btn inline" ng-model="picFile" name="file" ngf-accept="'image/*'" required="">
+							<label class="choose-pic" for="file">Choose a file</label>
+							<br><span>Accepted image formats gif ,png ,jpg and max upload size is 1MB</span>
+							<button ng-disabled="!imageUploadForm.$valid || uploading" class="btn update btn-primary ng-binding m-t" ng-click="uploadPic(picFile)">{{uploadImageBtnTxt}}</button>
+						</form>
+                    </div>
+                </section>
+			</div>
+		</div>
+	</header>
+</script>

@@ -1,0 +1,68 @@
+/**
+ * 
+ * Layout mixin credit goes to codyhouse.co - Claudia Romano (@romano_cla), 
+ * Sebastiano Guerriero (@guerriero_se)
+ *
+ */
+
+// -----------------------------------------------------
+ 
+// Extra small screen / phone
+$screen-xs: 480px;
+ 
+// Small screen / tablet
+$screen-sm: 768px;
+ 
+// Medium screen / desktop
+$screen-md: 992px;
+ 
+// Large screen / wide desktop
+$screen-lg: 1200px;
+ 
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:              ($screen-sm - 1);
+$screen-sm-max:              ($screen-md - 1);
+$screen-md-max:              ($screen-lg - 1);
+ 
+ 
+// short breakpoints
+   
+$S:     320px;   
+$M:     768px;     
+$L:     1170px;     
+
+// media queries
+
+@mixin MQ($canvas) {
+
+  // For bootstrap
+  @if $canvas == XS {
+    @media (max-width: $screen-xs-max){ @content; }
+  }
+  @else if $canvas == SM {
+    @media (min-width: $screen-sm) and (max-width: $screen-sm-max) { @content; }
+  }
+  @else if $canvas == MD {
+    @media (min-width: $screen-md) and (max-width: $screen-md-max) { @content; }
+  }
+  @else if $canvas == LG {
+    @media (min-width: $screen-lg){@content;}
+  }
+  @else if $canvas == XLG {
+    @media (min-width: 1400px) and (max-width: 1440px) {@content;}
+  }
+  @else if $canvas == XXLG {
+    @media (min-width: 1441px) and (max-width: 1920px) {@content;}
+  }
+
+  // For Simple layouting 	
+  @if $canvas == S {
+   @media only screen and (min-width: $S) { @content; } 
+  }
+  @else if $canvas == M {
+   @media only screen and (min-width: $M) { @content; } 
+  }
+  @else if $canvas == L {
+   @media only screen and (min-width: $L) { @content; } 
+  }
+}

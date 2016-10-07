@@ -1,0 +1,293 @@
+<style>
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-group, .panel-default {
+        position: relative;
+        width: 100%;
+        display: inline-block;
+    }
+
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 no-padder pull-left lesson-edit">
+        <button onClick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm"><i
+                class="fa fa-angle-left text"></i></button>
+    </div>
+</header>
+<div class="page-title col-md-12 m-b">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Gift Cards <i class="fa fa-angle-right"></i> <span>Payment Details</span>
+    </h4>
+</div>
+<section class="vbox gift-card-payment" ng-controller="GiftcardController">
+    <section class="padder m-b-xl wrapper" ng-init="loadGiftCardDetails()">
+        <div class="row no-margin" ng-if="!paid">
+
+            <section class="col-md-6 col-xs-12 b-a padder-v bg-white m-0-a pay-container form-container">
+                <!--Do Payment Do Form Form -->
+                <div ng-if="!usr.stripe_id">
+                    <header class="header m-b-lg">
+                        <p>Payment Details</p>
+                    </header>
+
+                    <form class="m-t padder" name="ccForm" ng-submit="payForGiftCard(giftcard)">
+                        <fieldset class="user-information">
+                            <legend data-toggle="collapse" data-target="#userinfo" class="scheduler-border cursor-pointer">User
+                                Information
+                            </legend>
+                            <div class="control-group collapse in" id="userinfo">
+                                <div class="form-group">
+                                    <label for="firstName">First Name <span class="txt-red">*</span></label>
+                                    <input type="text" class="form-control" ng-pattern="/^[a-zA-Z\s]*$/" id="firstName" placeholder="First Name" name="purchaserFName" ng-model="giftcard.purchaserFName" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserFName.$touched"
+                                         ng-messages="ccForm.purchaserFName.$error" role="alert">
+                                        <div ng-message="required">First Name is required</div>
+                                        <div ng-message="pattern">Invalid First name</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name <span class="txt-red">*</span></label>
+                                    <input type="text" class="form-control" ng-pattern="/^[a-zA-Z\s]*$/" id="lastName" placeholder="Last Name" name="purchaserLName" ng-model="giftcard.purchaserLName" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserLName.$touched"
+                                         ng-messages="ccForm.purchaserLName.$error" role="alert">
+                                        <div ng-message="required">Last Name is required</div>
+                                        <div ng-message="pattern">Invalid Last name</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchaser-phone">Phone Number <span class="txt-red">*</span></label>
+                                    <input id="purchaser-phone" placeholder="Phone Number" type="text" class="form-control" minlength="5" name="purchaserPhone" ng-model="giftcard.purchaserPhone"  data-required="true" required international-phone-number>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserPhone.$touched"
+                                         ng-messages="ccForm.purchaserPhone.$error" role="alert">
+                                        <div ng-message="required">Phone number is required</div>
+                                        <div ng-message="minlength">Invalid phone number</div>
+                                        <div ng-message="internationalPhoneNumber">Invalid phone number</div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchaser-email">Email <span class="txt-red">*</span></label>
+                                    <input placeholder="Email" id="purchaser-email" type="text" class="form-control" name="purchaserEmail" ng-model="giftcard.purchaserEmail" data-required="true" ng-pattern="/^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.(([0-9]{1,3})|([a-zA-Z]{2,3})|(aero|coop|info|museum|name))$/" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserEmail.$touched"
+                                         ng-messages="ccForm.purchaserEmail.$error" role="alert">
+                                        <div ng-message="required">Email is required</div>
+                                        <div ng-message="pattern">Email is invalid</div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="purchaser-address">Address <span class="txt-red">*</span></label>
+                                    <input placeholder="Address" id="purchaser-address" type="text" class="form-control" name="purchaserAddress" ng-model="giftcard.purchaserAddress" data-required="true">
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserAddress.$touched"
+                                         ng-messages="ccForm.purchaserAddress.$error" role="alert">
+                                        <div ng-message="required">Address is required</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchaser-zip">Zip Code <span class="txt-red">*</span></label>
+                                    <input placeholder="Zip Code" id="purchaser-zip" type="text" class="form-control" name="purchaserZipCode" ng-model="giftcard.purchaserZipCode" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserZipCode.$touched"
+                                         ng-messages="ccForm.purchaserZipCode.$error" role="alert">
+                                        <div ng-message="required">Zip Code is required</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="country">Country <span class="txt-red">*</span></label>
+                                    <select id="country" name="purchaseCountry"ng-model="giftcard.purchaserCountry" ng-change="loadStates(giftcard.purchaserCountry);" class="form-control" data-required="true"
+                                            required>
+                                        <option value="" ng-selected="giftcard.purchaserCountry == ''"> Select Country </option>
+                                        <option ng-repeat="country in countryList" value="{{country.code}}">{{country.name}}</option>
+                                    </select>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaseCountry.$touched"
+                                         ng-messages="ccForm.purchaseCountry.$error" role="alert">
+                                        <div ng-message="required">Please select a country</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"  ng-init="giftcard.country = giftcard.purchaserCountry == '' ? 'USA' : giftcard.purchaserCountry; loadStates(giftcard.purchaserCountry)" for="state">State <span class="txt-red">*</span></label>
+                                    <select id="state" placeholder="Select State" name="purchaseState" ng-model="giftcard.purchaserState" class="form-control" data-required="true"
+                                            required>
+                                        <option ng-repeat="state in state_list" ng-value="state" ng-selected="giftcard.purchaserState == state">{{state}}</option>
+                                    </select>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaseState.$touched"
+                                         ng-messages="ccForm.purchaseState.$error" role="alert">
+                                        <div ng-message="required">Please select a State</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="purchaser-city">City <span class="txt-red">*</span></label>
+                                    <input placeholder="City" type="text" id="purchaser-city" class="form-control" name="purchaserCity" ng-model="giftcard.purchaserCity" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.purchaserCity.$touched"
+                                         ng-messages="ccForm.purchaserCity.$error" role="alert">
+                                        <div ng-message="required">City Name is required</div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </fieldset>
+
+                        <fieldset class="payment-mtd">
+                            <legend data-toggle="collapse" data-target="#paymentinfo" class="scheduler-border cursor-pointer">Payment
+                                Method
+                            </legend>
+                            <div class="control-group collapse in" id="paymentinfo">
+                                <div class="control-group">
+                                    <div class="form-group pull-in clearfix">
+                                        <div class="col-md-9 col-xs-9">
+                                            <label for="card-number">Card number  <span class="txt-red">*</span></label>
+
+                                            <div class="right-inner-addon">
+                                                <i class="fa fa-cc-visa" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'Visa'"></i>
+                                                <i class="fa fa-cc-amex" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'American Express'"></i>
+                                                <i class="fa fa-cc-mastercard" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType == 'MasterCard'"></i>
+                                                <i class="fa fa-credit-card" name="{{ccForm.ccNumber.$ccType}}" ng-if="ccForm.ccNumber.$valid && ccForm.ccNumber.$ccType != 'Visa' && ccForm.ccNumber.$ccType != 'American Express' && ccForm.ccNumber.$ccType != 'MasterCard'"></i>
+                                                <input type="text" class="form-control" reset-on-blur id="cardNumber" placeholder="Card number" cc-number name="ccNumber" ng-model="giftcard.cardNumber" data-required="true" ng-pattern="/^(0|[1-9][0-9]*)$/" required>
+                                            </div>
+                                            <div class="text-danger msg-error" ng-show="ccForm.ccNumber.$touched"
+                                                 ng-messages="ccForm.ccNumber.$error" role="alert">
+                                                <div ng-message="required">Credti Card is required</div>
+                                                <div ng-message="pattern">Invalid Credti Card</div>
+                                                <div ng-message="ccNumber">Invalid Credti Card No</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 col-xs-3">
+                                            <label for="cvc">CVC <span class="txt-red">*</span></label>
+                                            <input type="text" class="form-control" id="cvc" placeholder="CVC" cc-cvc cc-type="ccForm.ccNumber.$ccType" name="ccCvc" ng-model="giftcard.cardCvc" data-required="true" ng-pattern="/^(0|[1-9][0-9]*)$/" required>
+                                            <div class="text-danger msg-error" ng-show="ccForm.ccCvc.$touched"
+                                                 ng-messages="ccForm.ccCvc.$error" role="alert">
+                                                <div ng-message="required">CVC is required</div>
+                                                <div ng-message="pattern">Invalid CVC</div>
+                                                <div ng-message="ccCvc">Invalid CVC</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="text-success" ng-show="ccForm.ccNumber.$valid">
+                                        Yes, that looks like a valid <b>{{ccForm.ccNumber.$ccType}} number!</b>
+                                    </p>
+                                    <div class="form-group">
+                                        <label for="card-number">Expiration <span class="txt-red">*</span></label>
+                                        <div class="row" cc-exp>
+                                            <div class="col-md-3 col-xs-3">
+                                                <!--<input placeholder="MM" type="text" class="form-control" cc-exp-month name="ccExpMonth" ng-model="giftcard.cardExpirMonth">-->
+                                                <select class="form-control" cc-exp-month name="ccExpMonth" ng-model="giftcard.cardExpirMonth" data-required="true"
+                                                        required>
+                                                    <option value="" selected>MM</option>
+                                                    <option value="01">01</option>
+                                                    <option value="02">02</option>
+                                                    <option value="03">03</option>
+                                                    <option value="04">04</option>
+                                                    <option value="05">05</option>
+                                                    <option value="06">06</option>
+                                                    <option value="07">07</option>
+                                                    <option value="08">08</option>
+                                                    <option value="09">09</option>
+                                                    <option value="10">10</option>
+                                                    <option value="11">11</option>
+                                                    <option value="12">12</option>
+                                                </select>
+                                                <div class="text-danger msg-error" ng-show="ccForm.ccExpMonth.$touched"
+                                                     ng-messages="ccForm.ccExpMonth.$error" role="alert">
+                                                    <div ng-message="required">Please select MM</div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-md-3 col-xs-3">
+                                                <!--<input placeholder="YY" type="text" class="form-control" cc-exp-year name="ccExpYear" ng-model="giftcard.cardExpirYear">-->
+                                                <select class="form-control" cc-exp-year name="ccExpYear" ng-model="giftcard.cardExpirYear" data-required="true"
+                                                        required>
+                                                    <option value="" selected>YY</option>
+                                                    <option value="16">16</option>
+                                                    <option value="17">17</option>
+                                                    <option value="18">18</option>
+                                                    <option value="19">19</option>
+                                                    <option value="20">20</option>
+                                                    <option value="21">21</option>
+                                                    <option value="22">22</option>
+                                                    <option value="23">23</option>
+                                                    <option value="24">24</option>
+                                                    <option value="25">25</option>
+                                                    <option value="26">26</option>
+                                                    <option value="27">27</option>
+                                                    <option value="28">28</option>
+                                                    <option value="29">29</option>
+                                                    <option value="30">30</option>
+                                                </select>
+                                                <div class="text-danger msg-error" ng-show="ccForm.ccExpYear.$touched"
+                                                     ng-messages="ccForm.ccExpYear.$error" role="alert">
+                                                    <div ng-message="required">Please select YY</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <fieldset class="recipient-information">
+                            <legend data-toggle="collapse" data-target="#recipientinfo" class="scheduler-border cursor-pointer">
+                                Recipient Information
+                            </legend>
+                            <div class="control-group collapse in" id="recipientinfo">
+                                <div class="form-group">
+                                    <label for="recipient-first-name">First Name <span class="txt-red">*</span></label>
+                                    <input type="text" class="form-control" id="recipient-first-name" placeholder="First Name" ng-pattern="/^[a-zA-Z\s]*$/" name="recipientFName" ng-model="giftcard.recipientFName" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.recipientFName.$touched"
+                                         ng-messages="ccForm.recipientFName.$error" role="alert">
+                                        <div ng-message="required">First Name is required</div>
+                                        <div ng-message="pattern">First Name is invalid</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-last-name">Last Name <span class="txt-red">*</span></label>
+                                    <input type="text" class="form-control" id="recipient-last-name" ng-pattern="/^[a-zA-Z\s]*$/" placeholder="Last Name" name="recipientLName" ng-model="giftcard.recipientLName" data-required="true" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.recipientLName.$touched"
+                                         ng-messages="ccForm.recipientLName.$error" role="alert">
+                                        <div ng-message="required">Last Name is required</div>
+                                        <div ng-message="pattern">Last Name is invalid</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-email">Recipient Email <span class="txt-red">*</span></label>
+                                    <input placeholder="Recipient Email" type="text"  id="recipient-email" class="form-control" name="recipientEmail" ng-model="giftcard.recipientEmail " data-required="true" ng-pattern="/^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/" required>
+                                    <div class="text-danger msg-error" ng-show="ccForm.recipientEmail.$touched"
+                                         ng-messages="ccForm.recipientEmail.$error" role="alert">
+                                        <div ng-message="required">Email is required</div>
+                                        <div ng-message="pattern">Email is invalid</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <div class="btn-group btn-control-xs-12 clearfix block">
+                            <button type="submit"
+                                    ng-disabled="ccForm.$invalid || !ccForm.ccNumber.$valid || !ccForm.ccCvc.$valid || !ccForm.ccExpMonth.$valid || !ccForm.ccExpYear.$valid || ccForm.$error.ccExp || isAddingCcWaiting || resources.stillProcessing"
+                                    class="btn btn-success pull-right"><span ng-show="isAddingCcWaiting"><i
+                                    class="fa fa-circle-o-notch fa-spin"></i></span>Pay
+                            </button>
+                            <span class="text-danger msg-error" ng-if="ccForm.$invalid && !ccForm.$pristine">Note: You have invalid form fields. Please re-check</span>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+        </div>
+    </section>
+</section>

@@ -1,0 +1,28 @@
+<section class="m-t-lg wrapper-md animated fadeInUp auth">
+    <div class="container aside-xxl">
+        <a class="navbar-brand block">
+            <img src="includes/images/logo.png" style="margin: 0 auto;"/>
+        </a>
+        <section class="panel panel-default bg-white m-t-lg">
+            <header class="panel-heading text-center">
+                <h4>Forgot Your Password</h4>
+            </header>
+            <form class="panel-body wrapper-lg" name="forgotForm" id="forgotForm" ng-controller="AuthController"
+                  ng-submit="forgotPassword(credentials)" data-validate="parsley">
+                <p>Enter your email address to reset password</p>
+                <div class="form-group email-pass">
+                    <!--<i class="fa fa-envelope-o icon"></i>--> <input type="email" id="email" ng-model="credentials.email" placeholder="E-mail"
+                           class="form-control input-lg" data-required="true" autofocus>
+                </div>
+                <div class="btn-control-xs-12">
+                    <button ng-disabled="forgotForm.$invalid || isWaiting" type="submit"
+                            class="btn btn-primary pull-left m-r">
+                        <span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{
+                        forgotButtonText }}
+                    </button>
+                    <button ui-sref="login" class="btn btn-default pull-right">Cancel</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</section>

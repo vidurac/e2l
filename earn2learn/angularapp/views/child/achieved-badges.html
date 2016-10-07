@@ -1,0 +1,33 @@
+<div ng-init="loadChildAchievedBadges()"></div>
+<section class="vbox" ng-if="!resources.stillLoading">
+    <header class="section-title main-head row">
+        <div class="col-xs-12 col-md-12">
+            <h2 class="section-header">Achieved Badges</h2>
+        </div>
+    </header>
+    <section class="scrollable padder padder-v">
+        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+            <div class="item-sizer col-md-3 col-sm-4 col-xs-6"></div>
+        <div masonry-brick class="grid-item col-md-3 col-sm-4 col-xs-6 m-t-sm"
+             ng-repeat="badge in childAchievedBadges">
+            <div class="badge-container col-md-12 col-sm-12 col-xs-12 bg-primary padder-v">
+
+                    <div class="control-group">
+                        <div class="badge-image child-badge">
+                            <img class="pull-left thumb avatar b-2x img-circle" src="uploads/badges/{{badge.badge_image}}">
+                            </div>
+                        <div class="child-badge-label">
+                            <div class="m-t-xs m-b-xs text-white ng-binding badge-title">
+                                <h4 title="{{badge.name}}">{{badge.name}}</h4>
+                        </div>
+                            </div>
+                    </div>
+
+            </div>
+        </div>
+            </div>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading"/>
+</section>

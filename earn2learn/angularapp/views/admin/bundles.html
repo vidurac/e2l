@@ -1,0 +1,94 @@
+
+<div ng-init="init()"></div>
+<header class="header bg-light bg-gradient b-b" >
+    <div class="col-md-6 pull-left no-padder">
+        <div class="search input-group left">
+
+            <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Category">
+                <span class="caret"></span>
+            </button>
+             <ul class="dropdown-menu animated fadeInUp">
+                <span class="arrow top"></span>
+                <li>
+                    <a ng-click="getFilteredList(null, true)" class="cursor-pointer">All Categories</a>
+                </li>
+                <li ng-repeat="bundleType in bundleModel.bundleTypes">
+                    <a data-id="{{BundleType.id}}" ng-click="getFilteredList(bundleType.id, false)" class="cursor-pointer">{{bundleType.name}}</a>
+                </li>
+            </ul>
+
+            <div class="search-field">
+                <input type="text" placeholder="search by name " ng-model="searchBundleName" class="input-sm form-control" />
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 no-padder pull-right top-buttons">
+		<span class="pull-right"><a class="btn btn-primary btn-sm btn-no-w" ui-sref="admin.addBundle">
+					<span class="text">New</span>
+					<i class="fa fa fa-caret-down text"></i>
+				</a>
+		</span>
+        <span class="btn-nt label bg-info info-count" title="Bundles" data-toggle="tooltip">{{bundleModel.allBundle.length}}</span>
+    </div>
+
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Bundle</h4>
+</div>
+<section class="vbox lessons-bundle" ng-if="!resources.stillLoading && !resources.stillLoadingCategories">
+    <section class=" no-padder m-b-xl">
+        <div class="col-md-4" ng-repeat="bundle in bundleModel.allBundle  | filter : {name : searchBundleName , points:searchByPointsFrom } | filter : filterByType as loadedBundlesForType">
+            <div class="video bg-white b-a m-t-sm hover m-b-xl">
+                <div class="wrapper bg-white no-padder">
+                    <div class="badge-container">
+                        <div class="row no-margin">
+                            <div class="col-md-12 no-padder">
+                                <div class="col-md-8 bg-primary col">
+                                    <div class="m-t m-b no-border">
+                                        <div class="clear">
+                                            <div class="m-t-xs m-b-xs text-white text-ellipsis ng-binding bundle-title">
+                                                <a ui-sref="admin.updateBundle({ id: bundle.id })" class="text-info text-ellipsis"><h4>{{bundle.name}}</h4></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 bg-info col">
+                                    <div class="badge-inner">
+                                    <div class="padder-v">
+                                        <span class="m-b-xs h3 block text-white ng-binding">{{bundle.points}}</span>
+                                        <span>Points</span>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 bundle-desc">
+                                    <div class="contents">{{bundle.description}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group pull-right">
+                    <span>
+                        <button class="btn btn-success btn-icon-new pull-left m-l-sm" ng-click="editBundle(bundle)" title="Edit Bundle" data-toggle="tooltip"><i class="fa fa-pencil"></i></button>
+                    </span>
+                    <span>
+                        <button class="btn btn-icon-new btn-danger pull-right m-l-sm" ng-click="deleteBundle(bundle)" title="Delete Bundle" data-toggle="tooltip"><i class="fa fa-trash"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <h4 class="text-center" ng-if="loadedBundlesForType.length == 0 && bundleModel.allBundle.length > 0">No Search Results Found</h4>
+        <section class="scrollable padder m-b-xl">
+            <div class="col-md-3 m-t-sm" ng-if="!(bundleModel.allBundle.length > 0)">
+                <h3>No Any Bundles</h3>
+            </div>
+        </section>
+    </section>
+</section>
+<section ng-if="!resources.stillLoading && bundleModel.allBundle.length == 0">
+    <h2 class="text-muted text-center">This Bundle is not available.</h2>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

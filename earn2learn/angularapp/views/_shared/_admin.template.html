@@ -1,0 +1,211 @@
+<div class="vbox admin-view">
+    <header class="bg-dark dk header navbar navbar-fixed-top-xs">
+        <div class="navbar-header aside-md">
+            <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+                <i class="fa fa-bars"></i>
+            </a>
+            <a class="btn btn-link visible-xs btn-link-full-screen" data-toggle="fullscreen" data-target="navbar">
+                <i class="fa fa-expand" aria-hidden="true"></i>
+                <i class="fa fa-compress" aria-hidden="true"></i>
+            </a>
+            <a ui-sref="admin.dashboard" class="navbar-brand"><img src="includes/images/logo.png" class="m-r-sm"></a>
+            <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".nav-user">
+                <i class="fa fa-cog"></i>
+            </a>
+            <span class="navbar-tools">
+                <a class="btn btn-link" data-toggle="class:nav-off" data-target="aside#nav">
+                    <i class="txt-green fa fa-caret-left menu-pull-left" aria-hidden="true"></i>
+                    <i class="fa fa-caret-right menu-pull-right" aria-hidden="true"></i>
+                    <i class="fa fa-bars"></i>
+            </a>
+            <a class="btn btn-link hidden-xs btn-link-full-screen" data-toggle="fullscreen">
+            <i class="fa fa-expand" aria-hidden="true" data-placement="right"  aria-hidden="true" title="Fullscreen" data-toggle="tooltip"></i>
+                 <i class="fa fa-compress" aria-hidden="true" data-placement="right"  aria-hidden="true" title="Exit" data-toggle="tooltip"></i>
+        </a></span>
+        </div>
+        <ul class="nav navbar-nav hidden-xs">
+        </ul>
+        <ul class="nav navbar-nav navbar-right m-n hidden-xs nav-user">
+            <li class="dropdown">
+                <a class="dropdown-toggle cursor-pointer" data-toggle="dropdown">
+                    <span class="thumb-sm avatar pull-left">
+              <img style="width : 28px; height : 28px;" src="{{user().profile_image}}">
+            </span> {{user().f_name}} {{user().l_name}} <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu animated fadeInUp">
+                    <span class="arrow top"></span>
+                    <li>
+                        <a ui-sref="admin.profile">Profile</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="cursor-pointer" ng-click="logout()">Log out</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </header>
+    <section>
+        <section class="hbox stretch">
+            <!-- .aside -->
+            <aside class="bg-dark lter aside-md hidden-print hidden-xs" id="nav">
+                <section class="vbox">
+                    <header class="header bg-primary lter text-center clearfix">
+                        <div class="text-center m-t m-b hidden-nav-xs">
+                            <div class="thumb">
+                                <a class="text-white" ui-sref="admin.profile">
+                                    <img style="width : 64px; height : 64px;" src="{{user().profile_image}}" class="img-circle">
+                                </a>
+                            </div>
+                            <div class="h4 m-t m-b-xs text-ellipsis"><a class="text-white" ui-sref="admin.profile">{{user().f_name}}</a></div>
+                            <small class="text-muted m-b">You are the {{getRoleName(user().role_id)}}</small>
+                        </div>
+                    </header>
+                    <section class="w-f scrollable" style="top: 151px;">
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333">
+                            <!-- nav -->
+                            <nav class="nav-primary hidden-xs">
+                                <ul class="nav">
+                                    <li ui-sref-active="{'active':'admin.dashboard'}">
+                                        <a ui-sref="admin.dashboard"  ui-sref-active="{'active':'admin.dashboard'}">
+                                            <i class="fa fa-dashboard icon">
+                                           <b class="bg-danger"></b>
+                                        </i>
+                                            <span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                     <li  ui-sref-active="{'active':'admin.lessons'}">
+                                         <a ui-sref="admin.lessons"  ui-sref-active="{'active':'admin.lessons'}">
+                                            <i class="fa fa-youtube-play icon">
+                                                <b class="bg-success"></b>
+                                            </i>
+                                            <span>Categories/Lessons</span>
+                                        </a>
+                                    </li>
+                                     <!--<li>
+                                        <a ui-sref="admin.lessons" class="cursor-pointer">
+                                            <i class="fa fa-youtube-play icon">
+                                                <b class="bg-success"></b>
+                                            </i>
+                                            <span>Lessons</span>
+                                        </a>
+                                    </li>-->
+                                    <li ui-sref-active="{'active':'admin.tasks'}">
+                                        <a ui-sref="admin.tasks" ui-sref-active="{'active':'admin.tasks'}">
+                                            <i class="fa fa-tasks icon">
+                                                <b class="bg-primary-chore"></b>
+                                            </i>
+                                            <span>Chores</span>
+                                        </a>
+                                    </li>
+                                 <!--   <li>
+                                        <a ui-sref="admin.houses">
+                                            <i class="fa fa-university icon">
+                                           <b class="bg-success"></b>
+                                        </i>
+                                            <span>Houses</span>
+                                        </a>
+                                    </li>-->
+                                    <li  ui-sref-active="{'active':'admin.parents','active 1':'admin.members','active 2':'admin.user'}">
+                                        <a style="cursor: pointer;">
+                                            <i class="fa fa-users icon">
+                                                  <b class="bg-primary"></b>
+                                        </i>
+                                            <span class="pull-right">
+                                          <i class="fa fa-angle-down text"></i>
+                                          <i class="fa fa-angle-up text-active"></i>
+                                        </span>
+                                            <span>Users</span>
+                                        </a>
+                                        <ul class="nav lt">
+                                            <!--<li>
+                                                <a ui-sref="admin.administrators">
+                                                    <i class="fa fa-angle-right"></i>
+                                                    <span>Administrators</span>
+                                                </a>
+                                            </li>-->
+                                            <li  ui-sref-active="{'active':'admin.parents',,'active 1':'admin.user'}">
+                                                <a ui-sref="admin.parents"  ui-sref-active="{'active':'admin.parents','active 1':'admin.user'}}">
+                                                    <i class="fa fa-angle-right"></i>
+                                                    <span>Parents</span>
+                                                </a>
+                                            </li>
+                                            <li ui-sref-active="{'active':'admin.members'}">
+                                                <a ui-sref="admin.members" ui-sref-active="{'active':'admin.members'}">
+                                                    <i class="fa fa-angle-right"></i>
+                                                    <span>Children</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <!-- badges section start -->
+                                    <li ui-sref-active="{'active':'admin.badges','active 1':'admin.addBadge'}">
+                                        <a ui-sref="admin.badges" ui-sref-active="{'active':'admin.badges','active 1':'admin.addBadge'}">
+                                            <i class="fa fa-star icon">
+                                                <b class="bg-primary-badge"></b>
+                                            </i>
+                                            <span>Badges</span>
+                                        </a>
+                                    </li>
+                                    <!-- badges section end -->
+
+                                    <!-- bundle section start -->
+                                    <!--<li>
+                                        <a ui-sref="admin.bundles">
+                                            <i class="fa fa-th-list">
+                                                <b class="bg-badge-primary"></b>
+                                            </i>
+
+                                            <span>Bundle</span>
+                                        </a>
+                                    </li>-->
+                                    <!-- bundle section end -->
+                                    <li ui-sref-active="{'active':'admin.transactions'}">
+                                        <a ui-sref="admin.transactions" ui-sref-active="{'active':'admin.transactions'}">
+                                            <i class="fa fa-money icon">
+                                                <b class="bg-primary-trans"></b>
+                                            </i>
+                                            <span>Transaction Details</span>
+                                        </a>
+                                    </li>
+                                    <!--<li>
+                                        <a ui-sref="admin.reports">
+                                            <i class="fa fa-book icon">
+                                                <b class="bg-info"></b>
+                                            </i>
+                                            <span>Reports</span>
+                                        </a>
+                                    </li>-->
+                                </ul>
+                            </nav>
+                            <!-- / nav -->
+                        </div>
+                    </section>
+                </section>
+            </aside>
+            <!-- /.aside -->
+            <section class="content-container">
+            <section id="content" ui-view>
+            </section>
+                <footer class="main-footer">
+                    <script>
+                        var currentYear = (new Date()).getFullYear();
+                        $(document).ready(function() {
+                            $("#year").text(currentYear);
+                        });
+                    </script>
+                    <div class="pull-right hidden-xs">
+                        <b>Version</b> 2.1.1
+                    </div>
+                    <strong>Copyright &copy; <span id="year"></span> Earn to Learn.</strong> All rights
+                    reserved.
+                </footer>
+            </section>
+
+            <aside class="bg-light lter b-l aside-md hide" id="notes">
+                <div class="wrapper">Notification</div>
+            </aside>
+        </section>
+    </section>
+</div>

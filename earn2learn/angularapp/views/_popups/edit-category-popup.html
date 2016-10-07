@@ -1,0 +1,12 @@
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center">
+        <strong class="text-uc">Update Category</strong>
+    </header>
+    <form class="panel-body wrapper-lg" name="addCatForm" id="addCatForm" ng-submit="updateCategory(selectedCategory)" data-validate="parsley">
+        <div class="form-group">
+            <input type="text" maxlength="40" placeholder="Category name" data-parsley-trigger="focusout" ng-model="selectedCategory.name" class="form-control input-lg" data-required="true">
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" ng-disabled="addCatForm.$invalid || isUpdateCategoryWaiting" class="btn btn-primary"><span ng-show="isUpdateCategoryWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ updateCategoryButtonText }}</button>
+    </form>
+</section>

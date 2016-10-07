@@ -1,0 +1,70 @@
+<div ng-init="CheckIsValidQuiz()"></div>
+<section class="vbox" ng-if="!resources.stillLoading && validQuiz">
+	<header class="section-title main-head row">
+		<div class="col-xs-12 col-md-12">
+			<h2 class="section-header">Lessons</h2>
+		</div>
+
+	</header>
+	<section class="scrollable padder">
+		<div class=" col-xs-12 col-md-8 col-md-offset-2 bg-white wrapper m-t-md m-b-md">
+			<div class="row">
+				<div class="col-xs-12 col-sm-12 col-md-6">
+				<img class="img-responsive quiz-img" ng-if="quiz.video_ref == 'youtube'" src="https://img.youtube.com/vi/{{quiz.video_id}}/0.jpg">
+				<img class="img-responsive  quiz-img" ng-if="quiz.video_ref == 'ted'" src="{{quiz.thumb}}" />
+				</div>
+				<div class="col-xs-12 col-sm-12 col-md-6">
+				<header>
+                	<h3 class="fs1 txt-black m-t-none" ng-bind="quiz.parent_category"></h3>
+                	<h4 class="fs2 txt-black" ng-bind="quiz.category"></h4>
+                	<h5 class="fs3 txt-black m-t-lg" ng-bind="quiz.title"></h5>
+                </header>
+				<div ng-if="!resources.stillLoadingMyAttempts">
+
+					<h4 ng-if="!finishedAttempt" class=" text-muted">You Must Answer  <span class="text-danger">{{quiz.pass_percentage}}%</span> Correct </h4>
+					<h4 ng-if="!finishedAttempt" class=" text-muted"> You will Earn <span class="txt-orage points">{{quiz.quiz_value}}</span> <small>E2L Bucks</small></h4>
+					<h4 ng-if="!finishedAttempt" class=" text-muted"> Your have <span class="txt-orage points">{{quiz.max_number_of_attempts}}</span> <small>attempts</small></h4>
+
+					<h2 ng-if="finishedAttempt" class=" txt-green text-uc" style="font-size: 60px;"><span class="icon-smile"></span></h2>
+
+					<h2 ng-if="finishedAttempt" class=" txt-green text-uc completed-points"><b>{{gotScore}}</b> %     |||   <b>+{{quiz.quiz_value}}</b><small>E2L Bucks</small></h2>
+					<h3 ng-if="finishedAttempt" class=" txt-green text-uc completed-msg">Well Done, You have completed.</h3>
+
+					<div class="clearfix m-t-xl">
+						<div class="inline-btn-group  btn-control-xs-12">
+							<button class="btn bg-green"  ng-if="!finishedAttempt" ng-click="startWatchVideo()">Start Lesson</button>
+							<!--<button class="btn bg-green"  ng-click="startWatchVideo()">Start Lesson</button>-->
+							<button class="btn bg-green"  ng-if="attemptStatus == 1 && hasAttemptToFinish" ng-click="contAttempt()">Continue...</button>
+							<a ng-if="!bundleId" class="btn btn-info" ui-sref="child.lessons">Back to Lessons</a>
+							<a ng-if="bundleId" class="btn btn-info" ui-sref="child.lessonBundleDetails({bundleId: bundleId})">
+								Back to Lesson Bundle
+							</a>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="padder text-center" ng-if="resources.stillLoadingMyAttempts">
+					Loading My Attempts...
+				</div>
+				</div>
+			</div>
+		</div>
+
+	</section>
+</section>
+<section class="vbox" ng-if="!resources.stillLoading && !validQuiz">
+	<h1 style="margin-top: 200px;" class="text-center text-uc">
+		Not Valid Quiz.
+	</h1>
+	<h5 class="text-center text-muted text-uc">This lesson is no longer available in my lessons or it may be not visible to public</h5>
+	<h5 ng-if="bundleId == undefined" class="text-center text-uc"><a ui-sref="child.lessons" class="text-center text-uc">View Assigned Lessons</a></h5>
+	<h5 ng-if="bundleId != undefined" class="text-center text-uc">
+		<a ui-sref="child.lessonBundleDetails({bundleId: bundleId})" class="text-center text-uc">
+			Back to lesson bundle
+		</a>
+	</h5>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+	<h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

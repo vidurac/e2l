@@ -1,0 +1,83 @@
+<div ng-init="getMyAssignedTasks();"></div>
+<section class="clearfix">
+    <header class="section-title main-head row">
+        <div class="col-xs-12 col-md-6">
+            <h2 class="section-header">Chores</h2>
+        </div>
+        <div class="col-xs-12 col-md-6  availability-tab transition">
+            <div class="btn-group" role="group" aria-label="lesson type" ng-init="viewType = 'available'">
+                <button type="button" class="btn btn-default" ng-class="{'active': viewType == 'available'}"
+                        ng-click="viewType='available'">Available
+                </button>
+                <button type="button" class="btn btn-default" ng-class="{'active': viewType == 'completed'}"
+                        ng-click="viewType='completed'">Completed
+                </button>
+            </div>
+        </div>
+    </header>
+    <section class="tab-content">
+
+        <div ng-show="viewType == 'available'" class="">
+
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 border-box" ng-repeat="task in mm = (LessonModel.myTasks | filter : {allocation_status : '!3'})">
+                <div class="box-wrapper">
+                <div class="box-header grayLight-b-b text-center">
+                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="task.task"></h3>
+                    <h4 class="fs3 txt-black text-ellipsis" ng-bind="task.description"></h4>
+                </div>
+                <div class="chores-footer box-footer">
+                    <div class="clearfix">
+                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{task.value}}
+                            <small>E2L Bucks</small>
+                        </div>
+                        <!--<div class="col-md-5 text-right txt-gray duration">{{task.duration}} mins</div>-->
+                        <div class="col-md-4 col-sm-4 col-xs-12"><a
+                                ui-sref="child.task({allocation_id : task.allocation_id})"
+                                class="btn view text-white pull-right bg-green">
+                            <span ng-if="task.allocation_status == 0">View</span>
+                            <span ng-if="task.allocation_status == 1">Continue</span>
+                        </a></div>
+                    </div>
+
+                </div>
+                    </div>
+            </div>
+            <div ng-if="!loadingAssignedTasks && (mm.length == 0)" class="text-center">
+                <h1 class="text-center child-error child-message">There are no assigned chores!</h1></div>
+
+        </div>
+
+        <div ng-show="viewType == 'completed'">
+            <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 border-box"
+                 ng-repeat="task in ( ll = (LessonModel.myTasks | filter : {allocation_status : '3'}))">
+                <div class="box-wrapper">
+                    <div class="grayLight-b-bbox-header grayLight-b-b text-center">
+                    <h3 class="fs1 txt-black text-ellipsis" ng-bind="task.task"></h3>
+                    <h4 class="fs3 txt-black text-ellipsis" ng-bind="task.description"></h4>
+                </div>
+                <div class="chores-footer box-footer">
+                    <div class="clearfix">
+                        <div class="col-md-8 col-sm-8 col-xs-12 text-left txt-orage points">+{{task.value}}
+                            <small>E2L Bucks</small>
+                        </div>
+                        <!--<div class="col-md-5 text-right txt-gray duration">{{/* task.duration */}} mins</div>-->
+                        <div class="col-md-4 col-sm-4 col-xs-12"><a
+                                ui-sref="child.task({allocation_id : task.allocation_id})"
+                                class="btn view text-white pull-right bg-green">
+                            <span ng-if="task.allocation_status == 3">View</span>
+                        </a></div>
+                    </div>
+
+                </div>
+                </div>
+            </div>
+            <div ng-if="!loadingAssignedTasks && (ll.length == 0)" class="text-center">
+                <h1 class="text-center child-error child-message">There are no finished chores!</h1>
+            </div>
+        </div>
+
+    </section>
+</section>
+<section class="vbox" ng-if="loadingAssignedTasks">
+    <h1 style="margin-top: 200px;" class="text-center text-white"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

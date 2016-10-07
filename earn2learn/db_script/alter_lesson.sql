@@ -1,0 +1,3 @@
+SET SQL_MODE='ALLOW_INVALID_DATES';
+ALTER TABLE `videos` ADD `min_age` INT(10) NOT NULL AFTER `enable`;
+ALTER TABLE `videos` ADD `max_age` INT(10) NOT NULL AFTER `min_age`;

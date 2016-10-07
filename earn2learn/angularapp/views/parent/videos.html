@@ -1,0 +1,140 @@
+<header class="header bg-light bg-gradient b-b" ng-init="init()">
+	<div class="col-md-6 padder pull-right top-buttons navbar-right">
+		<a type="button" class="btn btn-primary dropdown-toggle btn-sm btn-no-w pull-right" data-toggle="dropdown">
+					<span class="text">New</span>
+			<i class="caret"></i>
+		</a>
+		<ul class="dropdown-menu animated fadeInUp">
+			<!-- <span class="arrow top"></span>
+			<li>
+				<a class="cursor-pointer" ng-click="openPopup(1)">Category</a>
+			</li>
+			<li class="divider"></li> -->
+			<li>
+				<a class="cursor-pointer" ng-if="user_role_id == 1" ui-sref="admin.addlessons">Lesson</a>
+
+				<a class="cursor-pointer" ng-if="user_role_id == 2" ui-sref="parent.addlessons">Lesson</a>
+			</li>
+		</ul>
+		<span class="c-info"><i class="fa fa-youtube-play icon"></i><span class="btn-nt label bg-info info-count lessons-info" title="Lessons" data-toggle="tooltip">{{loadedSections.length}}</span></span>
+	</div>
+</header>
+<div class="page-title col-md-12">
+	<h4><i class="fa fa-angle-right" aria-hidden="true"></i> Categories/Lessons</h4>
+</div>
+<div class="container full-width">
+<div ng-init="getMainCategories()" class="row">
+<!-- <div ng-if="(CategoryModel.categories.length > 0) && !resources.stillLoadingCategories"  class="col-md-4 col-sm-12 col-xs-12 lessons m-t m-b">
+	<section class="vbox no-padder b-a col-md-12 col-sm-12 col-xs-12 ng-scope">
+		<header class="panel-heading font-bold">Categories</header>
+		
+		<section  class="no-padder">
+			<div class="col-md-12 no-padder  bg-white">
+
+		<div class="col-md-6 col-xs-6 col-xs-12 m-t-sm m-b" ng-repeat="category in CategoryModel.categories | filter : catVisibilityFilter | filter : resources.searchCategoryName as numberOfCategories" ng-if="category.enable == 1">
+
+			<div ng-if="user_role_id == 1" class="category cursor-pointer bg-white wrapper b-a hover" ng-click="openCategory(category);" ui-sref="admin.category({ id: category.id })">
+				<a ui-sref="admin.category({ id: category.id })" title="{{category.name}}"><strong class="text-ellipsis categoryName" ng-bind="category.name"></strong></a>
+				<small>created on {{category.created_at | amDateFormat:'MM/DD/YYYY'}}</small><br />
+			</div>
+
+			<div ng-if="user_role_id == 2" class="category cursor-pointer bg-white wrapper b-a hover" ng-click="openCategory(category);" ui-sref="parent.category({ id: category.id })">
+				<a ui-sref="parent.category({ id: category.id })" title="{{category.name}}"><strong class="text-ellipsis categoryName" ng-bind="category.name"></strong></a>
+				<small>created on {{category.created_at | amDateFormat:'MM/DD/YYYY'}}</small><br />
+			</div>
+
+			<div class="pull-right padder-v">
+				<a class="btn btn-sm pull-right btn-danger" ng-click="deleteCategory(category)"  title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
+				<a class="btn btn-sm pull-right btn-warning m-r-xs" ng-click="openPopup(3, category)"  title="Edit" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
+			</div>
+		</div>
+		<h4 class="text-center" ng-if="numberOfCategories.length == 0 && CategoryModel.categories.length > 0">No Search Results Found</h4>
+		<section class="scrollable padder m-b-xl">
+			<div class="col-md-4 m-t-sm" ng-if="!(CategoryModel.categories.length > 0) && !resources.stillLoadingCategories">
+				<h3>No Any Categories</h3>
+			</div>
+		</section>
+			</div>
+		</section>
+</div> -->
+<div class="col-md-12 col-sm-12 col-xs-12 lessons m-t m-b">
+<section class="vbox no-padder bg-white b-a col-md-12 col-sm-12 col-xs-12" ng-show="!resources.stillLoading && !resources.stillLoadingCategories">
+	<header class="panel-heading font-bold">
+		<span>Lessons</span>
+        <div class="search-min">
+            <div class="pull-right">
+                <div class="search input-group no-padder">
+                    <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Category">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu animated fadeInUp">
+                        <span class="arrow top"></span>
+                        <li>
+                            <a ng-click="getFilteredIdList(null, true)" class="cursor-pointer">All Categories</a>
+                        </li>
+                        <li ng-repeat="mainCategory in VideoModel.allCategories | filter:{ parent_cat_id: 0, enable: 1 }" ng-init="mainCategoryId = mainCategory.id" ng-class="{'dropdown-submenu' : VideoModel.subCategories[mainCategoryId]}">
+                            <a data-id="{{mainCategory.id}}" ng-click="getFilteredIdList(mainCategory.id, true)" class="cursor-pointer">{{mainCategory.name}}</a>
+                            <ul class="dropdown-menu" ng-if="VideoModel.subCategories[mainCategoryId]">
+                                <li ng-repeat="subCat in VideoModel.subCategories[mainCategoryId]">
+                                    <a data-id="{{subCat.id}}" ng-click="getFilteredIdList(subCat.id, false)" class="cursor-pointer">{{subCat.name}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="search-field">
+                        <input type="text" placeholder="Search" ng-model="searchVideoName" class="input-sm form-control" />
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</header>
+
+	<section class="no-padder m-b-xl">
+        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+            <div class="item-sizer col-md-3 col-sm-4 col-xs-6"></div>
+            		
+		<div masonry-brick class="grid-item col-md-3 col-sm-4 col-xs-6 m-t-sm" ng-repeat="video in VideoModel.allVideos | filter : searchVideoName | filter : visibilityFilter | filter : filterByCategory as loadedSections ">
+		    <div class="video bg-white b-a hover">
+				<!--<video-thumbnail video="{{video}}" video-ref="{{video.video_ref}}" video-id="{{video.video_id}}"></video-thumbnail>-->
+				<div class="control-group f-text">
+					<!--<div  ui-sref="admin.video({id : video.id})" class="video-title-display"><div>{{video.title}}</div></div>-->
+					<a ng-if="user_role_id == 1" ui-sref="admin.video({id : video.id})">
+						<img ng-if="video.video_ref == 'youtube'"  class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'"  class="img img-responsive" src="{{video.thumb}}" />
+					</a>
+
+					<a ng-if="user_role_id == 2" ui-sref="parent.video({id : video.id})">
+						<img ng-if="video.video_ref == 'youtube'"  class="img img-responsive" src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg" />
+						<img ng-if="video.video_ref == 'ted'"  class="img img-responsive" src="{{video.thumb}}" />
+					</a>
+
+				</div>
+				<div class="wrapper bg-white">
+                    <div class="category-item">{{categoryObj['main']}}</div>
+                    <div class="sub-item m-b "><small ng-init="categoryObj = getMainSubCategoryNames(video.category_id)"  class="">{{categoryObj['sub']}}</small></div>
+
+                   	<a ng-if="user_role_id == 1" class="video-name" ui-sref="admin.video({id : video.id})"><span class="categoryName" ng-bind="video.title"></span></a>
+
+                   	<a ng-if="user_role_id == 2" class="video-name" ui-sref="parent.video({id : video.id})"><span class="categoryName" ng-bind="video.title"></span></a>
+
+					<!--<small>created on {{video.created_at | amDateFormat:'MM/DD/YYYY'}}</small>-->
+				</div>
+			</div>
+		</div>
+		</div>
+        <div class="not-found"><h3 class="text-center clearfix" ng-if="loadedSections.length == 0 && VideoModel.allVideos.length > 0">No Lessons in this category</h3></div>
+		<section class="scrollable padder m-b-xl">
+            <div class="col-md-3 m-t-sm" ng-if="!(VideoModel.allVideos.length > 0)">
+                <h3>No Any Lessons</h3>
+            </div>
+        </section>
+	</section>
+</section>
+</div>
+</div>
+	</div>
+<section class="vbox" ng-if="resources.stillLoading ">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>

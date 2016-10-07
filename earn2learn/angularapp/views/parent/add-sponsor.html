@@ -1,0 +1,76 @@
+<style type="text/css">
+    .category {
+        cursor: pointer;
+        height: 145px;
+    }
+
+    .categoryName {
+        font-size: 17px;
+    }
+
+    .form-group, .panel-default {
+        position: relative;
+    }
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+    .form-group .error {
+        color: red;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 no-padder pull-left lesson-edit">
+        <button onClick="javascript:history.go(-1);" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+    </div>
+    </header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Sponsors <i class="fa fa-angle-right"></i> <span>Create Invitation</span></h4>
+</div>
+<section class="vbox sm-screen add-sponsor" ng-if="!resources.stillLoading">
+    <section class="padder m-b-xl wrapper">
+        <section class="inner-wrap col-md-6 col-sm-6 col-xs-12 b-a col-md-offset-3">
+            <header class="header b-b">
+                <p>Create Sponsor Invitation</p>
+            </header>
+            <div class="panel-default bg-white">
+                <form class="panel-body wrapper-lg" name="createUserForm" id="createUserForm" data-validate="parsley" ng-submit="createSponsorLink(createUserForm.$valid)">
+                    <div class="form-group">
+                        <input type="text" required placeholder="First Name" name="fName" data-parsley-trigger="focusout" ng-model="resources.newUser.f_name" class="form-control input-lg" data-required="true">
+                        <span class="required">*</span>
+                        <div class="text-danger" ng-show="createUserForm.fName.$touched" ng-messages="createUserForm.fName.$error" role="alert">
+                            <div ng-message="required">Please enter first name</div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="text" name="lName" placeholder="Last Name" data-parsley-trigger="focusout" ng-model="resources.newUser.l_name" class="form-control input-lg" data-required="true">
+                        <span class="required">*</span>
+                        <div class="text-danger" required ng-show="createUserForm.lName.$touched" ng-messages="createUserForm.lName.$error" role="alert">
+                            <div ng-message="required">Please enter last name</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" name="email" placeholder="Email" data-parsley-trigger="focusout" ng-model="resources.newUser.email" class="form-control input-lg" data-parsley-type="email">
+                        <span class="required">*</span>
+                        <div class="text-danger" required ng-show="createUserForm.email.$touched" ng-messages="createUserForm.email.$error" role="alert">
+                            <p ng-message="email">This needs to be a valid email</p>
+                            <p ng-message="required">emaili is required</p>
+                        </div>
+                    </div>
+                    <div class="line line-dashed"></div>
+                    <button type="submit" ng-disabled="createUserForm.$invalid" class="btn btn-primary">
+                        <span ng-show="isCreateWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+                        Submit
+                    </button>
+                </form>
+            </div>
+            </section>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>

@@ -1,0 +1,145 @@
+<style type="text/css">
+    .form-group, .panel-default {
+        position: relative;
+    }
+
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+</style>
+<div ng-init="loadEditBadge()"></div>
+<header class="header bg-light bg-gradient b-b">
+    <div class="col-md-6 no-padder pull-left lesson-edit">
+        <button ui-sref="admin.badges" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i>
+        </button>
+    </div>
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> Badges <i class="fa fa-angle-right"></i>
+        <span>Update badge</span></h4>
+</div>
+<section class="vbox add-badge ng-scope">
+    <section class="scrollable padder m-b-xl">
+        <form class="panel-body no-padder wrapper" name="updateBadgeForm" id="updateBadgeForm"
+              ng-submit="updateBadge(updateBadgeData)" data-validate="parsley">
+            <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12 left-block">
+                <div class="col-md-12 col-sm-12 col-xs-12 b-a bg-white padder-v m-t m-b form-wrapper">
+                    <div class="form-group no-margin">
+                        <input type="hidden" data-parsley-trigger="focusout" ng-init="updateBadgeData.badge_types_id=1"
+                               ng-model="updateBadgeData.badge_types_id" class="form-control" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Badge Name <span class="txt-red">*</span></label>
+                        <input type="text" maxlength="45" placeholder="Update Name" data-parsley-trigger="focusout"
+                               name="badgeName" ng-model="updateBadgeData.name" class="form-control"
+                               data-required="true" ng-pattern="/^[a-zA-Z\s]*$/" required>
+                        <span style="color: #fb6b5b">{{45 - updateBadgeData.name.length}} characters left</span>
+
+                        <div class="text-danger msg-error" ng-show="updateBadgeForm.badgeName.$touched"
+                             ng-messages="updateBadgeForm.badgeName.$error" role="alert">
+                            <div ng-message="required">Badge name is required</div>
+                            <div ng-message="pattern">Invalid badge name</div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group">
+                         <label class="control-label">Update E2L Bucks</label>
+                         <input type="text" placeholder="Update e2l bucks" data-parsley-trigger="focusout"
+                                ng-model="updateBadgeData.points" class="form-control" data-required="true" required>
+                     </div>-->
+                    <div class="form-group">
+                        <label class="control-label">Badge Description <span class="txt-red">*</span></label>
+                    <textarea placeholder="Update Description" data-parsley-trigger="focusout"
+                              ng-model="updateBadgeData.description" class="form-control" ng-pattern="/^\d*[a-zA-Z][a-zA-Z\d\s]*$/" data-required="true"
+                              name="badgeDescription" required></textarea>
+                        <span style="color: #fb6b5b">{{128 - updateBadgeData.description.length}} characters left</span>
+                        <div class="text-danger msg-error" ng-show="updateBadgeForm.badgeDescription.$touched"
+                             ng-messages="updateBadgeForm.badgeDescription.$error" role="alert">
+                            <div ng-message="required">Badge description is required</div>
+                            <div ng-message="pattern">Invalid badge description</div>
+                        </div>
+
+                    </div>
+
+                    <!-- image upload section -->
+                    <section class="panel panel-default">
+                        <div class="panel-body">
+                            <h4 class="text-center">Upload Badge Picture <span class="txt-red">*</span></h4>
+                            <h5 class="text-center">
+                                <div class="bg-light uploaded-badge">
+                                    <img ng-if="!updateImage" src="uploads/badges/{{updateBadgeData.badge_image}}"
+                                         class="img img-responsive" width="100%">
+                                    <img ng-if="updateImage" ngf-src="updateBadgeData.badge_image"
+                                         class="img img-responsive" width="100%">
+                                </div>
+                                <div ng-show="updateBadgeData.badge_images.progress >= 0"
+                                     class="progress progress-sm progress-striped  active">
+                                    <div class="progress-bar progress-bar-success" data-toggle="tooltip"
+                                         ng-bind="updateBadgeData.badge_image.progress + '%'"
+                                         data-original-title="{{updateBadgeData.badge_image.progress + '%'}}"
+                                         style="width:{{picFile.progress}}%"></div>
+                                </div>
+                            </h5>
+                            <div class="profile-select">
+                                <input type="file" ngf-select="updateImage = true" ng-change="updateImage = true"
+                                       class="profile-pic btn inline" ng-model="updateBadgeData.badge_image"
+                                       name="file" ngf-accept="'image/*'">
+                                <label class="choose-pic">Choose a file</label>
+                                <span>Accepted image formats gif ,png ,jpg and max upload size is 1MB </span>
+                            </div>
+                        </div>
+                    </section>
+                    <div class="line line-dashed"></div>
+                    <div class="form-group">
+                        <!--<label> <input type="checkbox" data-parsley-trigger="focusout" ng-model="updateBadgeData.enable" class="form-control" value="1" checked> <span>Enable / Disable</span></label>-->
+                        <button type="submit" ng-disabled="resources.isSaving"
+                                class="btn btn-primary btn-lg pull-right"><span ng-show="resources.isSaving"><i
+                                class="fa fa-circle-o-notch fa-spin"></i></span> {{ resources.addBadgeButtonText }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7 col-md-7 col-sm-6 col-xs-12 right-block">
+                <div class="col-md-12 col-sm-12 col-xs-12 form-wrapper">
+                    <div class="col-md-6">
+                        <div class="form-group" ng-init="loadAllCategories()">
+                            <label class="control-label" for="category">Category <span class="txt-red">*</span></label>
+                            <select disabled="disabled" class="form-control"
+                                    data-ng-options="a.id as a.name group by a.parentName for a in badgeModel.allCategories"
+                                    ng-change="loadLessons(updateBadgeData.category_id);"
+                                    ng-model="updateBadgeData.category_id" required><option value="">Select a Category</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="b-a bg-white load-lessons col-md-12 col-sm-12 col-xs-12">
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 m-b m-t" ng-repeat="video in lessonList ">
+                        <div class="video-wrapper b-a">
+                            <div class="video  hover">
+                                <div class="control-group">
+                                    <a ui-sref="parent.lesson({id : video.id})">
+                                        <img ng-if="video.video_ref == 'youtube'" class="img img-responsive"
+                                             src="https://img.youtube.com/vi/{{video.video_id}}/0.jpg"/>
+                                        <img ng-if="video.video_ref == 'ted'" class="img img-responsive"
+                                             src="{{video.thumb}}"/>
+                                    </a>
+                                </div>
+                                <div class="wrapper">
+                                    <a title="{{video.title}}"><strong class="text-ellipsis categoryName" ng-bind="video.title"></strong></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div><input disabled="disabled" type="checkbox" id="{{video.id}}" ng-model="updateBadgeData.badgeLessons[video.id]"
+                                    ng-checked="updateBadgeData.badgeLessons[video.id]" value="{{video.id}}"/></div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+
+    </section>
+</section>

@@ -1,0 +1,385 @@
+<div class="vbox parent-view" ng-controller="ParentRootController">
+<header class="bg-dark dk header navbar navbar-fixed-top-xs" style="margin-top: -4px;">
+    <div class="navbar-header aside-md">
+        <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+            <i class="fa fa-bars"></i>
+        </a>
+        <a class="btn btn-link visible-xs btn-link-full-screen" data-toggle="fullscreen">
+            <i class="fa fa-expand" aria-hidden="true"></i>
+            <i class="fa fa-compress" aria-hidden="true"></i>
+        </a>
+        <a href="{{base_url}}/#/parent/dashboard" class="navbar-brand"><img src="includes/images/logo.png" class="m-r-sm"></a>
+        <a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".nav-user">
+            <i class="fa fa-cog"></i>
+        </a>
+         <span class="navbar-tools">
+             <a class="btn btn-link" data-toggle="class:nav-off" data-target="aside#nav">
+             <i class="txt-green fa fa-caret-left menu-pull-left" aria-hidden="true"></i>
+             <i class="fa fa-caret-right menu-pull-right" aria-hidden="true"></i>
+             <i class="fa fa-bars"></i>
+             </a>
+             <a class="btn btn-link  btn-link-full-screen"  data-toggle="fullscreen">
+                 <i class="fa fa-expand txt-lightBlue" data-placement="right"  aria-hidden="true" title="Fullscreen" data-toggle="tooltip"></i>
+                 <i class="fa fa-compress txt-lightBlue" aria-hidden="true" data-placement="right"  aria-hidden="true" title="Exit" data-toggle="tooltip"></i>
+             </a>
+         </span>
+    </div>
+     <ul class="nav navbar-nav hidden-xs">
+    </ul>
+    <ul class="nav navbar-nav navbar-right m-n hidden-xs nav-user">
+        <li class="dropdown">
+            <a class="dropdown-toggle cursor-pointer" data-toggle="dropdown">
+                <span class="thumb-sm avatar pull-left">
+              <img style="width : 28px; height : 28px;" src="{{user().profile_image}}">
+            </span> {{user().f_name}} {{user().l_name}} <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu animated fadeInUp">
+                <span class="arrow top"></span>
+                <li>
+                    <a ui-sref="parent.profile">Profile</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a ui-sref="parent.configurations">Settings</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a class="cursor-pointer" ng-click="logout()">Log out</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <ul class="pull-right notifications">
+        <li>
+            <div id="user-message-btn-wrap">
+                <a class="btn" ng-click="navigateToMessagesView()" title="Messages" data-toggle="tooltip" data-placement="bottom">
+                    <i class="fa fa-envelope-o icon"></i>
+                    <i class="badge" ng-if="newMessageCount != 0">{{newMessageCount}}</i>
+                </a>
+            </div>
+        </li>
+        <li>
+            <div id="user-notification-panel-wrap">
+                <a class="btn" ng-click="toggleNotificationPanel()" ng-class="{'active-btn':toggleNotification}" title="Notifications" data-toggle="tooltip" data-placement="bottom">
+                    <i class="fa fa-bell-o icon"></i>
+                    <i class="badge" ng-if="unreadNotificationCount!= 0">{{unreadNotificationCount}}</i>
+                </a>
+
+                <div class="m-modals" ng-if="toggleNotification" ng-click="toggleNotificationPanel()"></div>
+                <notification-list ng-if="toggleNotification" toggle-notification="toggleNotification" unread-notification="unreadNotification" is-notification-loading="isNotificationLoading" callback-fn1="initNotificationList()"  callback-fn2="closeNotificationPopup()"></notification-list>
+            </div>
+        </li>
+    </ul>
+</header>
+<section>
+    <Section ng-if="user().is_expired">
+        <div ng-include="'angularapp/views/parent/payment.html'"/>
+    </Section>
+    <section class="hbox stretch" ng-if="!(user().is_expired)">
+        <!-- .aside -->
+        <aside class="bg-dark lter aside-md hidden-print hidden-xs" id="nav">
+            <section class="vbox">
+                <header class="header bg-primary lter text-center clearfix">
+                    <div class="text-center m-t m-b hidden-nav-xs">
+                        <div class="thumb">
+                            <a ui-sref="parent.profile">
+                                <img style="width : 64px; height : 64px;" src="{{user().profile_image}}" class="img-circle">
+                            </a>
+                        </div>
+                        <div class="h4 m-t m-b-xs text-ellipsis"><a ui-sref="parent.profile">{{user().f_name}}</a></div>
+                        <small class="text-muted m-b">You are a {{getRoleName(user().role_id)}}</small>
+                    </div>
+                </header>
+                <section class="w-f scrollable" style="top: 151px;">
+                    <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333">
+
+                        <!-- nav -->
+                        <nav class="nav-primary hidden-xs">
+                            <ul class="nav">
+                                <li ui-sref-active="{'active':'parent.dashboard'}">
+                                    <a ui-sref="parent.dashboard" ui-sref-active="active">
+                                        <i class="fa fa-dashboard icon">
+                                           <b class="bg-danger"></b>
+                                        </i>
+                                        <span>Dashboard</span>
+                                    </a>
+                                </li>
+                                <!--<li>
+                                    <a ui-sref="parent.house">
+                                        <i class="fa fa-university icon">
+                                       <b class="bg-success"></b>
+                                    </i>
+                                        <span>My House</span>
+                                    </a>
+                                </li>-->
+                                <li ui-sref-active="{'active':'parent.allParticipant','active 1':'parent.addNewParticipant','active 2':'parent.user'}">
+                                    <a class="cursor-pointer" ui-sref="parent.allParticipant" ui-sref-active="active">
+                                        <i class="fa fa-users icon">
+                                            <b class="bg-primary-children"></b>
+                                        </i>
+                                        <span>Children</span>
+                                    </a>
+                                </li>   
+
+                                <!-- <li>
+                                    <a ui-sref="parent.lessons">
+                                        <i class="fa fa-youtube-play icon">
+                                            <b class="bg-success"></b>
+                                            </i>
+                                            <span>Upload Lessons</span>
+                                    </a>
+                                </li> -->
+
+
+                                <li ui-sref-active="{'active':'parent.allSponsors','active 1':'parent.addSponsor'}">
+                                    <a class="cursor-pointer" ui-sref="parent.allSponsors" ui-sref-active="{'active':'parent.allSponsors'}">
+                                        <i class="fa fa-male icon">
+                                            <b class="bg-primary-sponsor"></b>
+                                        </i>
+                                        <span>Sponsors</span>
+                                    </a>
+                                </li>
+                                <li ui-sref-active="{'active':'parent.browselessons','active 1':'parent.mylessons','active 2':'parent.sponsorLessons','active 3':'parent.lessons','active 4':'parent.lesson'}">
+                                    <a style="cursor: pointer;">
+                                        <i class="fa fa-book icon">
+                                              <b class="bg-primary"></b>
+                                    </i>
+                                    <span class="pull-right">
+                                      <i class="fa fa-angle-down text"></i>
+                                      <i class="fa fa-angle-up text-active"></i>
+                                    </span>
+                                        <span>Lessons</span>
+                                    </a>
+                                    <ul class="nav lt">
+                                        <li ui-sref-active="{'active':'parent.browselessons'}">
+                                            <a class="cursor-pointer" ui-sref="parent.browselessons" ui-sref-active="{'active':'parent.browselessons'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Browse Lessons</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.mylessons'}">
+                                            <a class="cursor-pointer" ui-sref="parent.mylessons" ui-sref-active="{'active':'parent.mylessons'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>My Lessons</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.sponsorLessons'}">
+                                            <a class="cursor-pointer" ui-sref="parent.sponsorLessons" ui-sref-active="{'active':'parent.sponsorLessons'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Sponsor Lessons</span>
+                                            </a>
+                                        </li>
+                                        <!--<li>
+                                            <a class="cursor-pointer" ui-sref="parent.childlessons">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Child Lessons</span>
+                                            </a>
+                                        </li>-->
+                                    </ul>
+                                </li>
+                                <li ui-sref-active="{'active':'parent.browseTasks','active 1':'parent.assignedTasks','active 2':'parent.task'}">
+                                    <a class="cursor-pointer">
+                                        <i class="fa fa-tasks icon">
+                                            <b class="bg-primary-chore"></b>
+                                        </i>
+                                        <span class="pull-right">
+                                          <i class="fa fa-angle-down text"></i>
+                                          <i class="fa fa-angle-up text-active"></i>
+                                        </span>
+                                        <span>Chores</span>
+                                    </a>
+                                    <ul class="nav lt">
+                                        <!--<li>
+                                            <a class="cursor-pointer" ui-sref="parent.addTasks">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Add Task</span>
+                                            </a>
+                                        </li>-->
+                                        <li ui-sref-active="{'active':'parent.browseTasks','active 1':'parent.task'}">
+                                            <a class="cursor-pointer" ui-sref="parent.browseTasks" ui-sref-active="{'active':'parent.browseTasks'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Browse Chores</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.assignedTasks'}">
+                                            <a class="cursor-pointer" ui-sref="parent.assignedTasks"  ui-sref-active="{'active':'parent.assignedTasks'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>My Chores</span>
+                                            </a>
+                                        </li>
+                                       <!-- <li>
+                                            <a class="cursor-pointer" ui-sref="parent.finishedTasks">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Finished Chores</span>
+                                            </a>
+                                        </li>-->
+                                    </ul>
+                                </li>
+                                <li ui-sref-active="{'active':'parent.allCards','active 1':'parent.myCards','active 2':'parent.myCardsRequests','active 3':'parent.sponsoredCardsRequests'}">
+                                    <a class="cursor-pointer">
+                                        <i class="fa fa-gift icon">
+                                            <b class="bg-danger dker"></b>
+                                        </i>
+                                        <span class="pull-right">
+                                          <i class="fa fa-angle-down text"></i>
+                                          <i class="fa fa-angle-up text-active"></i>
+                                        </span>
+                                        <span>Gift Cards</span>
+                                    </a>
+                                    <ul class="nav lt">
+                                        <li ui-sref-active="{'active':'parent.allCards'}">
+                                            <a class="cursor-pointer" ui-sref="parent.allCards" ui-sref-active="{'active':'parent.allCards'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Browse Cards</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.myCards'}">
+                                            <a class="cursor-pointer" ui-sref="parent.myCards" ui-sref-active="{'active':'parent.myCards'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>My Cards</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.myCardsRequests'}">
+                                            <a class="cursor-pointer" ui-sref="parent.myCardsRequests" ui-sref-active="{'active':'parent.myCardsRequests'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Gift Card Requests</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.sponsoredCardsRequests'}">
+                                            <a class="cursor-pointer" ui-sref="parent.sponsoredCardsRequests"  ui-sref-active="{'active':'parent.sponsoredCardsRequests'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Sponsored Gift Card Requests</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!-- badges section start -->
+                                <li ui-sref-active="{'active':'parent.badges','active 1':'parent.addBadge'}">
+                                    <a ui-sref="parent.badges" ui-sref-active="{'active':'parent.badges'}">
+                                        <i class="fa fa-star icon">
+                                            <b class="bg-primary-badge"></b>
+                                        </i>
+                                            <!--<span class="pull-right">
+                                          <i class="fa fa-angle-down text"></i>
+                                          <i class="fa fa-angle-up text-active"></i>
+                                        </span>-->
+                                        <span>Badges</span>
+                                    </a>
+                                    <!--<ul class="nav lt">
+                                        <li>
+                                            <a ui-sref="parent.badges">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Badges</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a ui-sref="parent.assignBadges">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Child Assign Badges</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a ui-sref="parent.loadAchieveBadge">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Child Achieve Badges</span>
+                                            </a>
+                                        </li>
+                                    </ul>-->
+                                </li>
+                                <!-- badges section end -->
+
+                                <!-- Bundle Section -->
+                                <li ui-sref-active="{'active':'parent.bundles','active 1':'parent.sponsorBundles','active 2':'parent.addBundle','active 3':'parent.updateBundle'}">
+                                    <a>
+                                        <i class="fa fa-th-list">
+                                            <b class="bg-primary-bundle"></b>
+                                        </i>
+                                            <span class="pull-right">
+                                          <i class="fa fa-angle-down text"></i>
+                                          <i class="fa fa-angle-up text-active"></i>
+                                        </span>
+                                        <span>Bundle</span>
+                                    </a>
+                                    <ul class="nav lt">
+                                        <li ui-sref-active="{'active':'parent.bundles','active 1':'parent.addBundle}">
+                                            <a ui-sref="parent.bundles" ui-sref-active="{'active':'parent.bundles','active 1':'parent.addBundle}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Bundle</span>
+                                            </a>
+                                        </li>
+                                        <li ui-sref-active="{'active':'parent.sponsorBundles'}">
+                                            <a ui-sref="parent.sponsorBundles" ui-sref-active="{'active':'parent.sponsorBundles'}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Sponsor Bundle</span>
+                                            </a>
+                                        </li>
+                                        <!--<li>
+                                            <a ui-sref="parent.bundles">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span>Add Bundle</span>
+                                            </a>
+                                        </li>-->
+                                    </ul>
+                                </li>
+                                <!-- Bundle Section -->
+
+                                <!--Inbox Message section-->
+
+                                <li ui-sref-active="{'active':'parent.inboxMessage'}">
+                                    <a class="cursor-pointer" ng-click="clearCount()" ui-sref="parent.inboxMessage" ui-sref-active="{'active':'parent.inboxMessage'}">
+                                        <i class="fa fa-envelope icon">
+                                            <b class="bg-primary-messages"></b>
+                                        </i>
+                                        <span>Messages</span>
+                                    </a>
+                                </li>
+                                <!--Inbox Message section-->
+
+
+                                <li ui-sref-active="{'active':'parent.transactions'}">
+                                    <a class="cursor-pointer" ui-sref="parent.transactions" ui-sref-active="{'active':'parent.transactions'}">
+                                        <i class="fa fa-money   icon">
+                                            <b class="bg-danger"></b>
+                                        </i>
+                                        <span>Transactions History</span>
+                                    </a>
+                                </li>
+                                <li ui-sref-active="{'active':'parent.payment'}">
+                                    <a class="cursor-pointer" ui-sref="parent.payment" ui-sref-active="{'active':'parent.payment'}">
+                                        <i class="fa fa-credit-card-alt icon">
+                                            <b class="bg-warning"></b>
+                                        </i>
+                                        <span>Payment Details</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- / nav -->
+                    </div>
+                </section>
+            </section>
+        </aside>
+        <!-- /.aside -->
+        <section class="content-container">
+                <section id="content" ui-view>
+                </section>
+                <footer class="main-footer">
+                    <script>
+                        var currentYear = (new Date()).getFullYear();
+                        $(document).ready(function() {
+                            $("#year").text(currentYear);
+                        });
+                    </script>
+                    <div class="pull-right hidden-xs">
+                        <b>Version</b> 2.1.1
+                    </div>
+                    <strong>Copyright &copy; <span id="year"></span> Earn to Learn.</strong> All rights
+                    reserved.
+                </footer>
+            </section>
+        <aside class="bg-light lter b-l aside-md hide" id="notes">
+            <div class="wrapper">Notification</div>
+        </aside>
+    </section>
+</section>
+</div>

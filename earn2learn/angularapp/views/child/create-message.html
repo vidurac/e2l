@@ -1,0 +1,64 @@
+<style type="text/css">
+    .iframe-wrapper {
+        position: relative;
+        height: 0;
+        padding-top: 56.25%;
+        overflow: hidden;
+    }
+
+    .iframe-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .form-group, .panel-default {
+        position: relative;
+    }
+
+    .required {
+        position: absolute;
+        top: 10px;
+        right: -10px;
+        color: red;
+    }
+</style>
+<header class="header bg-light bg-gradient b-b">
+    <p>Create New Message</p>
+</header>
+<section class="vbox">
+    <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+        <div class="">
+            <header class="panel-heading text-uc font-bold">
+                Send Message
+            </header>
+            <form class="panel-body wrapper" name="addNewMessageForm" id="addNewMessageForm"
+                  ng-submit="addNewMessage(resources.newMessage)" data-validate="parsley">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <input type="hidden" ng-model="resources.newMessage.receiver_id">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="Subject " data-parsley-trigger="focusout"
+                               ng-model="resources.newMessage.subject" class="form-control" data-required="true"
+                               required>
+                    </div>
+                    <div class="form-group">
+                    <textarea placeholder="Message " data-parsley-trigger="focusout"
+                              ng-model="resources.newMessage.message" class="form-control" data-required="true"
+                              required></textarea>
+                    </div>
+
+                    <div class="line line-dashed"></div>
+                    <button type="submit"
+                            ng-disabled="resources.isSaving"
+                            class="btn btn-primary btn-lg pull-right"><span ng-show="resources.isSaving"><i
+                            class="fa fa-circle-o-notch fa-spin"></i></span> {{ sendButtonText }}
+                    </button>
+                </div>
+            </form>
+
+    </section>
+</section>

@@ -1,0 +1,61 @@
+<section class="m-t-lg wrapper-md animated fadeInUp auth" ng-init="verifyPswResetToken()">
+    <div ng-if="validToken" class="container aside-xxl">
+        <a class="navbar-brand block">
+            <img src="includes/images/logo.png" style="margin: 0 auto;"/>
+        </a>
+        <section class="panel panel-default bg-white m-t-lg">
+            <header class="panel-heading text-center">
+                <strong>Reset Your Password</strong>
+            </header>
+            <form class="panel-body wrapper-lg" name="resetPswForm" id="resetPswForm" ng-controller="AuthController"
+                  ng-submit="resetPassword(credentials)" data-validate="parsley">
+                <p>You can now reset the password.</p>
+                <div class="form-group">
+
+                    <input type="password" id="password" name="password" ng-model="credentials.password"
+                           ng-minlength="6" ng-maxlength="20" ng-pattern="/(?=.*[^a-zA-Z])/" placeholder="New Password"
+                           class="form-control input-lg" data-required="true">
+                </div>
+                <div class="form-group">
+                    <span class="text-danger msg-error"
+                          ng-show="resetPswForm.password.$error.required && resetPswForm.password.$dirty">required</span>
+                    <span class="text-danger msg-error"
+                          ng-show="!resetPswForm.password.$error.required && (resetPswForm.password.$error.minlength || resetPswForm.password.$error.maxlength) && resetPswForm.password.$dirty">Passwords must be between 6 and 20 characters.</span>
+                    <span class="text-danger msg-error"
+                          ng-show="!resetPswForm.password.$error.required && !resetPswForm.password.$error.minlength && !resetPswForm.password.$error.maxlength && resetPswForm.password.$error.pattern && resetPswForm.password.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>
+                </div>
+                <div class="form-group">
+
+                    <input type="password" id="confirm_password" name="confirm_password"
+                           ng-model="credentials.confirm_password" ng-minlength="6" ng-maxlength="20"
+                           ng-pattern="/(?=.*[^a-zA-Z])/" pw-check="password" placeholder="Confirm Password"
+                           class="form-control input-lg" data-required="true">
+                </div>
+                <div class="form-group">
+                    <span class="text-danger msg-error"
+                          ng-show="resetPswForm.confirm_password.$error.required && resetPswForm.confirm_password.$dirty">required</span>
+                    <span class="text-danger msg-error"
+                          ng-show="!resetPswForm.confirm_password.$error.required && (resetPswForm.confirm_password.$error.minlength || resetPswForm.confirm_password.$error.maxlength) && resetPswForm.confirm_password.$dirty">Passwords must be between 6 and 20 characters.</span>
+                    <span class="text-danger msg-error"
+                          ng-show="!resetPswForm.confirm_password.$error.required && !resetPswForm.confirm_password.$error.minlength && !resetPswForm.confirm_password.$error.maxlength && resetPswForm.confirm_password.$error.pattern && resetPswForm.confirm_password.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>
+                </div>
+                <div class="form-group">
+                    <div class="msg-block" ng-show="resetPswForm.$error">
+                        <span class="msg-error text-danger " ng-show="resetPswForm.confirm_password.$error.pwmatch">Passwords don't match.</span>
+                    </div>
+                </div>
+                <div class="btn-control-xs-12">
+                    <button ng-disabled="resetPswForm.$invalid || isWaiting" type="submit"
+                            class="btn btn-primary pull-left m-r">
+                        <span ng-show="isWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ resetButtonText
+                        }}
+                    </button>
+                    <a ui-sref="login" class="btn btn-default pull-right">Cancel</a>
+                </div>
+            </form>
+            <div ng-if="!validToken">
+                <h3 class="text-center text-white">Invalid Token</h3>
+            </div>
+        </section>
+    </div>
+</section>

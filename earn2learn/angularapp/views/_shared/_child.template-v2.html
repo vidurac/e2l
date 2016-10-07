@@ -1,0 +1,215 @@
+<div class="vbox child-view">
+    <header class="navbar navbar-inverse">
+        <div class="aside-lg padder-v padder col" id="e2l-brand">
+            <a class="btn btn-link visible-xs" data-toggle="class:nav-off-screen,open" data-target="#nav,html">
+                <i class="fa fa-outdent" aria-hidden="true"></i>
+                <i class="fa fa-indent" aria-hidden="true"></i>
+                <span class="menu-title">Menu</span>
+            </a>
+
+           <!-- <a class="btn btn-link visible-xs btn-link-full-screen" data-toggle="fullscreen">
+                <i class="fa fa-expand" aria-hidden="true"></i>
+                <i class="fa fa-compress" aria-hidden="true"></i>
+            </a>-->
+            <a href="{{base_url}}/#/parent/dashboard" class="brand">
+                <img class="logo-large" src="includes/images/logo.png">
+                <img class="logo-small" src="includes/images/logo-small.png">
+            </a>
+            <!--<a class="btn btn-link visible-xs" data-toggle="dropdown" data-target=".nav-user">
+                <i class="fa fa-cog"></i>
+            </a>-->
+
+        </div>
+        <div class="col toggle-nav">
+        <span class="navbar-tools">
+             <a class="btn btn-link" data-toggle="class:nav-off-screen,open" data-target="aside#nav,html">
+             <!--<i class="txt-green fa fa-caret-left menu-pull-left" aria-hidden="true"></i>
+             <i class="fa fa-caret-right menu-pull-right" aria-hidden="true"></i>-->
+             <i class="fa fa-outdent fa-2x" aria-hidden="true"></i>
+                 <i class="fa fa-indent fa-2x" aria-hidden="true"></i>
+             </a>
+            <a class="btn btn-link  btn-link-full-screen pull-right"  data-toggle="fullscreen">
+                <i class="fa fa-expand txt-lightBlue fa-2x" data-placement="right"  aria-hidden="true" title="Fullscreen" data-toggle="tooltip"></i>
+                <i class="fa fa-compress txt-lightBlue fa-2x" aria-hidden="true" data-placement="right"  aria-hidden="true" title="Exit" data-toggle="tooltip"></i>
+            </a>
+         </span>
+            </div>
+        <div class="col">
+        <div class="child-progress col-lg-7 col-md-12 col-sm-12 col-xs-12" ng-init="getTotalPoints();">
+            <ul class="list-inline child-progress-box">
+                <li class="earned-points"><a href="#"> <span class="inline progress-label"><small>E2L Bucks</small><b>Earned</b></span>
+                    <span class="value"><span class="inline progress-value">{{child_total_points}}</span></span></a></li>
+                <li class="lesson-completed"><a href="#">
+                    <span class="value"><span class="inline progress-value">{{completedPercentageGiftCard}}%</span></span>
+                    <span class="inline progress-label">Gift card <b>Completed</b></span>
+                </a>
+                </li>
+                <!--<li><a href="https://twitter.com/share?url=http://www.wsolus.com" class="twitter-share-button">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script></li>
+                <li><iframe src="https://www.facebook.com/plugins/share_button.php?href=http://www.wsolus.com&layout=button&mobile_iframe=true&width=59&height=20&appId" width="59" height="20" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe></li>-->
+            </ul>
+            <!--<a class="cursor-pointer" ui-sref="child.inboxMessage" >Message</a>-->
+        </div>
+        <div class="user-detail col-lg-5 col-md-12 col-sm-12 col-xs-12" ng-init="getMyAssignedLessonsCompletedPercentage()">
+            <div class="icon-box">
+                <ul class="inline top-badges no-margin">
+
+                    <!--<li><button class="btn-badges" type="button" id="futureMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span class="badge-box"><img src="images/future-badges.png" width="46px" height="46px"></span>
+                        <span>Future <b>badges</b></span></button>
+                        <ul class="dropdown-menu" aria-labelledby="futureMenu">
+                            <li></li>
+                        </ul>
+                    </li>-->
+                    <li ng-init="getLastCompletedBadges()">
+
+                        <button class="btn-badges" type="button" id="achievedMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span ng-show="badgeimages.length == 0" class="badge-box">
+                                    <img src="images/achieved-badges.png
+" width="44px" height="44px"></span>
+                        <span ng-show="badgeimages.length > 0" class="badge-box"><img src="uploads/badges/{{badgeimages[0]}}" width="44px" height="44px"></span>
+                        <span>Achieved <b>badges</b></span></button>
+                        <ul class="dropdown-menu animated fadeInUp" aria-labelledby="achievedMenu">
+                            <li ng-repeat="badgeimage in badgeimages track by $index">
+                                <img src="uploads/badges/{{badgeimage}}" class="img-responsive img-badge">
+                            </li>
+                            <li><a ui-sref="child.achieved" class="view-more">More Badges</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="inline-wrap">
+                </div>
+            <div class="inline-wrap fa-notes no-margin">
+                <div id="user-notification-panel-wrap" class="inline">
+                    <a class="btn" data-toggle="tooltip" title="Notifications" data-placement="bottom" ng-click="toggleNotificationPanel()" ng-class="{'active-btn':toggleNotification}">
+                        <span class="glyphicon glyphicon-bell"></span>
+                        <span class="badge" ng-if="unreadNotificationCount != 0">{{unreadNotificationCount}}</span>
+                    </a>
+                    <div class="m-modals" ng-if="toggleNotification" ng-click="toggleNotificationPanel()"></div>
+                    <notification-list ng-if="toggleNotification" toggle-notification="toggleNotification" unread-notification="unreadNotification" is-notification-loading="isNotificationLoading" callbackFn1="initNotificationList()" callback-fn2="closeNotificationPopup()"></notification-list>
+                </div>
+                <div id="user-message-btn-wrap" class="inline" data-toggle="tooltip" title="Messages" data-placement="bottom">
+                    <a class="btn" ng-click="navigateToMessagesView()">
+                        <i class="fa fa-envelope-o icon"></i>
+                        <span class="badge" ng-if="newMessageCount != 0">{{newMessageCount}}</span>
+                    </a>
+                </div >
+                </div>
+            <div class="inline-wrap">
+            <!-- s.child data progress -->
+            <div class="child-stats-info inline no-margin">
+                <!--<img ng-if="completedPercentage != 100" data-toggle="tooltip" data-placement="bottom" title="Earn  {{100-completedPercentage}}% to archive Your Gift card." class="img-circle" src="{{user().profile_image}}">-->
+                <div class="user-name"><span class="txt-white">{{user().f_name}}</span></div> <!-- ui-sref="child.profile"-->
+                <div ng-if="completedPercentage != 100" class="progress" data-toggle="tooltip" data-placement="bottom" title="Earn  {{100-completedPercentage}}% to archive Your Gift card.">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{completedPercentage}}" aria-valuemin="0" aria-valuemax="100" ng-style="{width: completedPercentage + '%'}">
+                        <span class="sr-only">{{completedPercentage}}% Complete (warning)</span>
+                    </div>
+                </div>
+                <div ng-if="completedPercentage == 100" class="progress" data-toggle="tooltip" data-placement="bottom" title="Hurrah!!! Request Gift Cards Now">
+                    <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="{{completedPercentage}}" aria-valuemin="0" aria-valuemax="100" ng-style="{width: completedPercentage + '%'}">
+                        <span class="sr-only">{{completedPercentage}}% Complete (warning)</span>
+                    </div>
+                </div>
+                <div class="user-logout"><a class="cursor-pointer" ng-click="logout()" class="logout">Log out</a></div>
+            </div>
+                </div>
+        </div>
+            </div>
+    </header>
+    <section>
+    <section class="hbox stretch" ng-if="!(user().is_expired)">
+            <!-- .aside -->
+            <aside class="bg-white lter aside-lg hidden-print hidden-xs" id="nav">
+                <section class="vbox">
+                    <header class="header bg-primary lter text-center clearfix padder-v">
+                        <div class="text-center m-t m-b hidden-nav-xs">
+                            <div class="thumb">
+                                <a ui-sref="child.profile">
+                                    <img style="width : 64px; height : 64px;" src="{{user().profile_image}}" class="img-circle">
+                                </a>
+                            </div>
+                            <div class="user col-md-12 padder-v text-center">
+                            <div class="h4 m-t m-b-xs text-ellipsis"><a ui-sref="parent.profile">{{user().f_name + ' ' +user().l_name}}</a></div>
+                           <!-- <small class="m-b">You are a {{getRoleName(user().role_id)}}</small>-->
+                                </div>
+                        </div>
+                    </header>
+                    <section class="w-f scrollable">
+                        <div class="slim-scroll" data-height="auto" data-disable-fade-out="true" data-distance="0" data-size="5px" data-color="#333333">
+
+                            <!-- nav -->
+                            <nav class="child-nav hidden-xs">
+                                <ul class="nav">
+                                    <!--<li class="active">
+                                        <a ui-sref="child.dashboard" class="active">
+                                            <i class="fa fa-dashboard icon">
+                                                <b class="bg-danger"></b>
+                                            </i>
+                                            <span>Dashboard</span>
+                                        </a>
+                                    </li>-->
+                                    <li class="item-1">
+                                        <a ui-sref="child.lessons" ui-sref-active="{ 'active': 'child.lessons', 'active 1':'child.lessonDetails','active 2':'child.lesson','active 3':'child.watchVideo'}">
+                                            <i class="fa fa-book icon">
+                                           <b class="bg-success"></b>
+                                        </i>
+                                            <span>Lessons</span>
+                                        </a>
+                                    </li>
+                                    <li class="item-2">
+                                        <a class="cursor-pointer" ui-sref="child.lessonBundles" ui-sref-active="{class: 'state', 'active': 'child.lessonBundles','active 1': 'child.lessonBundleLessonDetails', 'active 2':'child.lessonBundleLesson','active 3' :'child.LessonBundleWatchVideo','active 4':'child.lessonBundleDetails'}">
+                                            <i class="fa fa-th-list">
+                                                <b class="bg-primary-bundle"></b>
+                                            </i>
+                                            <span>Lesson Bundles</span>
+                                        </a>
+                                    </li>
+                                    <li class="item-3">
+                                        <a class="cursor-pointer" ui-sref="child.chores" ui-sref-active="{class: 'state', 'active': 'child.chores','active 1': 'child.task.*'}">
+                                        <i class="fa fa-tasks icon">
+                                            <b class="bg-primary-chore"></b>
+                                        </i>
+
+                                        <span>Chores</span>
+                                        </a>
+                                    </li>
+                                    <li class="item-4">
+                                        <a class="cursor-pointer" ui-sref="child.gift-cards" ui-sref-active="{class: 'state', active: 'child.gift-cards'}">
+                                            <i class="fa fa-gift icon">
+                                                <b class="bg-danger dker"></b>
+                                            </i>
+                                            <span>Gift Cards</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <!-- / nav -->
+                        </div>
+                    </section>
+                </section>
+            </aside>
+            <!-- /.aside -->
+            <section class="content-container">
+                <section id="content" ui-view>
+                </section>
+                <footer class="main-footer">
+                    <script>
+                        var currentYear = (new Date()).getFullYear();
+                        $(document).ready(function() {
+                            $("#year").text(currentYear);
+                        });
+                    </script>
+                    <div class="pull-right hidden-xs">
+                        <b>Version</b> 2.1.1
+                    </div>
+                    <span class="copyrights">Copyright &copy; <span id="year"></span> Earn to Learn.</span> All rights
+                    reserved.
+                </footer>
+            </section>
+            <aside class="bg-light lter b-l aside-lg hide" id="notes">
+                <div class="wrapper">Notification</div>
+            </aside>
+        </section>
+        </section>
+</div>

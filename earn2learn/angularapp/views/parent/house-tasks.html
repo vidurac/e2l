@@ -1,0 +1,68 @@
+<header class="header bg-light bg-gradient b-b" ng-init="getTaskAllocationByHouseId()">
+    <div class="col-md-6 pull-left no-padder">
+        <div class="search input-group left">
+        <!-- mini search box start-->
+        <div class="input-group pull-left">
+            <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-toggle="dropdown" title="Chores">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu animated fadeInUp">
+                <span class="arrow top"></span>
+                <li>
+                    <a ui-sref="parent.finishedTasks" class="cursor-pointer">Finished Chores</a>
+                </li>
+            </ul>
+        </div>
+
+        </div>
+        <div class="search input-group left">
+            <div class="search-field">
+                <input type="text" placeholder="Search by Name" ng-model="resources.searchTaskName"
+                       class="input-sm form-control"/>
+                <i class="fa fa-search" aria-hidden="true"></i>
+            </div><!-- end mini search box -->
+        </div>
+        <div class="btn btn-default m-t btn-no-w btn-clear" ng-click="resetMyChoresFilters()">Clear</div>
+
+    </div>
+    <div class="col-md-6 pull-right top-buttons no-padder">
+        <span class="pull-right"><a ng-click="openAddTaskPopup()" class="btn btn-primary btn-sm btn-no-w">
+            <span class="text">Add New Chores</span>
+        </a>
+            </span>
+    </div>
+
+</header>
+<div class="page-title col-md-12">
+    <h4><i class="fa fa-angle-right" aria-hidden="true"></i> My Chores</h4>
+</div>
+<section class="vbox chores" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl wrapper">
+        <article class="media b-b wrapper-sm no-margin"
+                 ng-repeat="task in houseAssignedTasks | orderBy : '-created_at' | filter : {enable : 1, task : resources.searchTaskName} as houseAssignTaskCount">
+            <span class="col-md-1 col-sm-1 col-xs-2">{{$index + 1}}.</span>
+            <div class="col-md-9 col-sm-8 col-xs-10">
+                <span class="h4" ng-bind-html="getUnsafeHtml(task.task)"></span>
+                <small class="block m-t-xs" ng-bind-html="getUnsafeHtml(task.description)"></small>
+            </div>
+            <div class="col-md-2 col-sm-3 col-xs-12 no-padder process-buttons m-t">
+                <a ng-if="task.by_admin != 1" href="" ng-click="openEditTaskPopup(task)" class="btn btn-sm btn-warning"
+                   title="Edit" data-toggle="tooltip"><i class="fa fa-pencil"></i></a>
+                <a ng-if="task.by_admin != 1" href="" ng-click="deleteTask(task)" class="btn btn-sm btn-danger"
+                   title="Delete" data-toggle="tooltip"><i class="fa fa-trash"></i></a>
+                <a ui-sref="parent.task({id : task.id})" ng-click="assignTask(task)"
+                   class="btn btn-sm btn-no-w btn-primary">View</a>
+            </div>
+        </article>
+        <h4 class="text-center" ng-if="houseAssignTaskCount.length == 0 && (houseAssignedTasks.length > 0)">No Search
+            Results Found</h4>
+        <section class="scrollable padder m-b-xl" style="padding-bottom: 70px;">
+            <div class="col-md-12 not-found m-t-sm" ng-if="!(houseAssignedTasks.length > 0)">
+                <h3>No Assigned Chores</h3>
+            </div>
+        </section>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading"/>
+</section>

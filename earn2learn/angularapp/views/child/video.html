@@ -1,0 +1,84 @@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[data-slick]').each(function () {
+            $(this).slick($(this).data('slick'))
+        });
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('[data-slick]').each(function () {
+                $(this).slick('setPosition');
+            });
+        });
+    });
+</script>
+<div ng-init="watchVideoInit()" class="video-quiz">
+<section class="vbox" ng-if="!resources.stillLoading && validQuiz ">
+    <header class="section-title main-head row">
+        <div class="col-xs-12">
+            <h2 class="section-header">Lessons</h2>
+        </div>
+
+    </header>
+    <section class="scrollable text-center">
+        <!-- s lessons-section -->
+        <div class="fullWidth subject-title-section questions">
+            <!-- <img class="subject-cover-bg" src="includes/child_includes/img/subjectCoave.png"> -->
+            <section class="container">
+                <header class="section-title-quiz">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12 start-quiz-head">
+                            <h2  class="text-ellipsis"><span title="{{quiz.parent_category}}"  ng-bind="quiz.parent_category"></span></h2>
+                            <h3 title="{{quiz.category}}" class="text-ellipsis m-t-sm quiz-category"
+                                ng-bind="quiz.category"></h3>
+                            <h4 title="{{quiz.title}}" class="text-ellipsis quiz-category" ng-bind="quiz.title"></h4>
+                        </div>
+
+                    </div>
+
+                </header>
+            </section>
+        </div>
+        <!-- s lessons-section -->
+        <!-- s subject-vid-section -->
+        <div class="fullWidth subject-vid">
+            <section class="container">
+                <div class="row">
+
+                    <div class="col-md-offset-1 col-md-10 video-youtube" id="video-wrapper" ng-bind-html="videoIframe">
+
+                    </div>
+                    <div class="col-md-offset-1 col-md-10 btn-container btn-control-xs-12 text-right">
+                        <div class="button-prev btn-inline no-padder clearfix">
+                            <a ui-sref="child.lessons" ui-sref-opts="{reload: true}" class="goBackbtn btn bg-orange btn-block btn-lg"><span
+                                    class="fa fa-angle-left text"></span> Back to Lessons</a>
+                        </div>
+                        <div class="button-next btn-inline no-padder clearfix">
+                            <button class="btn bg-green btn-block btn-lg m-t" ng-if="!hasAttemptToFinish"
+                                    ng-click="startQuiz()">Start Quiz
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+
+            <button class="btn bg-green btn-block text-uc m-t btn-lg" ng-if="hasAttemptToFinish"
+                    ng-click="contAttempt()">Continue...
+            </button>
+
+        </div>
+
+    </section>
+</section>
+<section class="vbox" ng-if="!resources.stillLoading && !validQuiz">
+    <h1 style="margin-top: 200px;" class="text-center">Not Valid Quiz.</h1>
+    <h4 class="text-center text-uc">
+        <a ui-sref="child.lessons" class="goBackbtn text-white"><span class="icon-arrow-left-thick"></span>View
+            Assigned Lessons</a>
+    </h4>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <h1 style="margin-top: 200px;" class="text-center text-white"><img src="includes/images/still-loading.svg" style="margin: 250px auto;text-align: center;display: block;" /></h1>
+</section>
+</div>

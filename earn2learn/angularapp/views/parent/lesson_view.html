@@ -1,0 +1,457 @@
+<style type="text/css">
+	.video {
+		cursor: pointer;
+		height: 145px;
+	}
+	
+	.videoName {
+		font-size: 17px;
+	}
+	
+	#video-player {
+		position: relative;
+	}
+	
+	#video {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	
+	.container1 {
+		/*height: 100%;*/
+		text-align: center;
+		padding: 1em;
+		box-sizing: border-box;
+	}
+
+	.add-to-sponsor-house-form {
+		padding: 10px;
+	}
+	img {
+		/*max-width: 100%;
+	    max-height: 100%;
+	    display: inline-block;*/
+	}
+	
+	.iframe-wrapper {
+		position: relative;
+		height: 0;
+		padding-top: 56.25%;
+		overflow: hidden;
+	}
+	
+	.iframe-wrapper iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
+	
+	.question-panel {
+		border-radius: 0px !important;
+		margin-bottom: 0 !important;
+		margin-top: 0px !important;
+		border: 0 !important;
+		border-bottom: 1px solid #e8e8e8 !important;
+	}
+	
+	.question-panel .answer {
+		border-radius: 0px !important;
+		border: 0 !important;
+	}
+	
+	.question-icons a {
+		padding: 10px 5px;
+		cursor: pointer;
+	}
+	
+	.fa-check-square-o {
+		color: green;
+	}
+	
+	.fa-square-o {
+		color: red;
+	}
+
+	/*Rating stars*/
+	/*.rating {*/
+		/*color: #a9a9a9;*/
+		/*margin: 0;*/
+		/*padding: 0;*/
+	/*}*/
+	/*ul.rating {*/
+		/*display: inline-block;*/
+	/*}*/
+	/*.rating li {*/
+		/*list-style-type: none;*/
+		/*display: inline-block;*/
+		/*padding: 1px;*/
+		/*text-align: center;*/
+		/*font-weight: bold;*/
+		/*cursor: pointer;*/
+	/*}*/
+	/*.rating .filled {*/
+		/*color: red;*/
+	/*}*/
+
+	.rating {
+		margin: 0;
+		padding: 0;
+		display: inline-block;
+	}
+	.rating li {
+		padding: 1px;
+		color: #ddd;
+		font-size: 20px;
+		text-shadow: .05em .05em #aaa;
+		list-style-type: none;
+		display: inline-block;
+		cursor: pointer;
+	}
+	.rating li.filled {
+		color: #fd0;
+	}
+	.rating.readonly li.filled {
+		color: #666;
+	}
+
+	.average-rating-container {
+		position: relative;
+		height: 31px;
+		width: 103px;
+		overflow: hidden;
+	}
+	.average-rating-container .background,
+	.average-rating-container .foreground {
+		position: absolute;
+		top: 0;
+		left: 0;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.note-line {
+		line-height: 1.4;
+	}
+
+</style>
+<div ng-init="loadLesson();"></div>
+<header class="header bg-light bg-gradient b-b">
+	<div class="col-md-6 no-padder pull-left lesson-edit">
+		<button ui-sref="parent.browselessons()" class="btn btn-primary btn-icon-new btn-sm"><i class="fa fa-angle-left text"></i></button>
+	</div>
+	</header>
+<section class="hbox lessons-view stretch" ng-if="!resources.stillLoading">
+	<div class="col-md-5 col-sm-12 col-xs-12 left-col">
+		<section class="vbox">
+			<section class="scrollable">
+				<div class="iframe-wrapper" id="video-wrapper" ng-bind-html="videoIframe">
+				</div>
+				<header class="header bg-white bg-gradient b-b assign-group">
+
+					<button class="btn btn-sm btn-no-w btn-info pull-right m-l-sm" ng-click="assignLessonToSponsoredHouse()" ng-show="isSponsor && cur_lesson.visibility == 'public'" >Add to Sponsored Lesson</button>
+					<button class="btn btn-sm btn-no-w btn-info pull-right m-l-sm" ng-click="addVideoToHouse()" ng-show="!addedToHouse">Add to My Lesson</button>
+					<button class="btn btn-sm btn-no-w btn-danger pull-right m-l-sm" ng-click="removeVideoFromHouse()" title="Remove this lesson from house." ng-if="addedToHouse">Remove Lesson</button>
+					<button class="btn btn-sm btn-no-w btn-success pull-right m-l-sm" ng-click="childAssignPopup()" title="Assign lesson." ng-if="addedToHouse">Assign Lesson</button>
+
+					<button ng-if="role_id == 1 || (cur_lesson.role_id == role_id && cur_lesson.user_id == user_id)"  ui-sref="parent.editlesson({id : vid})" class="btn btn-icon-new btn btn-warning pull-right m-l-sm" title="Edit lesson" data-toggle="tooltip">
+			                  <i class="fa fa-pencil"></i>
+		            </button>
+
+		            <button ng-if="role_id == 1 || (cur_lesson.role_id == role_id && cur_lesson.user_id == user_id && !addedToHouse)" class="btn btn-icon-new btn-danger pull-right" ng-click="deleteLesson(cur_lesson)"  title="Delete lesson" data-toggle="tooltip">
+			                  <i class="fa fa-trash"></i>
+		            </button>
+
+					<!--<div style="clear:both" ng-show="rate_stars_obj.status">-->
+						<!--Rate this video-->
+						<!--<span ng-repeat="rating in ratings">-->
+							<!--<div star-rating rating-value="rating.current" max="rating.max" on-rating-selected="getSelectedRating(rating,video_id)"></div>-->
+						<!--</span>-->
+					<!--</div>-->
+					<!--<div class="average" style="clear:both">-->
+						<!--Average rating ({{averageRating}})-->
+						<!--<average-star-rating ng-model="averageRating" max="5" ></average-star-rating>-->
+					<!--</div>-->
+
+					<div class="average rating">
+						<div ng-show="!rateObj.alreadyRated">Rate this</div>
+						<ng-rate-it style="display: inline;" ng-model="rateObj.rateValue" resetable="false" read-only="rateObj.alreadyRated" before-rated="confirmRating"></ng-rate-it>
+						<div>{{rateObj.rateValue}} out of 5
+							<span ng-show="rateObj.alreadyRated" data-toggle="tooltip" title="Already rated" class="text-success"><i class="fa fa-check"></i></span>
+						</div>
+					</div>
+
+
+					<!--<button class="btn btn-sm btn-no-w btn-success pull-right m-l-sm no-transition" ng-model="ratebutton" ng-hide="!rate_stars_obj.status" ng-click="average_stars=true;rate_stars_obj.status=true;">Rate this</button>-->
+				</header>
+				<div class="padder">
+					<h3 ng-bind-html="videoTitle"></h3>
+					<small class="text-muted">Created on {{cur_lesson.created_at}}</small>
+					<h5 class="text-info" ng-if="addedToHouse"><span class="text-danger">{{quizData[0].value}}</span> E2L Bucks</h5>
+					<h5 class="text-info" ng-if="addedToHouse">PASS RATE IS <span class="text-danger">{{quizData[0].score}}%</span></h5>
+					<p class="text-muted" ng-bind-html="videoDescription"></p>
+				</div>
+			</section>
+		</section>
+	</div>
+	<div class="col-md-7 col-sm-12 xol-xs-12 right-col q-container">
+		<header class="header bg-light no-padder bg-gradient b-a questions clearfix">
+
+			<div class="col-md-12 col-xs-12">
+			<!-- mini search box start-->
+			<div class="search input-group pull-right no-padder">
+				<div class="search-field">
+					<input type="text" placeholder="Search by Name" ng-model="searchQuestions" class="input-sm form-control" />
+					<i class="fa fa-search" aria-hidden="true"></i>
+				</div>
+			</div><!-- end mini search box -->
+				</div>
+
+		</header>
+		<section class="vbox">
+			<section class="scrollable">
+				<div class="page-title col-md-12">
+					<h4><i class="fa fa-angle-right"></i> Questions</h4>
+				</div>
+				<!--Question and answer panel start-->
+
+				<ul class="list-group alt q-group">
+					<li class="list-group-item panel question-panel" ng-repeat="question in cur_lesson.questions | filter : searchQuestions as questionCount track by $index">
+						<div class="media" style="color : black;">
+							<ul class="nav nav-pills pull-right">
+								<li class="question-icons">
+									<a class="panel-toggle text-muted pointer"><i class="fa fa-caret-down text-active"></i><i class="fa fa-caret-up text"></i></a>
+								</li>
+							</ul>
+							<div class="media-body">
+								<span class="pull-left media-xs">{{$index+1}}</span>
+								<div class="clear" ng-bind-html="getUnsafeHtml(question.question)">
+								</div>
+							</div>
+						</div>
+						<section class="panel-body no-padder">
+							<!--Add 'collapse' class to collapse by defaults-->
+							<div class="line pull-in"></div>
+							<ul class="list-group bg-white">
+								<li href="#" class="list-group-item answer" ng-repeat="answer in question.answers">
+									<span class="pull-left media-xs">
+			                    		<i class="fa" ng-class="{'fa-check-square-o' : answer.is_correct == 1, 'fa-square-o' : answer.is_correct == 0}"></i>
+			                    	</span>
+									<div class="clear" ng-bind-html="getUnsafeHtml(answer.answer)">
+									</div>
+								</li>
+							</ul>
+						</section>
+					</li>
+				</ul>
+				<!--Question and answer panel end-->
+				<div class="text text-center wrapper" ng-if="questionCount.length == 0 && cur_lesson.questions.length > 0">
+                    No Search Results Found.
+                </div>
+                <div class="text text-center wrapper" ng-if="cur_lesson.questions.length == 0">
+                    There are no questions in this lesson.
+                </div>
+			</section>
+		</section>
+	</div>
+</section>
+
+<!-------------------------------------------------------------------->
+<section class="vbox" ng-if="resources.stillLoading">
+	<img src="includes/images/still-loading.gif" class="loading" />
+</section>
+
+<script type="text/ng-template" id="assignVideoToHouseTemplate">
+	<div class="iframe-wrapper" id="video-wrapper" ng-bind-html="videoIframe">
+	</div>
+	<div class="padder wrapper">
+		<h3 class="text-ellipsis" ng-bind-html="videoTitle"></h3>
+	</div>
+	<form name="addToHouseForm" ng-submit="makeQuiz()" data-validate="parsley" class="padder wrapper">
+		<div>
+			<div class="form-group">
+				<label class="sr-only" for="lessonValue">Lesson Value</label>
+				<input type="number" name="lessonValue" min="1" pattern="^(100|[0-9][0-9]?)$" class="form-control input-md" id="lessonValue" ng-model="resources.videoAssignHouse.value" placeholder="Lesson Value" data-required="true" required>
+				<div class="text-danger msg-error" ng-show="addToHouseForm.lessonValue.$touched" ng-messages="addToHouseForm.lessonValue.$error" role="alert">
+					<div ng-message="required">Please enter lesson value</div>
+					<div ng-message="number">Must be a valid number</div>
+					<div ng-message="min">Lesson value is lesser than minimum value</div>
+				</div>
+			</div>
+			<!--<div class="form-group">-->
+				<!--<label class="sr-only" for="passRate">Passing Score %</label>-->
+				<!--<input type="number" name="passPct" pattern="^(100|[0-9][0-9]?)$" min="1" max="100" class="form-control input-md" id="passRate" ng-model="resources.videoAssignHouse.score" placeholder="Passing Score %" data-required="true" required>-->
+				<!--<div class="text-danger msg-error" ng-show="addToHouseForm.passPct.$touched" ng-messages="addToHouseForm.passPct.$error" role="alert">-->
+					<!--<div ng-message="required">Please enter pass percentage</div>-->
+					<!--<div ng-message="number">Must be a valid number</div>-->
+					<!--<div ng-message="min">Pass percentage must be between 1-100</div>-->
+					<!--<div ng-message="max">Pass percentage must be between 1-100</div>-->
+				<!--</div>-->
+			<!--</div>-->
+			<!--<div class="form-group">
+				<label class="sr-only" for="lessonValue">Lesson Value</label>
+				<input type="text" pattern="^(100|[0-9][0-9]?)$" class="form-control input-md" id="lessonValue" ng-model="resources.videoAssignHouse.value" placeholder="Lesson Value" data-required="true" required>
+			</div>
+			<div class="form-group">
+				<label class="sr-only" for="passRate">Passing Score %</label>
+				<input type="text" pattern="^(100|[0-9][0-9]?)$" class="form-control input-md" id="passRate" ng-model="resources.videoAssignHouse.score" placeholder="Passing Score %" data-required="true" required>
+			</div>-->
+		</div>
+		<div class="line line-dashed"></div>
+		<button type="submit" ng-disabled="addToHouseForm.$invalid" class="btn btn-block btn-success">ADD NOW</button>
+	</form>
+</script>
+
+
+<script type="text/ng-template" id="assignVideoToOtherHouseTemplate">
+	<div style="text-align: left;padding: 10px;">
+		<h3 class="text-ellipsis">Add Lesson to Sponsor</h3>
+	</div>
+	<form name="addToSponsorHouseForm" ng-submit="assignToOtherHouse()" data-validate="parsley" class="add-to-sponsor-house-form">
+		<div class="form-group">
+			<label>Select Member</label>
+			<select class="form-control" ng-model="res.selectedHouse" ng-options="item.name for item in otherHouseDetails">
+			</select>
+		</div>
+		<div class="form-group">
+			<label class="sr-only" for="lessonValue">Lesson Value</label>
+			<input type="number" name="lessonValue" min="1" pattern="^(100|[0-9][0-9]?)$" class="form-control input-md" id="lessonValue" ng-model="res.value" placeholder="Lesson Value" data-required="true" required>
+			<div class="text-danger msg-error" ng-show="addToSponsorHouseForm.lessonValue.$touched" ng-messages="addToSponsorHouseForm.lessonValue.$error" role="alert">
+				<div ng-message="required">Please enter lesson value</div>
+				<div ng-message="number">Must be a valid number</div>
+				<div ng-message="min">Lesson value is lesser than minimum value</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="sr-only" for="passRate">Passing Score %</label>
+			<input type="number" name="passPct" pattern="^(100|[0-9][0-9]?)$" min="1" max="100" class="form-control input-md" id="passRate" ng-model="res.score" placeholder="Passing Score %" data-required="true" required>
+			<div class="text-danger msg-error" ng-show="addToSponsorHouseForm.passPct.$touched" ng-messages="addToSponsorHouseForm.passPct.$error" role="alert">
+				<div ng-message="required">Please enter pass percentage</div>
+				<div ng-message="number">Must be a valid number</div>
+				<div ng-message="min">Pass percentage must be between 1-100</div>
+				<div ng-message="max">Pass percentage must be between 1-100</div>
+			</div>
+		</div>
+		<div class="line line-dashed"></div>
+		<button type="submit" ng-disabled="addToSponsorHouseForm.$invalid" class="btn btn-block btn-success">Add to Sponsor Lesson</button>
+	</form>
+</script>
+
+<script type="text/ng-template" id="assignMembersToQuizTemplate">
+	<div class="">
+		<header class="panel-heading text-uc font-bold">
+			Assign To Members
+		</header>
+		<ul class="list-group alt" ng-if="!stillLoadingChildren">
+			<li class="list-group-item">
+				<h6 class="text-muted note-line">
+					Note: Please click on Assign button whenever you made a change for already assigned member.
+				</h6>
+			</li>
+			<li class="list-group-item" ng-repeat="participant in allHouseParticipants">
+				<div class="media" data-toggle="collapse" data-parent="#accordion" href="#participant-{{participant.id}}">
+					<span class="pull-left thumb-sm">
+						<img style="height : 26px; width: 26px;" src="{{participant.profile_image}}" class="img-circle">
+					</span>
+					<div class="pull-right">
+						<a class="panel-toggle text-muted pointer" ng-class="$first ? '' : 'active'">
+							<i class="fa fa-caret-down text-active"></i>
+							<i class="fa fa-caret-up text"></i></a>
+					</div>
+					<div class="col-md-5" style="padding-right: 0;">
+						<div><a href="/#/parent/user/{{participant.id}}" target="_blank" class="text-ellipsis">{{participant.f_name}} {{participant.l_name}}</a></div>
+					</div>
+				</div>
+				<div id="participant-{{participant.id}}" aria-expanded="true"  ng-class='{in:$first}' class="panel-collapse collapse">
+					<ng-form name="assigntochildlessonForm">
+				<div class="row">
+						<!--<ng-form name="assigntochildlessonForm">-->
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Pass percentage(%)</label>
+								<input class="form-control" type="number" pattern="^(100|[0-9][0-9]?)+$" min="1" max="100" name="passpercentage" ng-model="participant.pass_percentage" data-required="true">
+								<div class="text-danger msg-error" ng-show="assigntochildlessonForm.passpercentage.$touched" ng-messages="assigntochildlessonForm.passpercentage.$error" role="alert">
+									<div ng-message="required">Please enter pass percentage</div>
+									<div ng-message="number">Must be a valid number</div>
+									<div ng-message="min">Percentage can't be a negative number</div>
+									<div ng-message="max">Percentage can't be greater than 100</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-group">
+								<label>Max Number of attempts</label>
+								<!---->
+								<input type="number" pattern="^(100|[0-9][0-9]?)+$" min="1" class="form-control" name="numberofattempts" ng-model="participant.max_number_of_attempts" data-required="true">
+								<div class="text-danger msg-error" ng-show="assigntochildlessonForm.numberofattempts.$touched" ng-messages="assigntochildlessonForm.numberofattempts.$error" role="alert">
+									<div ng-message="required">Please enter max number attempts</div>
+									<div ng-message="number">Must be a valid number</div>
+									<div ng-message="min">Attempts can't be a negative number</div>
+								</div>
+							</div>
+						</div>
+						<!--</ng-form>-->
+					</div>
+
+
+					<div class="form-group">
+						<label>Custom Message</label>
+						<!--<textarea class="form-control" name="custommessage" ng-model="custommessage"></textarea>-->
+						<input type="text" ng-model="participant.custom_message" class="form-control" ng-model="participant.custom_message">
+					</div>
+
+					<div class="form-group">
+						<label>
+							<input type="checkbox" ng-model="participant.notify" ng-true-value="1" ng-false-value="0" ng-checked="participant.notify"> Notify failed attempts
+						</label>
+					</div>
+					<!--<input type="text" name="numberofattempts" ng-model="numberofattempts"/>-->
+
+					<div class="btn-group" data-toggle="buttons" ng-if="assigntochildlessonForm.$valid">
+						<!--<label class="btn btn-sm btn-no-w btn-default m-r" ng-disabled="assignedMembers.indexOf(participant.id) == -1 || assigntochildlessonForm.$invalid" ng-class="{'active btn-danger disabled-x' : assignedMembers.indexOf(participant.id) == -1}" ng-click="assignedMembers.indexOf(participant.id) != -1 && childAssigToggle(participant.id, false, participant.pass_percentage, participant.max_number_of_attempts, participant.custom_message, participant.notify) && assigntochildlessonForm.$invalid">-->
+						<label class="btn btn-sm btn-no-w btn-default m-r" ng-disabled="assignedMembers.indexOf(participant.id) == -1 || assigntochildlessonForm.$invalid" ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}" ng-click="childAssigToggle(participant.id, false, participant.pass_percentage, participant.max_number_of_attempts, participant.custom_message, participant.notify) && assigntochildlessonForm.$invalid">
+							<!--<input type="radio" name="options" id="option2" ng-disabled="assignedMembers.indexOf(participant.id) == -1 || assigntochildlessonForm.$invalid"><i class="fa fa-check text-active"></i> Unassign-->
+							<input type="radio" name="options" id="option2" ><i class="fa fa-check text-active"></i> Unassign
+						</label>
+						<!--<label class="btn btn-sm btn-no-w btn-default" ng-disabled="assignedMembers.indexOf(participant.id) > -1 || assigntochildlessonForm.$invalid" ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}" ng-click="!(assignedMembers.indexOf(participant.id) > -1) && childAssigToggle(participant.id, true, participant.pass_percentage, participant.max_number_of_attempts, participant.custom_message, participant.notify) && assigntochildlessonForm.$invalid">-->
+						<label class="btn btn-sm btn-no-w btn-default" ng-class="{'active btn-success disabled-x' : assignedMembers.indexOf(participant.id) > -1}" ng-click="childAssigToggle(participant.id, true, participant.pass_percentage, participant.max_number_of_attempts, participant.custom_message, participant.notify) && assigntochildlessonForm.$invalid">
+							<!--<input type="radio" name="options" id="option1" ng-disabled="assignedMembers.indexOf(participant.id) > -1 || assigntochildlessonForm.$invalid"><i class="fa fa-check text-active"></i> Assign-->
+							<input type="radio" name="options" id="option1"><i class="fa fa-check text-active"></i> Assign
+						</label>
+					</div>
+					<div class="btn-group" data-toggle="buttons" ng-if="!assigntochildlessonForm.$valid">
+						<!--<label class="btn btn-sm btn-no-w btn-default m-r" ng-disabled="true" ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}" ng-click="">-->
+							<!--<input type="radio" name="options" id="option2" ng-disabled="true"><i class="fa fa-check text-active"></i> Unassign-->
+						<!--</label>-->
+						<!--<label class="btn btn-sm btn-no-w btn-default" ng-disabled="true" ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}" ng-click="">-->
+							<!--<input type="radio" name="options" id="option1" ng-disabled="true"><i class="fa fa-check text-active"></i> Assign-->
+						<!--</label>-->
+						<button class="btn btn-sm btn-no-w btn-default m-r" ng-class="{'active btn-danger disabled' : assignedMembers.indexOf(participant.id) == -1}">
+							<i class="fa fa-check text-active"></i> Unassign
+						</button>
+						<button class="btn btn-sm btn-no-w btn-default" ng-class="{'active btn-success disabled' : assignedMembers.indexOf(participant.id) > -1}">
+							<i class="fa fa-check text-active"></i> Assign
+						</button>
+					</div>
+					<br>
+					<br>
+
+					<div ng-if="assignedMembersAllocationDetails[participant.id]['sponsor_name']" >
+						<span class="text-muted">Assigned by: {{assignedMembersAllocationDetails[participant.id]['sponsor_name']}}</span>
+					</div>
+					<!--<div>valid : {{assigntochildlessonForm.$valid}}</div>-->
+					</ng-form>
+				</div>
+			</li>
+		</ul>
+		<div ng-if="loadingHouseMembers || loadingAssignedMembers">
+			<div class="wrapper">
+				<h5 class="text-center m-t-xl"><i class="fa fa-spinner fa fa-spin fa fa-large"></i>&nbsp;&nbsp;&nbsp;Loading...</h5>	
+			</div>
+		</div>
+	</div>
+</script>

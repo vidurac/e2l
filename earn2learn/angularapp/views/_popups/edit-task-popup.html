@@ -1,0 +1,25 @@
+<section class="panel-default pop-ups bg-white">
+    <header class="panel-heading text-center">
+        <strong class="text-uc">Edit Chores</strong>
+    </header>
+    <form class="panel-body wrapper-lg" name="addTaskForm" id="addTaskForm" ng-submit="updateTask()" data-validate="parsley">
+        <div class="form-group">
+            <input type="text"  placeholder="Enter Chores Name" name="choresName" data-parsley-trigger="focusout" ng-model="selectedTask.task" ng-trim="false" minlength="1" maxlength="100" class="form-control" data-required="true">
+            <span style="color: #fb6b5b">{{100 - selectedTask.task.length}} characters left</span>
+            <div class="text-danger msg-error" ng-show="addTaskForm.choresName.$touched" ng-messages="addTaskForm.choresName.$error" role="alert">
+                <div ng-message="required">You must enter a Chores Name</div>
+                <div ng-message="minlength">Please enter a minimum required name</div>
+                <div ng-message="maxlength">You have exceeded maximum length for the name</div>
+            </div>
+            <textarea placeholder="Enter Chores Description" name="choresDescription" rows="6" data-parsley-trigger="focusout" ng-model="selectedTask.description" ng-trim="false" minlength="1" maxlength="255" class="form-control m-t-sm" data-required="true"></textarea>
+            <span style="color: #fb6b5b">{{255 - selectedTask.description.length}} characters left</span>
+            <div class="text-danger msg-error" ng-show="addTaskForm.choresDescription.$touched" ng-messages="addTaskForm.choresDescription.$error" role="alert">
+                <div ng-message="required">required description</div>
+                <div ng-message="minlength">Please enter a minimum required description</div>
+                <div ng-message="maxlength">You have exceeded maximum length for the description</div>
+            </div>
+        </div>
+        <div class="line line-dashed"></div>
+        <button type="submit" ng-disabled="addTaskForm.$invalid || isUpdateTaskWaiting" class="btn btn-primary"><span ng-show="isUpdateTaskWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ updateTaskButtonText }}</button>
+    </form>
+</section>

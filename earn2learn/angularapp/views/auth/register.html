@@ -1,0 +1,94 @@
+<section class="m-t-lg wrapper-md animated fadeInUp  auth">
+    <div class="container aside-xxl">
+        <!--<a class="navbar-brand block">
+            <img src="includes/images/logo.png" style="margin: 0 auto;">
+        </a>-->
+        <section class="panel panel-default bg-white m-t-lg">
+            <header class="panel-heading text-center">
+                <h4>Sign up</h4>
+            </header>
+            <form class="panel-body wrapper-lg" name="registerForm" id="registerForm" ng-submit="signup(credentials)" data-validate="parsley">
+                
+                <div class="form-group" style="display: none;">
+                    <input type="text" id="houseName" ng-model="credentials.house_name" data-parsley-trigger="focusout" ng-value="House" placeholder="House Name" class="form-control input-lg" data-required="true">
+                </div>
+
+                <div class="form-group">
+                    <input type="text" placeholder="Your First Name" data-parsley-trigger="focusout" ng-model="credentials.fname" class="form-control input-lg" data-required="true" required name="fname" ng-pattern="/^[A-Za-z ]+$/">
+                    <span class="required">*</span>
+                    <div class="text-danger msg-error" ng-show="registerForm.fname.$touched" ng-messages="registerForm.fname.$error" role="alert">
+                        <div ng-message="required">Please enter first name</div>
+                        <div ng-message="pattern">Invalid first name</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Your Last Name" data-parsley-trigger="focusout" ng-model="credentials.lname" class="form-control input-lg" data-required="true" name="lname" ng-pattern="/^[A-Za-z ]+$/">
+                    <span class="required">*</span>
+                    <div class="text-danger msg-error" ng-show="registerForm.lname.$touched" ng-messages="registerForm.lname.$error" role="alert">
+                        <div ng-message="required">Please enter last name</div>
+                        <div ng-message="pattern">Invalid last name</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <!--
+                    /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
+                    -->
+                    <input type="email" lowercase placeholder="Email (test@example.com)" data-parsley-trigger="focusout" ng-model="credentials.email" class="form-control input-lg" data-parsley-type="email" data-required="true" name="email" required ng-pattern="/^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.(([0-9]{1,3})|([a-zA-Z]{2,3})|(aero|coop|info|museum|name))$/">
+                    <span class="required">*</span>
+                    <div class="text-danger msg-error" ng-show="registerForm.email.$touched" ng-messages="registerForm.email.$error" role="alert">
+                        <div ng-message="required">Please enter email</div>
+                        <div ng-message="pattern">Invalid email address</div>
+                        <div ng-message="email">Invalid email address</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" placeholder="Username" ng-model="credentials.username" data-parsley-trigger="focusout" class="form-control input-lg" data-required="true" ng-change="setHouseName(credentials)" name="username">
+                    <span class="required">*</span>
+                    <div class="text-danger msg-error" ng-show="registerForm.username.$touched" ng-messages="registerForm.username.$error" role="alert">
+                        <div ng-message="required">Please enter username</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <!--
+                    ^(?=.*\d)(?=.*[a-zA-Z])(?!.*\s).{6,20}$
+                    -->
+                    <input type="password" id="inputPassword" name="inputPassword" ng-model="credentials.password" ng-minlength="6" ng-maxlength="20" ng-pattern="/^(?=.{6,20}$)(?=.*[^a-zA-Z])/" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="password" class="form-control input-lg" data-required="true">
+                    <span class="required">*</span>
+                </div>
+                <div class="form-group">
+                    <span class="text-danger msg-error" ng-show="registerForm.inputPassword.$error.required && registerForm.inputPassword.$dirty">Please enter password</span>
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.inputPassword.$error.required && (registerForm.inputPassword.$error.minlength || registerForm.inputPassword.$error.maxlength) && registerForm.inputPassword.$dirty">Passwords must be between 6 and 20 characters.</span>-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.inputPassword.$error.required && !registerForm.inputPassword.$error.minlength && !registerForm.inputPassword.$error.maxlength && registerForm.inputPassword.$error.pattern && registerForm.inputPassword.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>-->
+                    <div class="text-danger msg-error" ng-show="registerForm.inputPassword.$touched" ng-messages="registerForm.inputPassword.$error" role="alert">
+                        <div ng-message="pattern">Password must be between 6 and 20 characters and must contain at least one non-alpha character</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" name="confirmPassword" ng-model="credentials.confirm_password" ng-minlength="6" ng-maxlength="20" ng-pattern="/(?=.*[^a-zA-Z])/" pw-check="inputPassword" data-parsley-trigger="focusout" data-parsley-equalto="#inputPassword" placeholder="Confirm Password" class="form-control input-lg" data-required="true">
+                    <span class="required">*</span>
+                </div>
+                <div class="form-group">
+                    <span class="text-danger msg-error" ng-show="registerForm.confirmPassword.$error.required && registerForm.confirmPassword.$dirty">Please enter confirm password</span>
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.confirmPassword.$error.required && (registerForm.confirmPassword.$error.minlength || registerForm.confirmPassword.$error.maxlength) && registerForm.confirmPassword.$dirty">Passwords must be between 6 and 20 characters.</span>-->
+                    <!--<span class="text-danger msg-error" ng-show="!registerForm.confirmPassword.$error.required && !registerForm.confirmPassword.$error.minlength && !registerForm.confirmPassword.$error.maxlength && registerForm.confirmPassword.$error.pattern && registerForm.confirmPassword.$dirty">Must contain at least one non-alpha character (a number or a symbol.)</span>-->
+                </div>
+                <div class="form-group">
+                    <div class="msg-block" ng-show="registerForm.$error">
+                        <span class="text-danger msg-error" ng-show="registerForm.confirmPassword.$error.pwmatch">
+                        Passwords don't match.
+                    </span>
+                </div>
+                    </div>
+                <div class="form-group col-md-12 col-xs-12 no-padder">
+                <button type="submit" ng-disabled="registerForm.$invalid || isRegWaiting" class="btn btn-primary pull-left m-r"><span ng-show="isRegWaiting"><i class="fa fa-circle-o-notch fa-spin"></i></span> {{ registerButtonText }}</button>
+                    <button onClick="javascript:history.go(-1);" class="btn btn-default pull-left">Cancel</button>
+                    </div>
+                    <div class="line line-dashed form-group col-md-12 col-xs-12 no-padder"></div>
+                <div class="form-group form-group col-md-12 col-xs-12 no-padder">
+                <p class="text-muted text-center"><small>Already have an account?</small></p>
+                <a ui-sref="login" ng-disabled="isRegWaiting" class="btn btn-info btn-block">Sign in</a>
+                    </div>
+            </form>
+        </section>
+    </div>
+</section>

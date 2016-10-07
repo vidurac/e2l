@@ -1,0 +1,190 @@
+<h5 ng-if="user().on_trial && !user().stripe_id" class="wrapper text-white m-t-none m-b-none trial-mode">You are in trial mode now! You have <b>{{getDateDiff(user().trial_ends_at)}}</b> more days.
+    <a ng-if="user().stripe_active == 0" class="btn-sm btn-no-w pull-right" ui-sref="parent.payment"
+style="margin-top: -8px;">Add payment details</a></h5>
+
+<h5 ng-if="user().stripe_id && user().stripe_active == 0" class="wrapper text-white m-t-none m-b-none trial-mode">You have <b>{{getDateDiff(user().subscription_ends_at)}}</b> more days.
+    <a class="btn-sm btn-no-w pull-right" ui-sref="parent.payment"
+       style="margin-top: -8px;">Subscribe</a></h5> <!--ng-if="user().stripe_active == 0"-->
+<section class="vbox dashboard">
+    <section class="scrollable padder">
+        <div class="m-b-md">
+            <h3 class="m-b-none text-uc">Hi, {{user().f_name}}!</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-xs-12">
+                <section class="panel panel-default">
+                    <header class="panel-heading text-uc font-bold">
+                        <span>Welcome to Earn2Learn!</span>
+                        <a class="pull-right"  data-toggle="collapse" href="#db1" aria-expanded="false" aria-controls="db1">
+                            <i class="fa fa-minus"></i>
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </header>
+                    <div class="collapse in panel-body" id="db1">
+                    <div class="row m-l-none m-r-none" ng-init="checkMySponsorInvitations();loadLessons(); loadMembers();" >
+                            
+                        <!--<div class="col-sm-6 col-md-4 b-r b-light" style="padding: 0;">
+                            <img src="uploads/house/{{user().house_image}}" class="img img-responsive">
+                        </div>-->
+                        <div class="col-sm-12 col-md-12">
+                            <!--<h4><a class="text-uc text-muted text-ellipsis" href="{{base_url}}/#/parent/house">{{user().house_name}}</a></h4>-->
+                            <!--<hr class="m-t-sm m-b-sm">-->
+                            <p><span class="badge badge-info bg-success">{{lessons.length}}</span> Lessons.</p>
+                            <p>You have <span class="badge badge-info bg-warning">{{allHouseParticipants.length}}</span> children participating.</p>
+                            <p>
+                                <span ng-repeat="member in allHouseParticipants" >
+                                    <img width="25" height="25" style="margin-left : 1px" src="{{member.profile_image}}" class="img-circle  lter">
+                                </span>
+                                <!--<span ng-if="allHouseParticipants.length > 5">...</span>-->
+                            </p>
+                        </div>
+                    </div>
+                        </div>
+                </section>
+                <section class="panel panel-default">
+                    <header class="panel-heading text-uc font-bold" ng-init="LoadRecommendedLessons()">
+                        <span>Recommended Lessons <span class="text-muted" style="display: inline">(Most used lessons)</span></span>
+                        <a class="pull-right"  data-toggle="collapse" href="#db2" aria-expanded="false" aria-controls="db2">
+                            <i class="fa fa-minus"></i>
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </header>
+                    <div class="collapse in panel-body" id="db2">
+                    <div class="row m-l-none m-r-none">
+                        <h4 class="text-center" ng-if="!loadingRecommendedLessons && recommendedLessons.length == 0">There are no recommended lessons.</h4>
+                        <div class="grid" preserve-order reload-on-resize masonry='{ "itemSelector": ".grid-item", "columnWidth":".item-sizer", "percentPosition": true,"gutter":0 }' >
+                            <div class="item-sizer col-md-4 col-sm-6 col-xs-12"></div>
+                        <div ng-if="!loadingRecommendedLessons" masonry-brick class="grid-item col-md-4 col-sm-6 col-xs-12 m-t-sm m-b-sm ng-scope" ng-repeat="lesson in recommendedLessons | limitTo : 6 track by $index">
+                		    <div class="video bg-white b-a hover">
+                				<div class="control-group">
+                					<a ui-sref="parent.lesson({id : lesson.video_id})">
+                						<img ng-if="lesson.video_ref == 'youtube'"  class="img img-responsive" src="https://img.youtube.com/vi/{{lesson.url_id}}/0.jpg" />
+                						<img ng-if="lesson.video_ref == 'ted'"  class="img img-responsive" src="includes/images/ted-no-thumbnail.png" />
+                					</a>
+                				</div>
+                				<div class="wrapper bg-white">
+                					<a ui-sref="parent.lesson({id : lesson.video_id})"><strong class="categoryName">{{lesson.title}}</strong></a>
+                                    <div class="sub-item m-b ">
+                                        <small ng-init="categoryObj = getMainSubCategoryNames(video.category_id)"  class="">{{lesson.category}}</small>
+                                    </div>
+                				</div>
+                			</div>
+                		</div>
+                        </div>
+                    </div>
+                        </div>
+                </section>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <!--<section class="panel panel-default">
+                    <header class="panel-heading font-bold"><strong>Notifications&nbsp;&nbsp;&nbsp;<span class="label bg-danger">8</span></strong></header>
+                    <ul class="list-group gutter list-group-lg list-group-sp sortable scrollable" style="height: 160px;">
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora completed the Lesson, Algebra.
+                            </div>
+                        </li>
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora Earns <span class="label label-info">5$</span>
+                            </div>
+                        </li>
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora completed the Task, "Clean the house".
+                            </div>
+                        </li>
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora completed the Task, "Do Home work".
+                            </div>
+                        </li>
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora completed the Task, "Go to the market".
+                            </div>
+                        </li>
+                        <li class="list-group-item box-shadow">
+                            <a href="#" class="pull-right" data-dismiss="alert">
+                                <i class="fa fa-times icon-muted"></i>
+                            </a>
+                            <div class="clear">
+                                Lora Earns <span class="label label-info">27$</span>
+                            </div>
+                        </li>
+                    </ul>
+                </section>-->
+                <section class="panel panel-default">
+                    <header class="panel-heading font-bold">
+                        <strong>Children&nbsp;&nbsp;&nbsp;<span class="label bg-success">{{allHouseParticipants.length}}</span></strong>
+                        <a class="pull-right"  data-toggle="collapse" href="#db3" aria-expanded="false" aria-controls="db3">
+                            <i class="fa fa-minus"></i>
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </header>
+                    <div class="collapse in panel-body" id="db3">
+                    <ul class="list-group alt" ng-if="!loadingAllHouseParticipants">
+                        <li class="list-group-item" ng-if="allHouseParticipants && allHouseParticipants.length == 0">
+                            <span class="add-child-message">Add a child to get started on Earn2Learn!</span>
+                        </li>
+                        <li class="list-group-item" ng-repeat="member in allHouseParticipants">
+                            <div class="media">
+                                <span class="pull-left thumb-sm">
+                                    <img width="25" height="25" src="{{member.profile_image}}" alt="John said" class="img-circle">
+                                </span>
+                                <div class="media-body">
+                                    <div><a ui-sref="parent.user({ id: member.id })" class="text-ellipsis">{{member.f_name}} {{member.l_name}}</a></div>
+                                    <small class="text-muted">{{member.created_at | amDateFormat:'MM/DD/YYYY'}}</small>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div ng-if="loadingAllHouseParticipants"><i class="fa fa-circle-o-notch fa-spin"></i> Loading children</div>
+                    <footer  ng-if="!loadingAllHouseParticipants" class="panel-footer bg-success text-center">
+                        <!--<a ng-if="allHouseParticipants.length" ui-sref="parent.allParticipant">VIEW ALL</a>-->
+                        <a ng-if="!!allHouseParticipants" ui-sref="parent.addNewParticipant">Add New Child</a>
+                    </footer>
+                        </div>
+                </section>
+
+                <section class="panel panel-default activities" ng-init="loadRecentActivities()">
+                    <header class="panel-heading font-bold">
+                        <strong>Recent Activities</strong>
+                        <a class="pull-right"  data-toggle="collapse" href="#db4" aria-expanded="false" aria-controls="db4">
+                            <i class="fa fa-minus"></i>
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </header>
+                    <div class="collapse in panel-body" id="db4">
+                        <div ng-repeat="activitys in userRecentActivities | groupBy:'type' " class="form-group b-b">
+                            <label class="h4">{{activitys[0].type}}</label>
+                            <div ng-repeat="activity in activitys" class="padder-v padder b-b activity-field">
+                                <div class="message">{{activity.message}}</div>
+                                <div class="created"><span class="label">Created @</span> : {{activity.created_at}}</div>
+                            </div>
+                        </div>
+                        <div class="padder" ng-show="!userRecentActivities.length">No data found</div>
+                    </div>
+
+
+
+                </section>
+            </div>
+        </div>
+    </section>
+</section>

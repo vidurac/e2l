@@ -1,0 +1,23 @@
+
+<div class="modal-header">
+        <h4 class="modal-title">How it works - find easy steps</h4>
+</div>
+<div class="modal-body no-padder" style="overflow: hidden">
+    <slick slides-to-scroll="1" current-index="3" touch-move="true" slides-to-show="1" speed="300" infinite="false" dots="false" responsive="breakpoints" >
+        <div class="slide"><div class="image"><img src="includes/images/virtual-tour/v1.jpg"/></div></div>
+        <div class="slide"><div class="image"><img src="includes/images/virtual-tour/v2.jpg"/></div></div>
+        <div class="slide"><div class="image"><img src="includes/images/virtual-tour/v3.jpg"/></div></div>
+        <div class="slide"><div class="image"><img src="includes/images/virtual-tour/v4.jpg"/></div></div>
+        <div class="slide"><div class="image"><img src="includes/images/virtual-tour/v5.jpg"/></div></div>
+</slick>
+        <div class="checkbox padder">
+            <label>
+                <input type="checkbox" ng-model="HasChecked"/>
+                Don't show this again
+            </label>
+        </div>
+</div>
+<div class="modal-footer padder">
+    <button class="btn btn-primary pull-left" type="button" ng-click="ok()">Ok</button>
+    <button class="btn btn-warning pull-left" type="button" ng-click="cancel()">Cancel</button>
+</div>

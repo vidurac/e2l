@@ -1,0 +1,34 @@
+<div ng-init="getChildAssignedGiftCards();"></div>
+<section class="container-fluid no-padder">
+    <header class="section-title main-head row">
+        <div class="col-xs-12 col-md-12">
+        <h2 class="section-header">Gift cards</h2>
+            </div>
+    </header>
+    <section class="gift-cards">
+
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 border-box" ng-repeat="card in hah = (houseAssighedGiftCards | orderBy : 'card_points')">
+            <div class="bg-white box-wrapper padder padder-v text-center">
+                <div class="panel-body no-padder" ng-init="card.image = jsonDecodeStr(card.CardImages)">
+                    <a class="cursor-pointer text-ellipsis card-title"><h3>{{card.Name}}</h3></a>
+                    <div class="card-container clearfix">
+
+                        <span class="card-img"> <img class="img img-responsive" src="{{card.image.ImageUrl}}" /></span>
+                        <div class="clearfix"></div>
+                        <span ng-init="getTotalPoints()" class="card-details clearfix">
+                                    <span class="clear badge card-val"><b>${{card.card_points}}</b></span>
+                                    <span class="card-req"><button class="btn bg-green pull-right" ng-if="getInt(card.card_points) <= getInt(child_total_points)" ng-click="childRequestGiftCard(card)">Request</button></span>
+                                </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <article ng-if="!loadingAssignGiftCards && (hah.length == 0)" class="text-center">
+            <h1 class="text-center child-message">There are no assigned gift cards!</h1>
+        </article>
+
+    </section>
+</section>
+<section class="vbox" ng-if="loadingAssignGiftCards">
+    <h1 style="margin-top: 200px;" class="text-center text-muted"><img src="includes/images/still-loading.svg" class="loading" /></h1>
+</section>

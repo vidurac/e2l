@@ -1,0 +1,43 @@
+<style type="text/css">
+    .task {
+        cursor: pointer;
+        height: 145px;
+    }
+    
+    .taskName {
+        font-size: 17px;
+    }
+</style>
+
+<header class="header bg-light bg-gradient b-b" ng-init="getChildAssignedTasks()">
+    <p>Tasks</p>
+    <div class="col-md-4 pull-right m-t-sm">
+        <div class="input-group">
+            <input type="text" placeholder="search" ng-model="resources.searchTaskName" class="input-sm form-control" />
+            <div class="input-group-btn">
+                <button class="btn btn-default btn-sm">Search</button>
+            </div>
+        </div>
+    </div>
+</header>
+<section class="vbox" ng-if="!resources.stillLoading">
+    <section class="scrollable padder m-b-xl wrapper">
+        <!--<article class="media b-b wrapper-sm" ng-repeat = "task in resources.childAssignedTasks | orderBy : '-created_at'  | filter : {task : resources.searchTaskName}">
+            <span class="pull-left thumb-sm">{{$index + 1}}.</span>
+            <div class="media-body">   
+                <a class="h4" ng-bind-html="getUnsafeHtml(task.task)"></a>
+                <small class="block m-t-xs" ng-bind-html="getUnsafeHtml(task.description)"></small>
+            </div>
+        </article>-->
+        <article class="media b-b wrapper-sm">
+            <span class="pull-left thumb-sm">1.</span>
+            <div class="media-body">   
+                <a class="h4">dfsdfsdf</a>
+                <small class="block m-t-xs">sdfgsdfdf sdfsd fsdfsd fsdfsdf sdfsdf sds</small>
+            </div>
+        </article>
+    </section>
+</section>
+<section class="vbox" ng-if="resources.stillLoading">
+    <img src="includes/images/still-loading.gif" class="loading" />
+</section>
